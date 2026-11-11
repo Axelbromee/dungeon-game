@@ -1,0 +1,91 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_stem"]
+albedo_color = Color(0.16, 0.36, 0.12, 1)
+roughness = 0.8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_stem"]
+material = SubResource("StandardMaterial3D_stem")
+top_radius = 0.018
+bottom_radius = 0.028
+height = 0.5
+radial_segments = 8
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_leaf"]
+albedo_color = Color(0.2, 0.55, 0.22, 1)
+roughness = 0.6
+cull_mode = 2
+rim_enabled = true
+rim = 0.4
+
+[sub_resource type="SphereMesh" id="SphereMesh_leaf"]
+material = SubResource("StandardMaterial3D_leaf")
+radial_segments = 12
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bulb"]
+albedo_color = Color(0.6, 1, 0.75, 1)
+emission_enabled = true
+emission = Color(0.3, 1, 0.6, 1)
+emission_energy_multiplier = 2.5
+
+[sub_resource type="SphereMesh" id="SphereMesh_bulb"]
+radius = 0.07
+height = 0.14
+radial_segments = 16
+rings = 8
+
+[sub_resource type="SphereMesh" id="SphereMesh_bud"]
+radius = 0.035
+height = 0.07
+radial_segments = 10
+rings = 5
+
+[node name="GlowcapHerbVisual" type="Node3D"]
+
+[node name="Stem" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+mesh = SubResource("CylinderMesh_stem")
+
+[node name="Leaf1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.09, 0, 0, 0, 0.013, -0.0075, 0, 0.12, 0.208, 0, 0.16, 0.104)
+mesh = SubResource("SphereMesh_leaf")
+
+[node name="Leaf2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, 0, -0.09, -0.0075, 0.013, 0, 0.208, 0.12, 0, 0.104, 0.16, 0)
+mesh = SubResource("SphereMesh_leaf")
+
+[node name="Leaf3" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.09, 0, 0, 0, 0.013, 0.0075, 0, 0.12, -0.208, 0, 0.16, -0.104)
+mesh = SubResource("SphereMesh_leaf")
+
+[node name="Leaf4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, 0, 0.09, 0.0075, 0.013, 0, -0.208, 0.12, 0, -0.104, 0.16, 0)
+mesh = SubResource("SphereMesh_leaf")
+
+[node name="Leaf5" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.0445, 0, -0.0445, -0.0037, 0.0091, -0.0037, 0.1029, 0.084, 0.1029, 0.0514, 0.342, 0.0514)
+mesh = SubResource("SphereMesh_leaf")
+
+[node name="Leaf6" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.0445, 0, 0.0445, 0.0037, 0.0091, 0.0037, -0.1029, 0.084, -0.1029, -0.0514, 0.342, -0.0514)
+mesh = SubResource("SphereMesh_leaf")
+
+[node name="Bulb" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.53, 0)
+cast_shadow = 0
+material_override = SubResource("StandardMaterial3D_bulb")
+mesh = SubResource("SphereMesh_bulb")
+
+[node name="Bud1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.06, 0.45, -0.03)
+cast_shadow = 0
+material_override = SubResource("StandardMaterial3D_bulb")
+mesh = SubResource("SphereMesh_bud")
+
+[node name="Bud2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.05, 0.47, 0.04)
+cast_shadow = 0
+material_override = SubResource("StandardMaterial3D_bulb")
+mesh = SubResource("SphereMesh_bud")

@@ -1,0 +1,25 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/interaction/item_pickup.gd" id="1_pickup"]
+[ext_resource type="PackedScene" path="res://scenes/items/glowcap_herb_visual.tscn" id="2_visual"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_pickup"]
+friction = 0.8
+bounce = 0.35
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_herb"]
+size = Vector3(0.3, 0.56, 0.3)
+
+[node name="GlowcapHerbPickup" type="RigidBody3D"]
+collision_layer = 4
+collision_mask = 1
+mass = 0.3
+physics_material_override = SubResource("PhysicsMaterial_pickup")
+continuous_cd = true
+script = ExtResource("1_pickup")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_herb")
+
+[node name="Visual" parent="." instance=ExtResource("2_visual")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.28, 0)

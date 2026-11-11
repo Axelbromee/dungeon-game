@@ -1,0 +1,68 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/interaction/item_pickup.gd" id="1_pickup"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_crystal"]
+friction = 0.6
+bounce = 0.35
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_crystal"]
+size = Vector3(0.11, 0.25, 0.11)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_crystal"]
+transparency = 1
+albedo_color = Color(0.55, 0.95, 0.8, 0.78)
+metallic_specular = 1.0
+roughness = 0.05
+emission_enabled = true
+emission = Color(0.3, 0.9, 0.7, 1)
+emission_energy_multiplier = 1.2
+rim_enabled = true
+rim = 0.5
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_shaft"]
+material = SubResource("StandardMaterial3D_crystal")
+top_radius = 0.05
+bottom_radius = 0.055
+height = 0.14
+radial_segments = 6
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_tip"]
+material = SubResource("StandardMaterial3D_crystal")
+top_radius = 0.0
+bottom_radius = 0.05
+height = 0.07
+radial_segments = 6
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_base"]
+material = SubResource("StandardMaterial3D_crystal")
+top_radius = 0.055
+bottom_radius = 0.0
+height = 0.04
+radial_segments = 6
+rings = 1
+
+[node name="SlimeCrystalPickup" type="RigidBody3D"]
+collision_layer = 4
+collision_mask = 1
+mass = 0.3
+physics_material_override = SubResource("PhysicsMaterial_crystal")
+continuous_cd = true
+script = ExtResource("1_pickup")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_crystal")
+
+[node name="Shaft" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.01, 0)
+mesh = SubResource("CylinderMesh_shaft")
+
+[node name="Tip" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.095, 0)
+mesh = SubResource("CylinderMesh_tip")
+
+[node name="Base" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+mesh = SubResource("CylinderMesh_base")

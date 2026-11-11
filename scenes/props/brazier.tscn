@@ -1,0 +1,70 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/flicker_light.gd" id="1_flicker"]
+[ext_resource type="Material" path="res://materials/iron.tres" id="2_iron"]
+[ext_resource type="Material" path="res://materials/fire_particle.tres" id="3_fire"]
+[ext_resource type="ParticleProcessMaterial" path="res://materials/fire_flame_process.tres" id="4_flame"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_base"]
+material = ExtResource("2_iron")
+top_radius = 0.2
+bottom_radius = 0.35
+height = 0.12
+radial_segments = 16
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_stand"]
+material = ExtResource("2_iron")
+top_radius = 0.07
+bottom_radius = 0.09
+height = 0.9
+radial_segments = 10
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_bowl"]
+material = ExtResource("2_iron")
+top_radius = 0.48
+bottom_radius = 0.22
+height = 0.3
+radial_segments = 20
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_brazier"]
+height = 1.3
+radius = 0.35
+
+[sub_resource type="QuadMesh" id="QuadMesh_flame"]
+material = ExtResource("3_fire")
+size = Vector2(0.45, 0.45)
+
+[node name="Brazier" type="StaticBody3D"]
+
+[node name="Base" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+mesh = SubResource("CylinderMesh_base")
+
+[node name="Stand" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
+mesh = SubResource("CylinderMesh_stand")
+
+[node name="Bowl" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.12, 0)
+mesh = SubResource("CylinderMesh_bowl")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
+shape = SubResource("CylinderShape3D_brazier")
+
+[node name="Flame" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.28, 0)
+cast_shadow = 0
+amount = 48
+lifetime = 0.9
+process_material = ExtResource("4_flame")
+draw_pass_1 = SubResource("QuadMesh_flame")
+
+[node name="Light" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+light_color = Color(1, 0.5, 0.18, 1)
+light_energy = 3.6
+omni_range = 15.0
+omni_attenuation = 1.1
+script = ExtResource("1_flicker")
+flicker_amount = 0.3

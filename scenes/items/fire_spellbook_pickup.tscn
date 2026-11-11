@@ -1,0 +1,93 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/interaction/item_pickup.gd" id="1_pickup"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_book"]
+friction = 0.9
+bounce = 0.15
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_book"]
+size = Vector3(0.34, 0.072, 0.26)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_leather"]
+albedo_color = Color(0.32, 0.05, 0.03, 1)
+roughness = 0.65
+
+[sub_resource type="BoxMesh" id="BoxMesh_cover"]
+material = SubResource("StandardMaterial3D_leather")
+size = Vector3(0.34, 0.012, 0.26)
+
+[sub_resource type="BoxMesh" id="BoxMesh_spine"]
+material = SubResource("StandardMaterial3D_leather")
+size = Vector3(0.016, 0.072, 0.26)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pages"]
+albedo_color = Color(0.88, 0.82, 0.66, 1)
+roughness = 0.95
+
+[sub_resource type="BoxMesh" id="BoxMesh_pages"]
+material = SubResource("StandardMaterial3D_pages")
+size = Vector3(0.315, 0.05, 0.24)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rune"]
+albedo_color = Color(1, 0.5, 0.15, 1)
+emission_enabled = true
+emission = Color(1, 0.4, 0.08, 1)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_rune"]
+material = SubResource("StandardMaterial3D_rune")
+top_radius = 0.065
+bottom_radius = 0.065
+height = 0.004
+radial_segments = 24
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_brass"]
+albedo_color = Color(0.55, 0.4, 0.15, 1)
+metallic = 0.9
+roughness = 0.35
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ring"]
+material = SubResource("StandardMaterial3D_brass")
+top_radius = 0.085
+bottom_radius = 0.085
+height = 0.003
+radial_segments = 24
+rings = 1
+
+[node name="FireSpellbookPickup" type="RigidBody3D"]
+collision_layer = 4
+collision_mask = 1
+mass = 0.8
+physics_material_override = SubResource("PhysicsMaterial_book")
+continuous_cd = true
+script = ExtResource("1_pickup")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_book")
+
+[node name="CoverBottom" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.03, 0)
+mesh = SubResource("BoxMesh_cover")
+
+[node name="CoverTop" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
+mesh = SubResource("BoxMesh_cover")
+
+[node name="Spine" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.162, 0, 0)
+mesh = SubResource("BoxMesh_spine")
+
+[node name="Pages" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.006, 0, 0)
+mesh = SubResource("BoxMesh_pages")
+
+[node name="RuneRing" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.01, 0.0375, 0)
+mesh = SubResource("CylinderMesh_ring")
+
+[node name="Rune" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.01, 0.039, 0)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_rune")

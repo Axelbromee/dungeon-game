@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="InventoryItem" format=3 uid="uid://j0db34gt8kuc"]
+
+[ext_resource type="Script" uid="uid://b0ca10dql82uu" path="res://scripts/inventory/inventory_item.gd" id="1_item"]
+[ext_resource type="PackedScene" path="res://scenes/items/slime_crystal_pickup.tscn" id="2_scene"]
+
+[sub_resource type="Gradient" id="Gradient_icon"]
+offsets = PackedFloat32Array(0, 0.3, 0.65, 0.85, 1)
+colors = PackedColorArray(0.9, 1, 0.97, 1, 0.55, 0.95, 0.8, 1, 0.2, 0.6, 0.5, 0.95, 0.08, 0.3, 0.25, 0.7, 0.03, 0.12, 0.1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_icon"]
+gradient = SubResource("Gradient_icon")
+fill = 2
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0.02)
+
+[resource]
+script = ExtResource("1_item")
+item_name = "Slime Crystal"
+grade = 4
+category = 2
+description = "Slime fluid that hardened inside an old slime over many years, much like a kidney stone. Hard and useful."
+icon = SubResource("GradientTexture2D_icon")
+world_scene = ExtResource("2_scene")
+held_offset = Vector3(0, 0.03, 0)
+held_rotation_degrees = Vector3(0, 30, -15)
+held_scale = 1.6

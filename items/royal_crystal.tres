@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="InventoryItem" format=3 uid="uid://c1akob36cbnsd"]
+
+[ext_resource type="Script" uid="uid://b0ca10dql82uu" path="res://scripts/inventory/inventory_item.gd" id="1_item"]
+[ext_resource type="PackedScene" path="res://scenes/items/royal_crystal_pickup.tscn" id="2_scene"]
+
+[sub_resource type="Gradient" id="Gradient_icon"]
+offsets = PackedFloat32Array(0, 0.2, 0.5, 0.8, 1)
+colors = PackedColorArray(1, 1, 0.9, 1, 1, 0.85, 0.35, 1, 0.85, 0.5, 0.08, 1, 0.4, 0.2, 0.03, 0.8, 0.15, 0.07, 0.01, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_icon"]
+gradient = SubResource("Gradient_icon")
+fill = 2
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0.02)
+
+[resource]
+script = ExtResource("1_item")
+item_name = "Royal Crystal"
+grade = 1
+category = 2
+description = "Crystallized royal jelly. Extremely rare."
+icon = SubResource("GradientTexture2D_icon")
+world_scene = ExtResource("2_scene")
+held_offset = Vector3(0, 0.03, 0)
+held_rotation_degrees = Vector3(0, 25, 0)
+held_scale = 1.4

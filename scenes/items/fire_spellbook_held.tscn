@@ -1,0 +1,115 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://materials/fire_particle.tres" id="1_soft"]
+[ext_resource type="ParticleProcessMaterial" path="res://materials/fire_flame_process.tres" id="2_flame"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_leather"]
+albedo_color = Color(0.32, 0.05, 0.03, 1)
+roughness = 0.65
+
+[sub_resource type="BoxMesh" id="BoxMesh_cover"]
+material = SubResource("StandardMaterial3D_leather")
+size = Vector3(0.17, 0.01, 0.25)
+
+[sub_resource type="BoxMesh" id="BoxMesh_spine"]
+material = SubResource("StandardMaterial3D_leather")
+size = Vector3(0.03, 0.02, 0.25)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pages"]
+albedo_color = Color(0.9, 0.84, 0.68, 1)
+roughness = 0.95
+
+[sub_resource type="BoxMesh" id="BoxMesh_pages"]
+material = SubResource("StandardMaterial3D_pages")
+size = Vector3(0.155, 0.022, 0.235)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rune"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.55, 0.15, 0.95)
+emission_enabled = true
+emission = Color(1, 0.4, 0.08, 1)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_rune"]
+material = SubResource("StandardMaterial3D_rune")
+top_radius = 0.045
+bottom_radius = 0.045
+height = 0.002
+radial_segments = 24
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ink"]
+albedo_color = Color(0.25, 0.12, 0.08, 1)
+roughness = 1.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_line"]
+material = SubResource("StandardMaterial3D_ink")
+size = Vector3(0.11, 0.001, 0.006)
+
+[sub_resource type="QuadMesh" id="QuadMesh_ember"]
+material = ExtResource("1_soft")
+size = Vector2(0.05, 0.05)
+
+[node name="FireSpellbookHeld" type="Node3D"]
+
+[node name="Spine" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.008, 0)
+mesh = SubResource("BoxMesh_spine")
+
+[node name="LeftHalf" type="Node3D" parent="."]
+transform = Transform3D(0.978, -0.208, 0, 0.208, 0.978, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Cover" type="MeshInstance3D" parent="LeftHalf"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.085, 0, 0)
+mesh = SubResource("BoxMesh_cover")
+
+[node name="Pages" type="MeshInstance3D" parent="LeftHalf"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.082, 0.016, 0)
+mesh = SubResource("BoxMesh_pages")
+
+[node name="Line1" type="MeshInstance3D" parent="LeftHalf"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.082, 0.028, -0.07)
+mesh = SubResource("BoxMesh_line")
+
+[node name="Line2" type="MeshInstance3D" parent="LeftHalf"]
+transform = Transform3D(0.8, 0, 0, 0, 1, 0, 0, 0, 1, -0.09, 0.028, -0.04)
+mesh = SubResource("BoxMesh_line")
+
+[node name="Line3" type="MeshInstance3D" parent="LeftHalf"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.082, 0.028, -0.01)
+mesh = SubResource("BoxMesh_line")
+
+[node name="Line4" type="MeshInstance3D" parent="LeftHalf"]
+transform = Transform3D(0.6, 0, 0, 0, 1, 0, 0, 0, 1, -0.095, 0.028, 0.02)
+mesh = SubResource("BoxMesh_line")
+
+[node name="Line5" type="MeshInstance3D" parent="LeftHalf"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.082, 0.028, 0.05)
+mesh = SubResource("BoxMesh_line")
+
+[node name="RightHalf" type="Node3D" parent="."]
+transform = Transform3D(0.978, 0.208, 0, -0.208, 0.978, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Cover" type="MeshInstance3D" parent="RightHalf"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.085, 0, 0)
+mesh = SubResource("BoxMesh_cover")
+
+[node name="Pages" type="MeshInstance3D" parent="RightHalf"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.082, 0.016, 0)
+mesh = SubResource("BoxMesh_pages")
+
+[node name="Rune" type="MeshInstance3D" parent="RightHalf"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.082, 0.028, 0)
+mesh = SubResource("CylinderMesh_rune")
+
+[node name="Embers" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08, 0.04, 0)
+amount = 10
+lifetime = 0.6
+local_coords = true
+process_material = ExtResource("2_flame")
+draw_pass_1 = SubResource("QuadMesh_ember")
+
+[node name="CastPoint" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, -0.02)

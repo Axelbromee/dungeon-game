@@ -1,0 +1,150 @@
+[gd_scene format=3 uid="uid://7evifhs6me3v"]
+
+[ext_resource type="PackedScene" uid="uid://bnixwl4ts8xyx" path="res://scenes/player.tscn" id="1_w235y"]
+[ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="2_hud"]
+[ext_resource type="Material" uid="uid://d1ddmmjvhwk6v" path="res://materials/stone_floor.tres" id="3_floor"]
+[ext_resource type="Material" uid="uid://ccmesaps5ruou" path="res://materials/stone_wall.tres" id="4_wall"]
+[ext_resource type="PackedScene" path="res://scenes/props/torch.tscn" id="7_torch"]
+[ext_resource type="PackedScene" path="res://scenes/props/brazier.tscn" id="8_brazier"]
+[ext_resource type="PackedScene" path="res://scenes/props/target_dummy.tscn" id="11_dummy"]
+[ext_resource type="PackedScene" path="res://scenes/items/glowcap_herb.tscn" id="12_herb"]
+[ext_resource type="Resource" path="res://items/glowcap_herb.tres" id="13_herb_item"]
+[ext_resource type="PackedScene" path="res://scenes/items/fire_spellbook_pickup.tscn" id="14_book"]
+[ext_resource type="Resource" path="res://items/fire_spellbook.tres" id="15_book_item"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/slime.tscn" id="16_slime"]
+[ext_resource type="Script" uid="uid://jpkm51xlmqjy" path="res://scripts/core/spawn_point.gd" id="17_spawn"]
+[ext_resource type="PackedScene" path="res://scenes/guild/player_room_door.tscn" id="18_scene_door"]
+
+[sub_resource type="Environment" id="Environment_dungeon"]
+background_mode = 1
+background_color = Color(0.01, 0.01, 0.015, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.55, 0.52, 0.6, 1)
+ambient_light_energy = 0.65
+tonemap_mode = 3
+tonemap_exposure = 1.15
+glow_enabled = true
+glow_intensity = 0.9
+glow_bloom = 0.05
+glow_hdr_threshold = 0.9
+fog_enabled = true
+fog_light_color = Color(0.16, 0.14, 0.16, 1)
+fog_density = 0.012
+
+[node name="Main" type="Node3D" unique_id=1912239806]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=130997860]
+environment = SubResource("Environment_dungeon")
+
+[node name="Player" parent="." unique_id=652394313 instance=ExtResource("1_w235y")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 16)
+
+[node name="HUD" parent="." unique_id=1452073640 node_paths=PackedStringArray("player") instance=ExtResource("2_hud")]
+player = NodePath("../Player")
+
+[node name="Architecture" type="CSGCombiner3D" parent="." unique_id=95186383]
+use_collision = true
+
+[node name="Floor" type="CSGBox3D" parent="Architecture" unique_id=1417943683]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+size = Vector3(30, 1, 40)
+material = ExtResource("3_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="Architecture" unique_id=107437757]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.5, 0)
+size = Vector3(30, 1, 40)
+material = ExtResource("4_wall")
+
+[node name="WallNorth" type="CSGBox3D" parent="Architecture" unique_id=1521520481]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, -20.5)
+size = Vector3(32, 10, 1)
+material = ExtResource("4_wall")
+
+[node name="WallSouth" type="CSGBox3D" parent="Architecture" unique_id=1748708651]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 20.5)
+size = Vector3(32, 10, 1)
+material = ExtResource("4_wall")
+
+[node name="WallWest" type="CSGBox3D" parent="Architecture" unique_id=2051285160]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.5, 4, 0)
+size = Vector3(1, 10, 40)
+material = ExtResource("4_wall")
+
+[node name="WallEast" type="CSGBox3D" parent="Architecture" unique_id=224502752]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.5, 4, 0)
+size = Vector3(1, 10, 40)
+material = ExtResource("4_wall")
+
+[node name="Lighting" type="Node3D" parent="." unique_id=598964629]
+
+[node name="FillLight" type="DirectionalLight3D" parent="Lighting" unique_id=367871190]
+transform = Transform3D(0.866, 0, -0.5, -0.41, 0.574, -0.709, 0.287, 0.819, 0.497, 0, 7, 0)
+light_color = Color(0.7, 0.75, 0.95, 1)
+light_energy = 0.35
+light_specular = 0.2
+
+[node name="TorchW_Mid" parent="Lighting" unique_id=1091304549 instance=ExtResource("7_torch")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -15, 3, -4)
+
+[node name="TorchE_Mid" parent="Lighting" unique_id=648754291 instance=ExtResource("7_torch")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 15, 3, -4)
+
+[node name="TorchW_South" parent="Lighting" unique_id=261458461 instance=ExtResource("7_torch")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -15, 3, 12)
+
+[node name="TorchE_South" parent="Lighting" unique_id=232339131 instance=ExtResource("7_torch")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 15, 3, 12)
+
+[node name="BrazierW" parent="Lighting" unique_id=1218431630 instance=ExtResource("8_brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, -16.5)
+
+[node name="BrazierE" parent="Lighting" unique_id=2027754346 instance=ExtResource("8_brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -16.5)
+
+[node name="Dummy" parent="." unique_id=1063094800 instance=ExtResource("11_dummy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6)
+
+[node name="Enemies" type="Node3D" parent="." unique_id=910709803]
+
+[node name="SlimeA" parent="Enemies" unique_id=138521221 instance=ExtResource("16_slime")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 1)
+
+[node name="SlimeB" parent="Enemies" unique_id=1481380090 instance=ExtResource("16_slime")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -3)
+
+[node name="FireSpellbook" parent="." unique_id=265974291 instance=ExtResource("14_book")]
+transform = Transform3D(0.94, 0, 0.342, 0, 1, 0, -0.342, 0, 0.94, -0.5, 0.15, 14.6)
+item = ExtResource("15_book_item")
+
+[node name="Forage" type="Node3D" parent="." unique_id=1437115546]
+
+[node name="GlowcapHerb1" parent="Forage" unique_id=91215275 instance=ExtResource("12_herb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, 0, 13.6)
+item = ExtResource("13_herb_item")
+
+[node name="GlowcapHerb2" parent="Forage" unique_id=1394598792 instance=ExtResource("12_herb")]
+transform = Transform3D(0.766, 0, 0.643, 0, 1, 0, -0.643, 0, 0.766, 1.3, 0, 13)
+item = ExtResource("13_herb_item")
+
+[node name="GlowcapHerb3" parent="Forage" unique_id=1840784722 instance=ExtResource("12_herb")]
+transform = Transform3D(-0.5, 0, 0.866, 0, 1, 0, -0.866, 0, -0.5, 0.2, 0, 11.8)
+item = ExtResource("13_herb_item")
+amount = 3
+
+[node name="Spawns" type="Node3D" parent="." unique_id=1322996469]
+
+[node name="Default" type="Marker3D" parent="Spawns" unique_id=413527456]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 16)
+script = ExtResource("17_spawn")
+
+[node name="FromGuild" type="Marker3D" parent="Spawns" unique_id=911667523]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 17.6)
+script = ExtResource("17_spawn")
+spawn_id = &"from_guild"
+
+[node name="ExitToGuild" parent="." unique_id=236908347 instance=ExtResource("18_scene_door")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 19.87)
+target_scene = "res://scenes/guild/guild_kit_test.tscn"
+target_spawn = &"from_dungeon"
+prompt = "Return to the guild"
+sign_text = "GUILD"

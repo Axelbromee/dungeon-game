@@ -1,0 +1,351 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/inventory_ui.gd" id="1_ui"]
+[ext_resource type="Script" path="res://scripts/ui/inventory_drop_zone.gd" id="2_drop"]
+[ext_resource type="PackedScene" path="res://scenes/ui/inventory_slot.tscn" id="3_slot"]
+[ext_resource type="Script" path="res://scripts/ui/stats_panel.gd" id="4_stats"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_window"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.085, 0.068, 0.055, 0.97)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.38, 0.28, 0.18, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.55)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
+content_margin_left = 10.0
+content_margin_right = 10.0
+bg_color = Color(0.13, 0.1, 0.075, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 2
+border_color = Color(0.3, 0.22, 0.14, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
+content_margin_left = 10.0
+content_margin_right = 10.0
+bg_color = Color(0.18, 0.14, 0.1, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 2
+border_color = Color(0.5, 0.38, 0.24, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_pressed"]
+content_margin_left = 10.0
+content_margin_right = 10.0
+bg_color = Color(0.24, 0.17, 0.09, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 2
+border_color = Color(0.85, 0.65, 0.32, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tooltip"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.07, 0.058, 0.05, 0.97)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.32, 0.22, 0.9)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_badge"]
+content_margin_left = 6.0
+content_margin_right = 6.0
+bg_color = Color(0.6, 0.6, 0.6, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="InventoryUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_ui")
+slot_scene = ExtResource("3_slot")
+
+[node name="DropZone" type="ColorRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.45)
+script = ExtResource("2_drop")
+
+[node name="Window" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -150.0
+offset_right = 240.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_window")
+
+[node name="Margin" type="MarginContainer" parent="Window"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="Window/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Tabs" type="HBoxContainer" parent="Window/Margin/VBox"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 6
+
+[node name="ItemsTab" type="Button" parent="Window/Margin/VBox/Tabs"]
+custom_minimum_size = Vector2(90, 26)
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(0.78, 0.7, 0.58, 1)
+theme_override_colors/font_hover_color = Color(0.95, 0.88, 0.75, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.88, 0.6, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_button_pressed")
+toggle_mode = true
+button_pressed = true
+text = "Items"
+
+[node name="StatsTab" type="Button" parent="Window/Margin/VBox/Tabs"]
+custom_minimum_size = Vector2(90, 26)
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(0.78, 0.7, 0.58, 1)
+theme_override_colors/font_hover_color = Color(0.95, 0.88, 0.75, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.88, 0.6, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_button_pressed")
+toggle_mode = true
+text = "Stats"
+
+[node name="ItemsPage" type="VBoxContainer" parent="Window/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="StorageSection" type="VBoxContainer" parent="Window/Margin/VBox/ItemsPage"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="StorageTitle" type="Label" parent="Window/Margin/VBox/ItemsPage/StorageSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.72, 0.5, 1)
+theme_override_font_sizes/font_size = 12
+text = "STORAGE"
+
+[node name="StorageGrid" type="GridContainer" parent="Window/Margin/VBox/ItemsPage/StorageSection"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+columns = 9
+
+[node name="StorageDivider" type="HSeparator" parent="Window/Margin/VBox/ItemsPage/StorageSection"]
+layout_mode = 2
+
+[node name="Toolbar" type="HBoxContainer" parent="Window/Margin/VBox/ItemsPage"]
+layout_mode = 2
+
+[node name="BagLabel" type="Label" parent="Window/Margin/VBox/ItemsPage/Toolbar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.65, 0.56, 0.45, 1)
+theme_override_font_sizes/font_size = 11
+text = "BAG"
+vertical_alignment = 1
+
+[node name="SortButton" type="Button" parent="Window/Margin/VBox/ItemsPage/Toolbar"]
+custom_minimum_size = Vector2(64, 22)
+layout_mode = 2
+focus_mode = 0
+tooltip_text = "Sort the bag by grade, type and name (the hotbar isn't touched)"
+theme_override_colors/font_color = Color(0.85, 0.76, 0.62, 1)
+theme_override_colors/font_hover_color = Color(1, 0.9, 0.72, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+text = "Sort"
+
+[node name="Grid" type="GridContainer" parent="Window/Margin/VBox/ItemsPage"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+columns = 9
+
+[node name="Hint" type="Label" parent="Window/Margin/VBox/ItemsPage"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.53, 0.44, 1)
+theme_override_font_sizes/font_size = 10
+text = "Drag between the bag, the hotbar below and open chests   ·   Shift+click: hotbar ⇄ bag (chest ⇄ bag)
+Ctrl+drag or right-click: split   ·   Double-click: gather   ·   [Q] over a slot: drop one
+Drag outside: drop   ·   [I] / [Tab] / [Esc]: close"
+horizontal_alignment = 1
+
+[node name="StatsPage" type="VBoxContainer" parent="Window/Margin/VBox"]
+visible = false
+custom_minimum_size = Vector2(440, 0)
+layout_mode = 2
+script = ExtResource("4_stats")
+
+[node name="Hotbar" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -218.0
+offset_top = -66.0
+offset_right = 218.0
+offset_bottom = -21.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Tooltip" type="PanelContainer" parent="."]
+visible = false
+top_level = true
+layout_mode = 0
+offset_right = 240.0
+offset_bottom = 80.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_tooltip")
+
+[node name="Margin" type="MarginContainer" parent="Tooltip"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="Tooltip/Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Name" type="Label" parent="Tooltip/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.8)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 16
+text = "Item"
+
+[node name="BadgeRow" type="HBoxContainer" parent="Tooltip/Margin/VBox"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="Badge" type="PanelContainer" parent="Tooltip/Margin/VBox/BadgeRow"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_badge")
+
+[node name="Letter" type="Label" parent="Tooltip/Margin/VBox/BadgeRow/Badge"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.06, 0.05, 0.04, 1)
+theme_override_font_sizes/font_size = 12
+text = "F"
+horizontal_alignment = 1
+
+[node name="Info" type="Label" parent="Tooltip/Margin/VBox/BadgeRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.64, 0.55, 1)
+theme_override_font_sizes/font_size = 12
+text = "Grade F  ·  Item"
+vertical_alignment = 1
+
+[node name="Description" type="Label" parent="Tooltip/Margin/VBox"]
+custom_minimum_size = Vector2(230, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 0.78, 0.72, 1)
+theme_override_font_sizes/font_size = 13
+autowrap_mode = 3
+
+[node name="Stack" type="Label" parent="Tooltip/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.52, 0.44, 1)
+theme_override_font_sizes/font_size = 11
+text = "Stack 1 / 20"
+
+[node name="SelectedLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -132.0
+offset_right = 200.0
+offset_bottom = -114.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 0.85, 0.55, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+vertical_alignment = 1

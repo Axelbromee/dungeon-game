@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/building/kit_wall.gd" id="1_piece"]
+
+[node name="WallWindow" type="StaticBody3D"]
+script = ExtResource("1_piece")
+style = 1

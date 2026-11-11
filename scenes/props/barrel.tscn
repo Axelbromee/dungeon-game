@@ -1,0 +1,52 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/breakable.gd" id="1_break"]
+[ext_resource type="Material" path="res://materials/wood.tres" id="2_wood"]
+[ext_resource type="Material" path="res://materials/iron.tres" id="3_iron"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_barrel"]
+height = 1.0
+radius = 0.38
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_barrel"]
+material = ExtResource("2_wood")
+top_radius = 0.34
+bottom_radius = 0.34
+height = 1.0
+radial_segments = 16
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_bulge"]
+material = ExtResource("2_wood")
+top_radius = 0.38
+bottom_radius = 0.38
+height = 0.5
+radial_segments = 16
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_hoop"]
+material = ExtResource("3_iron")
+top_radius = 0.385
+bottom_radius = 0.385
+height = 0.06
+radial_segments = 16
+
+[node name="Barrel" type="RigidBody3D"]
+mass = 15.0
+script = ExtResource("1_break")
+max_health = 60.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CylinderShape3D_barrel")
+
+[node name="Body" type="MeshInstance3D" parent="."]
+mesh = SubResource("CylinderMesh_barrel")
+
+[node name="Bulge" type="MeshInstance3D" parent="."]
+mesh = SubResource("CylinderMesh_bulge")
+
+[node name="HoopTop" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+mesh = SubResource("CylinderMesh_hoop")
+
+[node name="HoopBottom" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3, 0)
+mesh = SubResource("CylinderMesh_hoop")

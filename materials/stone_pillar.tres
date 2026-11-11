@@ -1,0 +1,31 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dv7acviakviut"]
+
+[sub_resource type="Gradient" id="Gradient_pillar"]
+colors = PackedColorArray(0.14, 0.12, 0.1, 1, 0.3, 0.27, 0.23, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_pillar"]
+frequency = 0.03
+fractal_octaves = 4
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_pillar_albedo"]
+width = 256
+height = 256
+noise = SubResource("FastNoiseLite_pillar")
+color_ramp = SubResource("Gradient_pillar")
+seamless = true
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_pillar_normal"]
+width = 256
+height = 256
+noise = SubResource("FastNoiseLite_pillar")
+seamless = true
+as_normal_map = true
+bump_strength = 6.0
+
+[resource]
+albedo_texture = SubResource("NoiseTexture2D_pillar_albedo")
+roughness = 0.72
+normal_enabled = true
+normal_texture = SubResource("NoiseTexture2D_pillar_normal")
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true

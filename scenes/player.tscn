@@ -1,0 +1,69 @@
+[gd_scene format=3 uid="uid://bnixwl4ts8xyx"]
+
+[ext_resource type="Script" uid="uid://b7q38jbceuvyd" path="res://scripts/player.gd" id="1_ky7la"]
+[ext_resource type="PackedScene" path="res://scenes/fireball.tscn" id="2_fb"]
+[ext_resource type="Script" path="res://scripts/inventory/inventory.gd" id="3_inv"]
+[ext_resource type="Resource" path="res://items/fire_spellbook.tres" id="4_book"]
+[ext_resource type="Script" path="res://scripts/player/held_item_view.gd" id="5_hand"]
+[ext_resource type="Script" path="res://scripts/player/player_stats.gd" id="6_stats"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_interact"]
+radius = 1.6
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_0g4ut"]
+radius = 0.4
+height = 1.8
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_k5ulh"]
+radius = 0.4
+height = 1.8
+
+[node name="Player" type="CharacterBody3D" unique_id=652394313]
+collision_mask = 3
+floor_constant_speed = true
+floor_max_angle = 0.872665
+floor_snap_length = 0.4
+script = ExtResource("1_ky7la")
+fireball_scene = ExtResource("2_fb")
+spell_item = ExtResource("4_book")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=345927631]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_0g4ut")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1451221584]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+mesh = SubResource("CapsuleMesh_k5ulh")
+
+[node name="CameraPivot" type="Node3D" parent="." unique_id=1319196324]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot" unique_id=1684048636]
+fov = 90.0
+
+[node name="Hand" type="Node3D" parent="CameraPivot/Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.52, -0.52, -0.85)
+script = ExtResource("5_hand")
+
+[node name="Sway" type="Node3D" parent="CameraPivot/Camera3D/Hand"]
+
+[node name="ItemRoot" type="Node3D" parent="CameraPivot/Camera3D/Hand/Sway"]
+
+[node name="Muzzle" type="Marker3D" parent="CameraPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.35, -0.3, -1)
+
+[node name="Inventory" type="Node" parent="."]
+script = ExtResource("3_inv")
+slot_count = 36
+
+[node name="Stats" type="Node" parent="."]
+script = ExtResource("6_stats")
+
+[node name="InteractionArea" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 4
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractionArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("SphereShape3D_interact")

@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="InventoryItem" format=3 uid="uid://bilmgp6ll0rmv"]
+
+[ext_resource type="Script" uid="uid://b0ca10dql82uu" path="res://scripts/inventory/inventory_item.gd" id="1_item"]
+[ext_resource type="PackedScene" path="res://scenes/items/glowcap_herb_pickup.tscn" id="2_scene"]
+
+[sub_resource type="Gradient" id="Gradient_icon"]
+offsets = PackedFloat32Array(0, 0.3, 0.65, 1)
+colors = PackedColorArray(0.9, 1, 0.8, 1, 0.4, 1, 0.6, 1, 0.1, 0.5, 0.25, 0.9, 0.05, 0.2, 0.1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_icon"]
+gradient = SubResource("Gradient_icon")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[resource]
+script = ExtResource("1_item")
+item_name = "Glowcap Herb"
+category = 3
+description = "A softly glowing dungeon herb. Smells faintly of ozone."
+icon = SubResource("GradientTexture2D_icon")
+world_scene = ExtResource("2_scene")
+held_offset = Vector3(0, 0.03, 0)
+held_rotation_degrees = Vector3(0, 30, -12)
+held_scale = 0.5
