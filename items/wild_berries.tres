@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="InventoryItem" format=3 uid="uid://c7sarck562vhk"]
+
+[ext_resource type="Script" uid="uid://b0ca10dql82uu" path="res://scripts/inventory/inventory_item.gd" id="1_item"]
+[ext_resource type="PackedScene" path="res://scenes/items/wild_berries_pickup.tscn" id="2_scene"]
+
+[sub_resource type="Gradient" id="Gradient_icon"]
+offsets = PackedFloat32Array(0, 0.6, 1)
+colors = PackedColorArray(1, 0.4, 0.45, 1, 0.6, 0.05, 0.1, 0.9, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_icon"]
+gradient = SubResource("Gradient_icon")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[resource]
+script = ExtResource("1_item")
+item_name = "Wild Berries"
+category = 3
+description = "Sweet berries. Restores a little stamina when eaten."
+icon = SubResource("GradientTexture2D_icon")
+world_scene = ExtResource("2_scene")
+held_offset = Vector3(0, 0.02, 0)
+held_rotation_degrees = Vector3(15, 20, 0)
+held_scale = 1.1

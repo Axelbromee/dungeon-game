@@ -1,0 +1,165 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/interaction/harvestable.gd" id="1_harvest"]
+[ext_resource type="Resource" path="res://items/iron_ore.tres" id="2_item"]
+[ext_resource type="PackedScene" path="res://KayKit/Assets4/gltf/Rock_1_E_Color1.gltf" id="3_rock"]
+[ext_resource type="PackedScene" path="res://KayKit/Assets3/gltf/Iron_Nuggets.gltf" id="4_cluster"]
+[ext_resource type="PackedScene" path="res://KayKit/Assets3/gltf/Iron_Nugget_Large.gltf" id="5_nugget"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_reach"]
+radius = 0.95
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_rock"]
+size = Vector3(1.2, 1.2, 1.0)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_chips"]
+emission_shape = 1
+emission_sphere_radius = 0.15
+direction = Vector3(0, 0.6, 1)
+spread = 50.0
+initial_velocity_min = 2.0
+initial_velocity_max = 3.5
+angular_velocity_min = -360.0
+angular_velocity_max = 360.0
+gravity = Vector3(0, -9.8, 0)
+scale_min = 0.5
+scale_max = 1.2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_chip"]
+albedo_color = Color(0.3, 0.32, 0.36, 1)
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_chip"]
+material = SubResource("StandardMaterial3D_chip")
+size = Vector3(0.05, 0.05, 0.05)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ore"]
+albedo_color = Color(0.3, 0.32, 0.37, 1)
+metallic = 0.6
+roughness = 0.35
+emission_enabled = true
+emission = Color(0.16, 0.2, 0.3, 1)
+emission_energy_multiplier = 0.4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_accent"]
+albedo_color = Color(0.82, 0.85, 0.9, 1)
+metallic = 0.6
+roughness = 0.35
+emission_enabled = true
+emission = Color(0.35, 0.4, 0.5, 1)
+emission_energy_multiplier = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_chunk"]
+material = SubResource("StandardMaterial3D_ore")
+size = Vector3(0.22, 0.17, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_accent"]
+material = SubResource("StandardMaterial3D_accent")
+size = Vector3(0.07, 0.06, 0.09)
+
+[node name="IronOreNode" type="Area3D" node_paths=PackedStringArray("shake_node", "hit_particles", "tint_root")]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+script = ExtResource("1_harvest")
+item = ExtResource("2_item")
+amount_max = 3
+verb = "Mine"
+hits_to_harvest = 3
+drop_as_pickups = true
+shake_node = NodePath("Model")
+hit_particles = NodePath("Chips")
+tint_root = NodePath("Model/Rock")
+model_tint = Color(0.55, 0.57, 0.62, 1)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0.15)
+shape = SubResource("SphereShape3D_reach")
+
+[node name="Solid" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Solid"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -0.1)
+shape = SubResource("BoxShape3D_rock")
+
+[node name="Model" type="Node3D" parent="."]
+
+[node name="Rock" parent="Model" instance=ExtResource("3_rock")]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 0, -0.2)
+
+[node name="Cluster" parent="Model" instance=ExtResource("4_cluster")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 0, 0.32)
+
+[node name="Nugget1" parent="Model" instance=ExtResource("5_nugget")]
+transform = Transform3D(0.866, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866, 0.36, 0.12, 0.3)
+
+[node name="Nugget2" parent="Model" instance=ExtResource("5_nugget")]
+transform = Transform3D(0.7, 0.3, 0, -0.3, 0.7, 0, 0, 0, 0.76, -0.38, 0.1, 0.28)
+
+[node name="Chunk1" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1.1695, 0.2689, 0.0006, -0.2684, 1.1671, 0.0764, 0.0165, -0.0746, 1.1976, -0.3268, 0.6343, 0.0742)
+mesh = SubResource("BoxMesh_chunk")
+
+[node name="Chunk2" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1.318, 0.3105, 0.3558, -0.1392, 1.2634, -0.5868, -0.4512, 0.5171, 1.2203, -0.0628, 0.7733, 0.1562)
+mesh = SubResource("BoxMesh_chunk")
+
+[node name="Chunk3" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(-1.1923, -0.0346, -0.1315, -0.0399, 1.1984, 0.0468, 0.13, 0.0508, -1.1919, 0.2174, 0.5967, 0.1766)
+mesh = SubResource("BoxMesh_chunk")
+
+[node name="Chunk4" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(-0.3006, -0.2906, 1.0174, 0.2631, 1.0039, 0.3645, -1.0249, 0.343, -0.2049, 0.2771, 0.8039, -0.006)
+mesh = SubResource("BoxMesh_chunk")
+
+[node name="Chunk5" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(0.6192, -0.177, 0.765, 0.1044, 0.9842, 0.1432, -0.7783, -0.0088, 0.6279, -0.1342, 0.8945, -0.0083)
+mesh = SubResource("BoxMesh_chunk")
+
+[node name="Chunk6" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(0.3824, 0.3639, -0.9651, -0.5206, 0.9566, 0.1544, 0.8904, 0.4031, 0.5048, 0.0324, 0.9202, -0.0162)
+mesh = SubResource("BoxMesh_chunk")
+
+[node name="Chunk7" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(0.2313, 0.2488, 0.9405, 0.1062, 0.9545, -0.2786, -0.9671, 0.1643, 0.1943, 0.3987, 0.7066, -0.2349)
+mesh = SubResource("BoxMesh_chunk")
+
+[node name="Chunk8" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(-0.9871, -0.3153, -0.3692, -0.3441, 1.0444, 0.0281, 0.3425, 0.1407, -1.0358, -0.4087, 0.671, -0.2721)
+mesh = SubResource("BoxMesh_chunk")
+
+[node name="Glint1" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(-0.1786, -0.383, -0.9063, -0.9063, 0.4226, 0, 0.383, 0.8214, -0.4226, -0.1783, 0.7168, 0.1824)
+mesh = SubResource("BoxMesh_accent")
+
+[node name="Glint2" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(0.5712, 0.3214, -0.7553, -0.8138, 0.342, -0.4698, 0.1073, 0.883, 0.4569, 0.1496, 0.6792, 0.2111)
+mesh = SubResource("BoxMesh_accent")
+
+[node name="Glint3" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(0.5792, 0.4056, -0.7071, -0.5736, 0.8192, 0, 0.5792, 0.4056, 0.7071, 0.1888, 0.9014, -0.0112)
+mesh = SubResource("BoxMesh_accent")
+
+[node name="Glint4" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(0.2071, -0.5792, -0.7884, -0.3536, 0.7071, -0.6124, 0.9122, 0.4056, -0.0583, -0.2697, 0.8492, -0.0112)
+mesh = SubResource("BoxMesh_accent")
+
+[node name="Glint5" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(0.2588, 0, -0.9659, -0.683, 0.7071, -0.183, 0.683, 0.7071, 0.183, 0, 0.8492, 0.1292)
+mesh = SubResource("BoxMesh_accent")
+
+[node name="Glint6" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(0.2432, 0.9077, -0.342, -0.9659, 0.2588, 0, 0.0885, 0.3304, 0.9397, 0.4226, 0.6405, -0.0462)
+mesh = SubResource("BoxMesh_accent")
+
+[node name="Chips" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0.5)
+cast_shadow = 0
+emitting = false
+amount = 10
+lifetime = 0.8
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_chips")
+draw_pass_1 = SubResource("BoxMesh_chip")

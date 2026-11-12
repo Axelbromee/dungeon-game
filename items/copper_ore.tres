@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="InventoryItem" format=3 uid="uid://b05xtwm8sdqkn"]
+
+[ext_resource type="Script" uid="uid://b0ca10dql82uu" path="res://scripts/inventory/inventory_item.gd" id="1_item"]
+[ext_resource type="PackedScene" path="res://scenes/items/copper_ore_pickup.tscn" id="2_scene"]
+
+[sub_resource type="Gradient" id="Gradient_icon"]
+offsets = PackedFloat32Array(0, 0.6, 1)
+colors = PackedColorArray(0.95, 0.6, 0.35, 1, 0.55, 0.3, 0.15, 0.9, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_icon"]
+gradient = SubResource("Gradient_icon")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[resource]
+script = ExtResource("1_item")
+item_name = "Copper Ore"
+category = 2
+description = "A soft metal used for basic tools and gear."
+icon = SubResource("GradientTexture2D_icon")
+world_scene = ExtResource("2_scene")
+held_rotation_degrees = Vector3(10, 30, -10)
+held_scale = 0.8

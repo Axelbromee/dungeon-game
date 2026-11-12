@@ -1,0 +1,59 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/interaction/harvestable.gd" id="1_harvest"]
+[ext_resource type="Material" path="res://materials/effects/fire_particle.tres" id="2_soft"]
+[ext_resource type="PackedScene" path="res://scenes/items/mana_flower_visual.tscn" id="3_visual"]
+[ext_resource type="Resource" path="res://items/mana_flower.tres" id="4_item"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_flower"]
+radius = 0.45
+
+[sub_resource type="Gradient" id="Gradient_mote"]
+offsets = PackedFloat32Array(0, 0.3, 1)
+colors = PackedColorArray(0.6, 0.8, 1, 0, 0.45, 0.7, 1, 1, 0.2, 0.4, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_mote"]
+gradient = SubResource("Gradient_mote")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_mote"]
+emission_shape = 1
+emission_sphere_radius = 0.2
+direction = Vector3(0, 1, 0)
+spread = 30.0
+initial_velocity_min = 0.05
+initial_velocity_max = 0.15
+gravity = Vector3(0, 0.08, 0)
+scale_min = 0.5
+scale_max = 1.0
+color_ramp = SubResource("GradientTexture1D_mote")
+
+[sub_resource type="QuadMesh" id="QuadMesh_mote"]
+material = ExtResource("2_soft")
+size = Vector2(0.05, 0.05)
+
+[node name="ManaFlower" type="Area3D" node_paths=PackedStringArray("glow_mesh")]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+script = ExtResource("1_harvest")
+item = ExtResource("4_item")
+verb = "Pick"
+glow_mesh = NodePath("Visual/Core")
+base_glow = 2.0
+highlight_glow = 6.0
+pulse_speed = 0.8
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
+shape = SubResource("SphereShape3D_flower")
+
+[node name="Visual" parent="." instance=ExtResource("3_visual")]
+transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, 0, 0, 0)
+
+[node name="Motes" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+cast_shadow = 0
+amount = 12
+lifetime = 2.5
+process_material = SubResource("ParticleProcessMaterial_mote")
+draw_pass_1 = SubResource("QuadMesh_mote")

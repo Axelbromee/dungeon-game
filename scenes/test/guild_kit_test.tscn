@@ -283,6 +283,7 @@ height = 2.8
 
 [node name="RailBack1" parent="Showcase" instance=ExtResource("12_railing")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 3, -3.95)
+post_end = false
 
 [node name="RailBack2" parent="Showcase" instance=ExtResource("12_railing")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 3, -3.95)
@@ -292,12 +293,16 @@ transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 2.05, 3, -1)
 
 [node name="RailLeft2" parent="Showcase" instance=ExtResource("12_railing")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 2.05, 3, -3)
+post_start = false
+post_end = false
 
 [node name="RailRight1" parent="Showcase" instance=ExtResource("12_railing")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 5.95, 3, -1)
 
 [node name="RailRight2" parent="Showcase" instance=ExtResource("12_railing")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 5.95, 3, -3)
+post_start = false
+post_end = false
 
 [node name="PlatformRoof" parent="Showcase" instance=ExtResource("14_roof")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 3, -2)

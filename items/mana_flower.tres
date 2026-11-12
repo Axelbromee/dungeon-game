@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="InventoryItem" format=3 uid="uid://c1ygcxerhj7da"]
+
+[ext_resource type="Script" uid="uid://b0ca10dql82uu" path="res://scripts/inventory/inventory_item.gd" id="1_item"]
+[ext_resource type="PackedScene" path="res://scenes/items/mana_flower_pickup.tscn" id="2_scene"]
+
+[sub_resource type="Gradient" id="Gradient_icon"]
+offsets = PackedFloat32Array(0, 0.6, 1)
+colors = PackedColorArray(0.7, 0.9, 1, 1, 0.2, 0.45, 1, 0.9, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_icon"]
+gradient = SubResource("Gradient_icon")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[resource]
+script = ExtResource("1_item")
+item_name = "Mana Flower"
+grade = 4
+category = 3
+description = "Its petals hold a trace of magic. Rare."
+icon = SubResource("GradientTexture2D_icon")
+world_scene = ExtResource("2_scene")
+held_offset = Vector3(0, 0.02, 0)
+held_rotation_degrees = Vector3(0, 30, -12)
+held_scale = 0.6

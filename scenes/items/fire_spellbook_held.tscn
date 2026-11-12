@@ -1,16 +1,13 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://n5ht2d8bxsin"]
 
-[ext_resource type="Material" path="res://materials/effects/fire_particle.tres" id="1_soft"]
-[ext_resource type="ParticleProcessMaterial" path="res://materials/effects/fire_flame_process.tres" id="2_flame"]
-[ext_resource type="PackedScene" path="res://KayKit/Assets/gltf/journal_open.gltf" id="3_model"]
+[ext_resource type="Material" uid="uid://1r4bq6asvrrr" path="res://materials/effects/fire_particle.tres" id="1_soft"]
+[ext_resource type="Material" uid="uid://pe4f6rlc405s" path="res://materials/effects/fire_flame_process.tres" id="2_flame"]
+[ext_resource type="PackedScene" uid="uid://c5h0kokctkgye" path="res://KayKit/Assets/gltf/journal_open.gltf" id="3_model"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rune"]
 transparency = 1
 shading_mode = 0
 albedo_color = Color(1, 0.55, 0.15, 0.95)
-emission_enabled = true
-emission = Color(1, 0.4, 0.08, 1)
-emission_energy_multiplier = 3.0
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_rune"]
 material = SubResource("StandardMaterial3D_rune")
@@ -24,16 +21,16 @@ rings = 1
 material = ExtResource("1_soft")
 size = Vector2(0.05, 0.05)
 
-[node name="FireSpellbookHeld" type="Node3D"]
+[node name="FireSpellbookHeld" type="Node3D" unique_id=183812008]
 
-[node name="Model" parent="." instance=ExtResource("3_model")]
+[node name="Model" parent="." unique_id=1422487679 instance=ExtResource("3_model")]
 transform = Transform3D(0.362, 0, 0, 0, 0, 0.362, 0, -0.362, 0, 0, 0.005, -0.018)
 
-[node name="Rune" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.927, -0.375, 0, 0.375, 0.927, 0, 0, 0, 1, 0.085, 0.075, 0)
+[node name="Rune" type="MeshInstance3D" parent="." unique_id=320174112]
+transform = Transform3D(0.9076252, -0.41972673, 0, 0.41972673, 0.9076252, 0, 0, 0, 1, 0.085, 0.075, 0)
 mesh = SubResource("CylinderMesh_rune")
 
-[node name="Embers" type="GPUParticles3D" parent="."]
+[node name="Embers" type="GPUParticles3D" parent="." unique_id=913668774]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08, 0.04, 0)
 amount = 10
 lifetime = 0.6
@@ -41,5 +38,5 @@ local_coords = true
 process_material = ExtResource("2_flame")
 draw_pass_1 = SubResource("QuadMesh_ember")
 
-[node name="CastPoint" type="Marker3D" parent="."]
+[node name="CastPoint" type="Marker3D" parent="." unique_id=1000098688]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, -0.02)

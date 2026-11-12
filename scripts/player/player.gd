@@ -119,7 +119,9 @@ signal storage_opened(storage: Inventory, title: String, on_close: Callable)
 @export_group("Hotbar")
 ## Slots in the hotbar (first row of the inventory). Number keys 1-9 map to them.
 @export_range(1, 9) var hotbar_size: int = 9
-## Items given to the player on spawn.
+## New game: put the spell item (the Fire Spellbook) in hotbar slot 1, selected.
+@export var start_with_spell_item: bool = true
+## Extra items given on a new game (into the bag).
 @export var starting_items: Array[InventoryItem] = []
 
 # Derived from the base values above plus PlayerStats (see _apply_stats()).
@@ -205,6 +207,10 @@ func _ready() -> void:
 	if GameState.has_player_data():
 		load_state(GameState.player_data)  # Coming from another scene.
 	else:
+		# New game.
+		if start_with_spell_item and spell_item:
+			inventory.set_slot(0, spell_item, 1)
+		selected_hotbar_index = 0
 		for item in starting_items:
 			if item:
 				inventory.add_item(item, 1)

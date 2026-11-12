@@ -1,30 +1,5 @@
 [gd_resource type="StandardMaterial3D" format=3 uid="uid://ccmesaps5ruou"]
 
-[sub_resource type="Gradient" id="Gradient_wall"]
-offsets = PackedFloat32Array(0, 0.5, 1)
-colors = PackedColorArray(0.06, 0.06, 0.065, 1, 0.16, 0.155, 0.15, 1, 0.27, 0.25, 0.23, 1)
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_wall"]
-noise_type = 3
-frequency = 0.012
-fractal_octaves = 6
-fractal_gain = 0.55
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_wall_albedo"]
-noise = SubResource("FastNoiseLite_wall")
-color_ramp = SubResource("Gradient_wall")
-seamless = true
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_wall_normal"]
-noise = SubResource("FastNoiseLite_wall")
-seamless = true
-as_normal_map = true
-bump_strength = 14.0
-
 [resource]
-albedo_texture = SubResource("NoiseTexture2D_wall_albedo")
-roughness = 0.88
-normal_enabled = true
-normal_texture = SubResource("NoiseTexture2D_wall_normal")
-uv1_scale = Vector3(0.3, 0.3, 0.3)
-uv1_triplanar = true
+albedo_color = Color(0.46, 0.5, 0.53, 1)
+roughness = 0.95

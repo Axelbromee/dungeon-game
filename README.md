@@ -42,9 +42,9 @@ spawn points and ways to the other scenes. The guild hall is grouped into `Struc
 
 | Scene | What's there | Spawn points |
 |---|---|---|
-| `guild_hall.tscn` (main scene) | 20 × 30 m two-storey hall with an 8 m beamed ceiling. Front: barred double doors (spawn just inside). Back: reception desk and quest board, the lit dungeon entrance. West: tavern with fireplace. East: shop counter under a balcony, reached by stairs, with room doors (one is yours) | `default`, `from_room`, `from_dungeon` |
+| `guild_hall.tscn` (main scene) | 20 × 30 m two-storey hall with an 8 m beamed ceiling, in a clearing in the woods (`Outside`). Front: barred double doors (spawn just inside). Back: reception desk and quest board, and the "DUNGEON" archway over the stairs down to the cellar (`Basement`), where the glowing dungeon gate is. West: tavern with fireplace. East: shop counter under a balcony, reached by stairs, with room doors (one is yours) | `default`, `from_room`, `from_dungeon` (in the cellar, in front of the gate) |
 | `player_room.tscn` | 6 × 6 m plank floor, one warm room light, door back to the guild | `default`, `from_guild` |
-| `dungeon_floor_1.tscn` (forest) | 80 × 80 m forest ground, sky, green fog, a sun with shadows, exit back to the guild | `default`, `from_guild` |
+| `dungeon_floor_1.tscn` (forest) | 200 × 200 m forest inside the dungeon, built by `scripts/world/forest_floor.gd` on the `Terrain` node (see **Dungeon floor 1** below) | `default`, `from_guild` (both at the arrival stairs) |
 
 Moving between scenes: a **Scene Door** (or the **Dungeon Entrance**) calls
 `SceneManager.change_scene(target_scene, target_spawn)`. The screen fades, the
@@ -57,18 +57,21 @@ or empty ids use the `default` spawn. Storage chest contents are kept per
 
 The original test scenes, linked to each other only:
 
-- `test_room.tscn`: a 30 × 40 m stone chamber with 4 flickering torches, 2 braziers, a target dummy, two slimes, the Fire Spellbook and three Glowcap Herbs. Its exit leads to the guild kit test.
+- `test_room.tscn`: a 30 × 40 m stone chamber with 4 flickering torches, 2 braziers, a target dummy, two slimes and three Glowcap Herbs. Its exit leads to the guild kit test.
 - `guild_kit_test.tscn`: a guild hall built with the whole kit, plus a showcase of stairs, a platform, pillars, railings and wall samples. Its dungeon entrance leads back to the test room, and the room door leads to the test room's own copy of the player room.
 - `player_room_test.tscn`: bed, storage chest, table, banner, lantern and two "coming soon" spots.
+- `forageables_demo.tscn`: one of each forageable in a row with labels (moss, berry bush, glowcap, mana flower, copper and iron ore against a wall). Walk up and press E.
+- `spawn_area_demo.tscn`: an 80 × 80 m field with a spawn area for each kind. Slimes behind some pillars, moss by a pond, berry bushes in the open, copper (south half) and iron ore (north half) on the walls of a ravine, mana flowers among trees in a corner, glowcaps. Open it in the editor to see the outlines.
 
 | Where (test room) | What |
 |---|---|
 | (0, 0, 16) | Player spawn, facing north |
-| ~1.5 m ahead | Fire Spellbook, 3 Glowcap Herbs (one holds a stack of 3) |
+| ~1.5 m ahead | 3 Glowcap Herbs (one holds a stack of 3) |
 | (0, 0, 6) | Target dummy (shows last hit, hit count, total damage) |
 | (−4, 0, 1) and (5, 0, −3) | Two slimes, idle at the start (out of their 12 m range) |
 
-Slimes don't respawn yet; press F6 to restart the scene.
+Slimes placed by hand don't respawn; ones from a spawn area do (see
+**Spawn areas**). Press F6 to restart a scene.
 
 ## Building blocks
 
@@ -85,20 +88,21 @@ at floor level, they snap to a 2 m grid, and their front is +Z.
 | | `door.tscn` (opens with E) | open angle and time, hinge side, start open, locked (stays shut and shows its locked text). The leaf is the KayKit doorway's own |
 | | `scene_door.tscn` (E loads another scene) | target scene, target spawn, prompt, sign text, plus the doorway wall settings |
 | | `stairs.tscn` | step colliders, rise (width and run follow evenly: 3.26 × 5.93 m at 4 m), smooth ramp |
-| | `railing.tscn`, `pillar.tscn`, `roof.tscn` | length (2 m steps, 1.1 m stone barrier); height (evenly scaled pillar); tiles, height, beam rows |
+| | `railing.tscn`, `pillar.tscn`, `roof.tscn` | length (2 m steps, 1.1 m stone barrier) and a KayKit column post at each end (post start / end; turn one off where two railings share a corner or an end goes into a wall); height (evenly scaled pillar); tiles, height, beam rows |
 | **Furniture** | `scenes/guild/furniture/table.tscn`, `chair.tscn`, `bench.tscn`, `barrel.tscn`, `crate.tscn`, `shelf.tscn` | kind, size (the height sets an even scale; the bench is a row of stools), shelf count, shelf items |
 | | `bed.tscn` (E: rest, refills HP/mana/stamina) | length (the rest follows evenly) |
 | | `banner.tscn`, `lantern.tscn`, `fireplace.tscn` | colour/width; chain length and optional light; size, chimney height and light (the fireplace keeps its box look) |
 | **Stations** | `scenes/guild/stations/quest_board.tscn` | size, title, message |
 | | `reception_desk.tscn`, `shop_counter.tscn` | role, size, sign text |
 | | `storage_chest.tscn` | storage id (chests with the same id share contents), title, slot count, size |
-| | `dungeon_entrance.tscn` | footprint, pit depth, steps, arch, target scene / spawn, auto enter |
+| | `dungeon_entrance.tscn` | footprint, pit depth, steps, arch, target scene / spawn, auto enter, sign text, prompt, locked text (when set, E only shows it and nothing loads) |
 | | `furniture_spot.tscn` ("coming soon" marker) | text, size |
 | **Props** | `scenes/props/torch.tscn`, `brazier.tscn` | light on/off, energy, range, colour, flicker |
 | | `target_dummy.tscn` | idle text, label hold time |
 | | `barrel_breakable.tscn`, `crate_breakable.tscn` | health, respawn time, kill height |
-| **Enemies** | `scenes/enemies/slime.tscn` | every number, grouped as Health, Senses, Hop, Contact, Jump Attack, Fireball Attack, Dodge, Hurt, Squash & Stretch, Death & Loot |
-| **Harvestables** | `scenes/harvestables/glowcap_herb.tscn` | item (Glowcap Herb by default), amount, verb, glow |
+| **Enemies** | `scenes/enemies/slime.tscn` | every number, grouped as Health, Senses, Leash, Hop, Contact, Jump Attack, Fireball Attack, Dodge, Hurt, Squash & Stretch, Death & Loot |
+| **Harvestables** | `scenes/harvestables/glowcap_herb.tscn`, `healing_moss.tscn`, `wild_berry_bush.tscn`, `copper_ore_node.tscn`, `iron_ore_node.tscn`, `mana_flower.tscn` | item, amount (and amount max for a random amount), verb, presses needed, drop as pickups, regrow time and what hides meanwhile, shake / chip effects, glow, tint |
+| **Spawning** | `scenes/world/spawn_area.tscn` | shape and size, what to spawn with weights, max alive, respawn time, spawn all at start, placement (ground / against a wall), spacing, clearance, player distance and sight, leash. See **Spawn areas** |
 | **Pickups** | `scenes/items/*_pickup.tscn` | item (falls back to the scene's default item), amount, verb |
 | **Level setup** | `scenes/player/player.tscn`, `scenes/ui/hud.tscn` | Every level needs one of each. The HUD finds the Player by itself |
 | | Spawn point: a `Marker3D` with `scripts/core/spawn_point.gd` | spawn id |
@@ -145,8 +149,13 @@ light off by default, so turn it on for only a few.
 
 | Item | Grade | Stack | Notes |
 |---|---|---|---|
-| Fire Spellbook | F | 1 | Needed to cast; fireballs charge from the open book in your hand |
+| Fire Spellbook | F | 1 | Needed to cast; fireballs charge from the open book in your hand. A new game starts with it in hotbar slot 1, selected (Player → **Start With Spell Item**) |
 | Glowcap Herb | F | 20 | Harvest the glowing plant with E; dropped herbs tumble and can be picked up |
+| Healing Moss | F | 20 | Gather a moss patch with E (1–2). Put its spawn areas near water |
+| Wild Berries | F | 20 | Pick a berry bush with E (2–4). The bush stays and regrows its berries in 90 s. Eating isn't in the game yet, so the stamina is description only |
+| Copper Ore | F | 20 | Ore node on a wall: a warm grey rock studded with orange-brown copper chunks and veins (softly glowing, easy to spot in the dark). 3 presses of E to mine, drops 1–3 ore pickups |
+| Iron Ore | E | 20 | Rarer ore node: a dark rock with dark grey metal chunks and bright silvery glints. Mined the same way |
+| Mana Flower | D | 20 | Rare glowing blue flower, pick with E. Put it deep in the forest |
 | Slime Jelly | F | 20 | Every slime drops 1–2 |
 | Magic Core (F) | F | 20 | Every slime drops one, matching its grade |
 | Slime Crystal | D | 20 | 15% of slimes |
@@ -170,7 +179,98 @@ interrupted, at most once every 1.2 s, so its attacks can't be stunlocked.
 | FIRE_ATTACK | Player 6–15 m away, in clear view | Glows orange for 0.8 s, shoots a small fireball. Its explosion hurts within 2 m but never hurts other slimes | 12 direct, 10→3 splash, 4 s cooldown |
 | DODGE | Your fireball will pass within ~1.3 m in the next 0.6 s | 30% chance (once per shot) to hop sideways. Only from IDLE / HOP | 2 s cooldown |
 | HURT | Hit while idling or hopping | Brief flinch and knockback | 0.35 s |
+| RETURN | Chased farther than its leash range from home (spawn-area slimes) | Hops home ignoring you until it's within 40% of the leash, then idles. Only chases players inside its leash circle | gives up after 12 s |
 | DEAD | 0 HP | Flattens and fades, drops loot, gives XP | see Items |
+
+## Dungeon floor 1 (`scenes/world/dungeon_floor_1.tscn`)
+
+A 200 × 200 m forest inside the magic dungeon. Everything about the land is
+generated by `scripts/world/forest_floor.gd` on the **Terrain** node, live in
+the editor (it rebuilds when you change a setting, or press **Rebuild**). The
+same **Layout Seed** always gives the same floor. +Z is south.
+
+| Place | Where | What |
+|---|---|---|
+| Arrival | south, (0, 76) | Stone stairs up from the guild in a calm clearing, no spawns nearby. Walking down the stairs (or E at the "GUILD" arch) returns to the guild. Spawn points `default` / `from_guild` are just north of the arch |
+| Forest | most of the floor | Dense KayKit trees, bushes, rocks and fallen logs on gentle hills, with dirt paths from the arrival to the meadow, the lake, the cave and the exit |
+| Lake & stream | west, (−55, 25) | A lake with shallow edges and reeds; a stream runs south from it and disappears under the edge cliffs |
+| Meadow | east, (50, 35) | Flatter open grass with scattered bushes and coloured flowers |
+| Cave | north-east, mouth at (40, −54) | Cut into a high rocky spur of the north cliff wall. A path leads to a cutting through the cliff foot and an arched opening in the cliff face. Inside, narrow low passages open into wider chambers: an entry hall, a main chamber (about 24 m across, up to 9 m high), an east chamber and a west alcove. The walls wander, the ceiling is lumpy with hanging rock, the floor is uneven, and KayKit rocks and rubble line the walls and the cutting, with rock spires in the chambers. Glowing crystal clusters (cyan and violet) and glowing mushrooms grow along the walls (decoration only). No sunlight inside: the cave's inside, its rocks, crystals, mushrooms and the ore spawned there are on render layer 2, which the sun's cull mask leaves out, so only the crystals, mushrooms and one soft light per chamber (4 lights) light it. Near the mouth the rock is brighter, as if daylight spills in, fading out over about 8 m. About 3 m in, the `Lighting/CaveDarkness` area fades the ambient light down to a dark cave level (and back when you leave) |
+| Exit | north-west, (−56, −72) | Stone archway with stairs down, sealed: "Floor 2 coming soon" |
+| Edges | all round | Steep rocky cliffs with thick forest, plus invisible walls |
+
+**Look:** like the KayKit models, the terrain is low-poly and flat-shaded,
+one flat palette colour per face: greens for grass, warm dirt for paths, sand
+on shores and the lake bed, blue-grey rock on cliffs and steep slopes, darker
+rock in the cave. Water is a flat teal.
+
+**Terrain node settings:** size and vertex spacing, hills, edge cliffs, the
+portals to cut holes for, lake (centre, radius, depth, water level), stream
+and paths (lines of points), meadow, cave (the cliff spur it's cut into: area, height, slope; chambers
+and passages as [x1, z1, x2, z2, radius, ceiling height]; mouth position;
+roughness), forest and grass density, tree spacing and scale, number of light
+shafts, and the scene roots it fills (Nature, Water, Lighting/LightShafts,
+Lighting/CaveDarkness). **Snap to Ground** puts every
+direct child of `Portals` and `Spawns` on the terrain (it also runs on every
+build and when the game starts). Give a node the meta `snap_offset` (float)
+to lift or sink it, or `no_snap` to leave it alone.
+
+**Scene tree:** `Terrain` (ground mesh, cave, collision, bounds), `Nature`
+(generated MultiMesh chunks: Trees, Bushes, Rocks, Logs, Grass, Flowers,
+Reeds, plus their colliders), `Water`, `Portals` (both stairs, their glows,
+the spawn points), `Spawns` (spawn areas), `Lighting` (sun, light shafts,
+fireflies and magic motes that follow the player, cave darkness).
+
+**No clipping:** every tree, bush, rock and log claims its footprint, so none
+overlap; grass, flowers and reeds skip taken spots; nothing grows on paths,
+in water or at the cave walls; rocks, logs and bushes lean with the slope and
+trees sit deeper on slopes. Bushes and small rocks have invisible colliders on
+layer 6, so spawn areas never place anything inside them.
+
+**Spawn areas** (none overlap): 4 slime areas (max 4–5, respawn 3 min, leashed 18 m) in the
+forest and by the lake; Healing Moss on the lake's east and north shores and
+along the stream; Wild Berries on the meadow; in the cave, Copper Ore on the
+walls of the entry hall and the main chamber, Iron Ore (max 2, 120 s) on the east
+chamber's walls and a mixed copper/iron area on the alcove floor; 2 Mana Flower
+areas (max 1, 180 s) deep in the forest; 3 Glowcap areas in shady spots.
+
+**Performance:** the vegetation is MultiMeshes in 40 m chunks (grass and
+flowers in 20 m chunks), each drawn only within its own distance (grass 45 m,
+bushes 90 m, trees 150 m), and the fog hides the far edge. The only real lights
+are the sun and the two portal glows.
+
+## Spawn areas (`scenes/world/spawn_area.tscn`, `scripts/world/spawn_area.gd`)
+
+A spawn area keeps a number of enemies or forageables alive in a box or
+circle and refills it over time. The same node works for both. Try
+`scenes/test/spawn_area_demo.tscn`.
+
+### Setting one up
+1. Drag `scenes/world/spawn_area.tscn` into the level (under `Enemies` or `Harvestables`) and place it **at ground level** in the middle of where things should appear.
+2. **Area:** pick **Box** (set **Size**, X × Z in metres) or **Circle** (set **Radius**). A coloured outline shows the area in the editor only. The faint upper outline is how high above the node the ground may be, and the orange ring is the leash range. Give each area its own **Editor Color** so they're easy to tell apart.
+3. **Spawning → Entries:** add an element, choose **New SpawnEntry**, and set its **Scene** (e.g. `scenes/enemies/slime.tscn`) and **Weight**. Weights are relative, so 90 and 10 give 90% / 10%. The outline's label shows the resulting percentages.
+4. Set **Max Alive** (default 6), **Respawn Time** (default 30 s) and **Spawn All At Start** (on: full when the level loads; off: the slots fill one by one over the first respawn time).
+5. **Placement:** **Ground** for creatures and plants. **Against Wall** for ore: each spawn goes to the foot of the nearest wall within **Wall Search Distance**, facing out of it. Raise **Clearance Radius / Height** for big things (bushes 0.7, ore 0.5 × 1.2) and **Min Spacing** to spread them out.
+6. **Leash** (enemies): slimes won't chase farther than **Leash Range** from the area's centre; past it they hop home. Set it to 0 for forageables (they ignore it anyway).
+
+### How it decides where to spawn
+- A random point in the area is raycast straight down to find the ground (**Ground Mask**, default layer 1). The ground must be within **Max Rise** above and **Max Drop** below the node, and no steeper than **Max Slope**. That keeps spawns off crates and wall tops; raise Max Rise on hilly ground.
+- The spot must be free: an upright capsule (**Clearance Radius / Height**) may not touch walls, bodies or other interactables (**Blocker Mask**, layers 1 and 3), so nothing spawns inside walls, rocks or other spawns. It must also be **Min Spacing** away from this area's other spawns.
+- Never closer than **Min Player Distance** (10 m) to the player, and, with **Hide From Player** on, never where the player's camera can see it. A blocked spawn waits **Retry Interval** (2 s) and tries again. The start-of-level fill skips the sight rule unless **Check Sight At Start** is on, but still keeps the distance.
+- **Tries Per Attempt** random spots are tried each time before waiting.
+
+### Respawning
+Spawns become children of the area. When one leaves the scene (a slime dies,
+moss is gathered, ore is mined out), its slot frees up and refills after
+**Respawn Time**, using the same rules. Berry bushes stay when picked and
+regrow their own berries, so they keep their slot. The area emits `spawned`
+and `despawned` signals, and `get_alive()` lists what's alive.
+
+### Making something spawnable
+Any scene with a 3D root works. Its origin should be at its base (on the
+ground). For a leash, give it `set_leash(center: Vector3, range: float)`, as
+the Slime has. For a forageable, use `scripts/interaction/harvestable.gd` on an
+`Area3D` (layer 3) and let it `queue_free()` when harvested (the default).
 
 ## Extending it
 
@@ -181,6 +281,11 @@ interrupted, at most once every 1.2 s, so its attacks can't be stunlocked.
 | 1 | `world` | Floor, walls, player, slimes, dummy, props, furniture. Fireballs only hit this layer |
 | 2 | `player_only` | Invisible helpers only the player touches, such as stair ramps |
 | 3 | `interactable` | Growing herbs, dropped pickups, doors, beds, chests, stations. Fireballs pass through the herbs and pickups |
+| 5 | water | Lake and stream surfaces on floor 1. Nothing collides with them (you wade through); spawn areas skip spots under water (their **Avoid Mask**) |
+| 6 | scenery | Invisible colliders around floor 1's bushes and small rocks. Only spawn areas see them (in their **Blocker Mask**), so nothing spawns inside a bush |
+
+Colliders in the `no_spawn_ground` group (floor 1's tree trunks, boulders and
+logs) never count as ground or walls for spawn areas.
 
 ### Adding a level
 1. Duplicate one of the `scenes/world/` scenes and clear out what you don't need.
@@ -229,12 +334,12 @@ items/                 InventoryItem definitions (.tres)
 materials/
   surfaces/            wood, iron, burlap, stone floor / wall / pillar
   effects/             fire particle material and flame process
-  world/               forest_ground
+  world/               forest_ground, grass_ground, dirt_path, floor1_terrain, water
 shaders/
   spells/              fireball_shell.gdshader
 scenes/
-  world/               guild_hall, player_room, dungeon_floor_1 (the real game)
-  test/                test_room, guild_kit_test, player_room_test (sandbox)
+  world/               guild_hall, player_room, dungeon_floor_1 (the real game), spawn_area
+  test/                test_room, guild_kit_test, player_room_test, forageables_demo, spawn_area_demo (sandbox)
   player/              player
   ui/                  hud, inventory_ui, inventory_slot
   spells/              fireball, fireball_explosion
@@ -242,9 +347,9 @@ scenes/
   building/            floors, walls, corner, door, scene_door, stairs, railing, pillar, roof
   guild/furniture/     table, chair, bench, barrel, crate, shelf, bed, banner, lantern, fireplace
   guild/stations/      quest_board, reception_desk, shop_counter, storage_chest, dungeon_entrance, furniture_spot
-  props/               torch, brazier, target_dummy, barrel_breakable, crate_breakable
-  harvestables/        glowcap_herb
-  items/               pickups, held spellbook model, herb visual
+  props/               torch, brazier, target_dummy, barrel_breakable, crate_breakable, magic_glow
+  harvestables/        glowcap_herb, healing_moss, wild_berry_bush, copper_ore_node, iron_ore_node, mana_flower
+  items/               pickups, held spellbook model, herb / moss / berry / flower visuals
 scripts/
   core/                game_state, scene_manager (autoloads), spawn_point
   player/              player, held_item_view, player_stats
@@ -255,8 +360,9 @@ scripts/
   guild/furniture/     furniture, bed, banner, lantern, fireplace
   guild/stations/      quest_board, guild_counter, storage_chest, dungeon_entrance, furniture_spot
   props/               breakable, target_dummy, fire_light_prop
-  effects/             flicker_light, hit_flash
+  effects/             flicker_light, hit_flash, follow_player
   interaction/         harvestable, item_pickup
+  world/               spawn_area, spawn_entry, forest_floor (floor 1 generator), outside (guild surroundings), ambience_zone
   inventory/           inventory_item, inventory, item_visuals, icon_baker (autoload)
 addons/godot_ai/       editor plugin (MCP bridge), not part of the game
 ```

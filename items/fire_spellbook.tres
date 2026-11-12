@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b0ca10dql82uu" path="res://scripts/inventory/inventory_item.gd" id="1_item"]
 [ext_resource type="PackedScene" path="res://scenes/items/fire_spellbook_pickup.tscn" id="2_scene"]
-[ext_resource type="PackedScene" path="res://scenes/items/fire_spellbook_held.tscn" id="3_held"]
+[ext_resource type="PackedScene" uid="uid://n5ht2d8bxsin" path="res://scenes/items/fire_spellbook_held.tscn" id="3_held"]
 
 [sub_resource type="Gradient" id="Gradient_icon"]
 offsets = PackedFloat32Array(0, 0.25, 0.55, 0.8, 1)

@@ -13,15 +13,11 @@ radius = 0.42
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_body"]
 transparency = 1
-albedo_color = Color(0.3, 0.88, 0.36, 0.62)
-metallic_specular = 0.8
-roughness = 0.12
+albedo_color = Color(0.48, 0.84, 0.4, 0.75)
+roughness = 0.4
 emission_enabled = true
-emission = Color(0.12, 0.55, 0.18, 1)
-emission_energy_multiplier = 0.45
-rim_enabled = true
-rim = 0.7
-rim_tint = 0.3
+emission = Color(0.2, 0.5, 0.22, 1)
+emission_energy_multiplier = 0.35
 
 [sub_resource type="SphereMesh" id="SphereMesh_body"]
 radius = 0.5
@@ -30,8 +26,8 @@ radial_segments = 32
 rings = 16
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_core"]
-albedo_color = Color(0.08, 0.35, 0.12, 1)
-roughness = 0.3
+albedo_color = Color(0.2, 0.55, 0.32, 1)
+roughness = 0.6
 emission_enabled = true
 emission = Color(0.25, 0.9, 0.35, 1)
 emission_energy_multiplier = 1.2
@@ -44,8 +40,8 @@ radial_segments = 6
 rings = 3
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eye"]
-albedo_color = Color(0.97, 0.98, 0.95, 1)
-roughness = 0.2
+albedo_color = Color(0.97, 0.97, 0.95, 1)
+roughness = 0.6
 
 [sub_resource type="SphereMesh" id="SphereMesh_eye"]
 material = SubResource("StandardMaterial3D_eye")
@@ -55,8 +51,8 @@ radial_segments = 16
 rings = 8
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pupil"]
-albedo_color = Color(0.03, 0.03, 0.04, 1)
-roughness = 0.1
+albedo_color = Color(0.16, 0.18, 0.2, 1)
+roughness = 0.6
 
 [sub_resource type="SphereMesh" id="SphereMesh_pupil"]
 material = SubResource("StandardMaterial3D_pupil")

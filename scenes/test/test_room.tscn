@@ -9,8 +9,6 @@
 [ext_resource type="PackedScene" path="res://scenes/props/target_dummy.tscn" id="11_dummy"]
 [ext_resource type="PackedScene" path="res://scenes/harvestables/glowcap_herb.tscn" id="12_herb"]
 [ext_resource type="Resource" path="res://items/glowcap_herb.tres" id="13_herb_item"]
-[ext_resource type="PackedScene" path="res://scenes/items/fire_spellbook_pickup.tscn" id="14_book"]
-[ext_resource type="Resource" path="res://items/fire_spellbook.tres" id="15_book_item"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/slime.tscn" id="16_slime"]
 [ext_resource type="Script" uid="uid://jpkm51xlmqjy" path="res://scripts/core/spawn_point.gd" id="17_spawn"]
 [ext_resource type="PackedScene" path="res://scenes/building/scene_door.tscn" id="18_scene_door"]
@@ -111,10 +109,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 1)
 
 [node name="SlimeB" parent="Enemies" unique_id=1481380090 instance=ExtResource("16_slime")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -3)
-
-[node name="FireSpellbook" parent="." unique_id=265974291 instance=ExtResource("14_book")]
-transform = Transform3D(0.94, 0, 0.342, 0, 1, 0, -0.342, 0, 0.94, -0.5, 0.15, 14.6)
-item = ExtResource("15_book_item")
 
 [node name="Forage" type="Node3D" parent="." unique_id=1437115546]
 

@@ -1,0 +1,99 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/effects/flicker_light.gd" id="1_flicker"]
+[ext_resource type="Material" path="res://materials/effects/fire_particle.tres" id="2_mote"]
+
+[sub_resource type="Gradient" id="Gradient_veil"]
+offsets = PackedFloat32Array(0, 0.35, 1)
+colors = PackedColorArray(0.75, 0.55, 1, 0.9, 0.45, 0.3, 1, 0.45, 0.2, 0.1, 0.6, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_veil"]
+gradient = SubResource("Gradient_veil")
+fill_from = Vector2(0.5, 1)
+fill_to = Vector2(0.5, 0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_veil"]
+transparency = 1
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+albedo_texture = SubResource("GradientTexture2D_veil")
+
+[sub_resource type="QuadMesh" id="QuadMesh_veil"]
+material = SubResource("StandardMaterial3D_veil")
+size = Vector2(3.6, 3.2)
+
+[sub_resource type="Gradient" id="Gradient_pool"]
+colors = PackedColorArray(0.7, 0.5, 1, 0.9, 0.3, 0.15, 0.8, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_pool"]
+gradient = SubResource("Gradient_pool")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pool"]
+transparency = 1
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+albedo_texture = SubResource("GradientTexture2D_pool")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_pool"]
+material = SubResource("StandardMaterial3D_pool")
+size = Vector2(3.6, 1.8)
+
+[sub_resource type="Gradient" id="Gradient_mote"]
+offsets = PackedFloat32Array(0, 0.2, 0.7, 1)
+colors = PackedColorArray(0.6, 0.45, 1, 0, 0.8, 0.65, 1, 1, 0.5, 0.35, 1, 0.8, 0.3, 0.2, 0.9, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_mote"]
+gradient = SubResource("Gradient_mote")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_motes"]
+emission_shape = 3
+emission_box_extents = Vector3(1.7, 1.2, 3)
+direction = Vector3(0, 1, 0)
+spread = 25.0
+initial_velocity_min = 0.15
+initial_velocity_max = 0.45
+gravity = Vector3(0, 0.12, 0)
+scale_min = 0.5
+scale_max = 1.2
+color_ramp = SubResource("GradientTexture1D_mote")
+
+[sub_resource type="QuadMesh" id="QuadMesh_mote"]
+material = ExtResource("2_mote")
+size = Vector2(0.12, 0.12)
+
+[node name="MagicGlow" type="Node3D"]
+
+[node name="Light" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -1.2)
+light_color = Color(0.55, 0.38, 1, 1)
+light_energy = 3.2
+omni_range = 7.5
+omni_attenuation = 1.0
+script = ExtResource("1_flicker")
+flicker_amount = 0.12
+flicker_speed = 0.4
+
+[node name="Veil" type="MeshInstance3D" parent="."]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 1.6, 0.42)
+cast_shadow = 0
+mesh = SubResource("QuadMesh_veil")
+
+[node name="Pool" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, -0.3)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_pool")
+
+[node name="Motes" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, -3.2)
+cast_shadow = 0
+amount = 48
+lifetime = 4.0
+preprocess = 4.0
+visibility_aabb = AABB(-2.5, -2, -4, 5, 6, 8)
+process_material = SubResource("ParticleProcessMaterial_motes")
+draw_pass_1 = SubResource("QuadMesh_mote")

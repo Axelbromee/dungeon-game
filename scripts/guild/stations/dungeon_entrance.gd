@@ -30,6 +30,12 @@ extends KitPiece
 @export var target_spawn: StringName = &"from_guild"
 ## Load the dungeon automatically when the player reaches the bottom.
 @export var auto_enter: bool = true
+## Text on the arch's beam.
+@export var sign_text: String = "DUNGEON"
+## Not empty: the way is closed. E shows this text and nothing loads.
+@export var locked_text: String = ""
+## Prompt for E at the arch.
+@export var prompt: String = "Descend into the dungeon"
 
 ## Where the flame sits on the KayKit mounted torch (model space).
 const TORCH_HEAD := Vector3(0.0, 0.62, 0.31)
@@ -101,6 +107,11 @@ func _build() -> void:
 	for sx in [-1.0, 1.0]:
 		_barrier_run(Vector3(sx * (half_ow + 0.25), 0, z_back), od, sx)
 		add_collision_box(Vector3(0.5, 1.1, od), Vector3(sx * (half_ow + 0.25), 0.55, (z_back + z_front) * 0.5))
+		# The barrier is open at its end: a KayKit column closes the back end
+		# (the front end meets the arch pillar).
+		var post_at := Vector3(sx * (half_ow + 0.25), 0, z_back)
+		add_model(kk("column"), 0.8, post_at)
+		add_collision_box(Vector3(0.56, 1.12, 0.56), post_at + Vector3.UP * 0.56)
 
 	# Archway at the top of the stairs: two pillars, a stone beam, torches.
 	var pillar_scale := arch_height / WALL
@@ -129,10 +140,10 @@ func _build() -> void:
 	var beam_scale := pillar_x * 2.0 / (WALL - 0.7)
 	add_model(kk("barrier_column"), beam_scale, Vector3(0, arch_height, pillar_z))
 	add_collision_box(Vector3(pillar_x * 2.0 + 0.7 * beam_scale, 1.4 * beam_scale, 0.7 * beam_scale), Vector3(0, arch_height + 0.7 * beam_scale, pillar_z))
-	add_label("DUNGEON", Vector3(0, arch_height + 0.75 * beam_scale, pillar_z + 0.35 * beam_scale + 0.03), 64, Color(1.0, 0.8, 0.55))
+	add_label(sign_text, Vector3(0, arch_height + 0.75 * beam_scale, pillar_z + 0.35 * beam_scale + 0.03), 64, Color(1.0, 0.8, 0.55))
 
 	# Trigger at the bottom of the stairs (runtime only).
-	if not Engine.is_editor_hint() and auto_enter:
+	if not Engine.is_editor_hint() and auto_enter and locked_text.is_empty():
 		var trigger := Area3D.new()
 		trigger.collision_layer = 0
 		trigger.collision_mask = LAYER_WORLD
@@ -167,10 +178,13 @@ func _barrier_run(start: Vector3, length: float, side: float) -> void:
 
 
 func get_interaction_text() -> String:
-	return "Descend into the dungeon"
+	return locked_text if not locked_text.is_empty() else prompt
 
 
-func interact(_player: Player) -> void:
+func interact(player: Player) -> void:
+	if not locked_text.is_empty():
+		player.notified.emit(locked_text)
+		return
 	_enter()
 
 

@@ -1,0 +1,147 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="2_hud"]
+[ext_resource type="Script" path="res://scripts/core/spawn_point.gd" id="3_spawn"]
+[ext_resource type="Material" path="res://materials/world/forest_ground.tres" id="4_ground"]
+[ext_resource type="Material" path="res://materials/surfaces/stone_wall.tres" id="5_wall"]
+[ext_resource type="PackedScene" path="res://scenes/harvestables/healing_moss.tscn" id="6_moss"]
+[ext_resource type="PackedScene" path="res://scenes/harvestables/wild_berry_bush.tscn" id="7_bush"]
+[ext_resource type="PackedScene" path="res://scenes/harvestables/glowcap_herb.tscn" id="8_glowcap"]
+[ext_resource type="PackedScene" path="res://scenes/harvestables/mana_flower.tscn" id="9_mana"]
+[ext_resource type="PackedScene" path="res://scenes/harvestables/copper_ore_node.tscn" id="10_copper"]
+[ext_resource type="PackedScene" path="res://scenes/harvestables/iron_ore_node.tscn" id="11_iron"]
+
+[sub_resource type="Environment" id="Environment_demo"]
+background_mode = 1
+background_color = Color(0.42, 0.56, 0.72, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.62, 0.66, 0.72, 1)
+ambient_light_energy = 0.6
+tonemap_mode = 3
+glow_enabled = true
+glow_hdr_threshold = 1.0
+
+[node name="ForageablesDemo" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_demo")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.8575, 0.3024, -0.4162, 0, 0.809, 0.5878, 0.5145, -0.504, 0.6937, 0, 20, 0)
+light_color = Color(1, 0.95, 0.86, 1)
+light_energy = 1.2
+shadow_enabled = true
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 6)
+
+[node name="HUD" parent="." node_paths=PackedStringArray("player") instance=ExtResource("2_hud")]
+player = NodePath("../Player")
+
+[node name="Spawns" type="Node3D" parent="."]
+
+[node name="Default" type="Marker3D" parent="Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 6)
+script = ExtResource("3_spawn")
+
+[node name="Architecture" type="CSGCombiner3D" parent="."]
+use_collision = true
+
+[node name="Ground" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+size = Vector3(30, 1, 30)
+material = ExtResource("4_ground")
+
+[node name="RavineWall" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.5, -1.7)
+size = Vector3(8, 3, 1)
+material = ExtResource("5_wall")
+
+[node name="WallNorth" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -15.5)
+size = Vector3(32, 3, 1)
+material = ExtResource("5_wall")
+
+[node name="WallSouth" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 15.5)
+size = Vector3(32, 3, 1)
+material = ExtResource("5_wall")
+
+[node name="WallWest" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.5, 1.5, 0)
+size = Vector3(1, 3, 30)
+material = ExtResource("5_wall")
+
+[node name="WallEast" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.5, 1.5, 0)
+size = Vector3(1, 3, 30)
+material = ExtResource("5_wall")
+
+[node name="Forageables" type="Node3D" parent="."]
+
+[node name="HealingMoss" parent="Forageables" instance=ExtResource("6_moss")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, 0)
+
+[node name="WildBerryBush" parent="Forageables" instance=ExtResource("7_bush")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.2, 0, 0)
+
+[node name="GlowcapHerb" parent="Forageables" instance=ExtResource("8_glowcap")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6, 0, 0)
+
+[node name="ManaFlower" parent="Forageables" instance=ExtResource("9_mana")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0, 0)
+
+[node name="CopperOreNode" parent="Forageables" instance=ExtResource("10_copper")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -0.9)
+
+[node name="IronOreNode" parent="Forageables" instance=ExtResource("11_iron")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, -0.9)
+
+[node name="Labels" type="Node3D" parent="."]
+
+[node name="MossLabel" type="Label3D" parent="Labels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 1.3, 0)
+billboard = 1
+text = "Healing Moss (F)
+E: gather 1-2"
+font_size = 40
+outline_size = 8
+
+[node name="BushLabel" type="Label3D" parent="Labels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.2, 1.6, 0)
+billboard = 1
+text = "Wild Berries (F)
+E: pick 2-4, regrows in 90 s"
+font_size = 40
+outline_size = 8
+
+[node name="GlowcapLabel" type="Label3D" parent="Labels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6, 1.3, 0)
+billboard = 1
+text = "Glowcap Herb (F)"
+font_size = 40
+outline_size = 8
+
+[node name="ManaLabel" type="Label3D" parent="Labels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 1.4, 0)
+billboard = 1
+text = "Mana Flower (D)"
+font_size = 40
+outline_size = 8
+
+[node name="CopperLabel" type="Label3D" parent="Labels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 2, -0.6)
+billboard = 1
+text = "Copper Ore (F)
+E x3: drops 1-3"
+font_size = 40
+outline_size = 8
+
+[node name="IronLabel" type="Label3D" parent="Labels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 2, -0.6)
+billboard = 1
+text = "Iron Ore (E)
+E x3: drops 1-3"
+font_size = 40
+outline_size = 8

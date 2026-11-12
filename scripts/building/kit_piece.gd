@@ -318,27 +318,27 @@ static func mat(material_name: String) -> Material:
 		"iron":
 			material = load("res://materials/surfaces/iron.tres")
 		"plaster":
-			material = _flat(Color(0.82, 0.76, 0.64), 0.95)
+			material = _flat(Color(0.9, 0.84, 0.74), 0.95)
 		"brass":
-			var brass := _flat(Color(0.7, 0.52, 0.22), 0.35)
-			brass.metallic = 0.9
+			var brass := _flat(Color(0.95, 0.72, 0.32), 0.45)
+			brass.metallic = 0.4
 			material = brass
 		"cloth_red":
-			material = _flat(Color(0.5, 0.07, 0.06), 1.0)
+			material = _flat(Color(0.82, 0.22, 0.25), 1.0)
 		"cloth_blue":
-			material = _flat(Color(0.1, 0.16, 0.42), 1.0)
+			material = _flat(Color(0.27, 0.46, 0.76), 1.0)
 		"cloth_green":
-			material = _flat(Color(0.12, 0.3, 0.14), 1.0)
+			material = _flat(Color(0.27, 0.6, 0.36), 1.0)
 		"parchment":
-			material = _flat(Color(0.9, 0.82, 0.6), 1.0)
+			material = _flat(Color(0.96, 0.89, 0.7), 1.0)
 		"cork":
-			material = _flat(Color(0.5, 0.36, 0.22), 1.0)
+			material = _flat(Color(0.8, 0.58, 0.4), 1.0)
 		"straw":
-			material = _flat(Color(0.75, 0.62, 0.3), 1.0)
+			material = _flat(Color(0.96, 0.8, 0.44), 1.0)
 		"blanket":
-			material = _flat(Color(0.48, 0.12, 0.1), 1.0)
+			material = _flat(Color(0.76, 0.22, 0.26), 1.0)
 		"linen":
-			material = _flat(Color(0.88, 0.84, 0.76), 1.0)
+			material = _flat(Color(0.95, 0.92, 0.86), 1.0)
 		"glow_warm":
 			var glow := _flat(Color(1.0, 0.72, 0.4), 0.5)
 			glow.emission_enabled = true
@@ -366,7 +366,7 @@ static func _tinted(path: String, tint: Color) -> Material:
 	if base == null:
 		return _flat(tint, 0.8)
 	var copy := base.duplicate() as StandardMaterial3D
-	copy.albedo_color = tint
+	copy.albedo_color = base.albedo_color * tint
 	return copy
 
 

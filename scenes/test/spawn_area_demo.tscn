@@ -1,0 +1,290 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="2_hud"]
+[ext_resource type="Script" path="res://scripts/core/spawn_point.gd" id="3_spawn"]
+[ext_resource type="Material" path="res://materials/world/forest_ground.tres" id="4_ground"]
+[ext_resource type="Material" path="res://materials/surfaces/stone_wall.tres" id="5_wall"]
+[ext_resource type="PackedScene" path="res://scenes/world/spawn_area.tscn" id="6_area"]
+[ext_resource type="Script" path="res://scripts/world/spawn_entry.gd" id="7_entry"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/slime.tscn" id="8_slime"]
+[ext_resource type="PackedScene" path="res://scenes/harvestables/healing_moss.tscn" id="10_moss"]
+[ext_resource type="PackedScene" path="res://scenes/harvestables/wild_berry_bush.tscn" id="11_bush"]
+[ext_resource type="PackedScene" path="res://scenes/harvestables/copper_ore_node.tscn" id="12_copper"]
+[ext_resource type="PackedScene" path="res://scenes/harvestables/iron_ore_node.tscn" id="13_iron"]
+[ext_resource type="PackedScene" path="res://scenes/harvestables/mana_flower.tscn" id="14_mana"]
+[ext_resource type="PackedScene" path="res://scenes/harvestables/glowcap_herb.tscn" id="15_glowcap"]
+[ext_resource type="PackedScene" path="res://KayKit/Assets4/gltf/Tree_2_D_Color1.gltf" id="16_tree_a"]
+[ext_resource type="PackedScene" path="res://KayKit/Assets4/gltf/Tree_1_C_Color1.gltf" id="17_tree_b"]
+[ext_resource type="PackedScene" path="res://KayKit/Assets4/gltf/Tree_4_C_Color1.gltf" id="18_tree_c"]
+
+[sub_resource type="Environment" id="Environment_demo"]
+background_mode = 1
+background_color = Color(0.42, 0.56, 0.72, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.62, 0.66, 0.72, 1)
+ambient_light_energy = 0.6
+tonemap_mode = 3
+glow_enabled = true
+glow_hdr_threshold = 1.0
+
+[sub_resource type="Resource" id="Resource_slime"]
+script = ExtResource("7_entry")
+scene = ExtResource("8_slime")
+
+[sub_resource type="Resource" id="Resource_moss"]
+script = ExtResource("7_entry")
+scene = ExtResource("10_moss")
+
+[sub_resource type="Resource" id="Resource_bush"]
+script = ExtResource("7_entry")
+scene = ExtResource("11_bush")
+
+[sub_resource type="Resource" id="Resource_copper"]
+script = ExtResource("7_entry")
+scene = ExtResource("12_copper")
+
+[sub_resource type="Resource" id="Resource_iron"]
+script = ExtResource("7_entry")
+scene = ExtResource("13_iron")
+
+[sub_resource type="Resource" id="Resource_mana"]
+script = ExtResource("7_entry")
+scene = ExtResource("14_mana")
+
+[sub_resource type="Resource" id="Resource_glowcap"]
+script = ExtResource("7_entry")
+scene = ExtResource("15_glowcap")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_water"]
+transparency = 1
+albedo_color = Color(0.12, 0.32, 0.48, 0.78)
+metallic_specular = 1.0
+roughness = 0.05
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_pond"]
+material = SubResource("StandardMaterial3D_water")
+size = Vector2(7, 9)
+
+[node name="SpawnAreaDemo" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_demo")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.8575, 0.3024, -0.4162, 0, 0.809, 0.5878, 0.5145, -0.504, 0.6937, 0, 20, 0)
+light_color = Color(1, 0.95, 0.86, 1)
+light_energy = 1.2
+shadow_enabled = true
+directional_shadow_max_distance = 60.0
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+
+[node name="HUD" parent="." node_paths=PackedStringArray("player") instance=ExtResource("2_hud")]
+player = NodePath("../Player")
+
+[node name="Spawns" type="Node3D" parent="."]
+
+[node name="Default" type="Marker3D" parent="Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+script = ExtResource("3_spawn")
+
+[node name="Architecture" type="CSGCombiner3D" parent="."]
+use_collision = true
+
+[node name="Ground" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+size = Vector3(80, 1, 80)
+material = ExtResource("4_ground")
+
+[node name="WallNorth" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -40.5)
+size = Vector3(82, 4, 1)
+material = ExtResource("5_wall")
+
+[node name="WallSouth" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 40.5)
+size = Vector3(82, 4, 1)
+material = ExtResource("5_wall")
+
+[node name="WallWest" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.5, 2, 0)
+size = Vector3(1, 4, 80)
+material = ExtResource("5_wall")
+
+[node name="WallEast" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.5, 2, 0)
+size = Vector3(1, 4, 80)
+material = ExtResource("5_wall")
+
+[node name="RavineWallWest" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 2, -14)
+size = Vector3(2, 4, 22)
+material = ExtResource("5_wall")
+
+[node name="RavineWallEast" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 2, -14)
+size = Vector3(2, 4, 22)
+material = ExtResource("5_wall")
+
+[node name="CoverA" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1.5, 16)
+size = Vector3(1.5, 3, 1.5)
+material = ExtResource("5_wall")
+
+[node name="CoverB" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 1.5, 21)
+size = Vector3(1.5, 3, 1.5)
+material = ExtResource("5_wall")
+
+[node name="CoverC" type="CSGBox3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 1.5, 13)
+size = Vector3(1.5, 3, 1.5)
+material = ExtResource("5_wall")
+
+[node name="Pond" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0.02, -18)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_pond")
+
+[node name="DeepForest" type="Node3D" parent="."]
+
+[node name="TreeA" parent="DeepForest" instance=ExtResource("16_tree_a")]
+transform = Transform3D(1.4, 0, 0, 0, 1.4, 0, 0, 0, 1.4, -33, 0, 24)
+
+[node name="TreeB" parent="DeepForest" instance=ExtResource("17_tree_b")]
+transform = Transform3D(0.7, 0, 1.2124, 0, 1.4, 0, -1.2124, 0, 0.7, -24, 0, 33)
+
+[node name="TreeC" parent="DeepForest" instance=ExtResource("18_tree_c")]
+transform = Transform3D(1.3, 0, 0, 0, 1.3, 0, 0, 0, 1.3, -34, 0, 34)
+
+[node name="TreeD" parent="DeepForest" instance=ExtResource("16_tree_a")]
+transform = Transform3D(-1.2, 0, 0, 0, 1.2, 0, 0, 0, -1.2, -22, 0, 22)
+
+[node name="SpawnAreas" type="Node3D" parent="."]
+
+[node name="Slimes" parent="SpawnAreas" instance=ExtResource("6_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 18)
+size = Vector2(16, 12)
+editor_color = Color(0.95, 0.4, 0.35, 1)
+entries = Array[ExtResource("7_entry")]([SubResource("Resource_slime")])
+clearance_radius = 0.45
+clearance_height = 0.9
+leash_range = 15.0
+
+[node name="HealingMoss" parent="SpawnAreas" instance=ExtResource("6_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0, -18)
+size = Vector2(4, 10)
+editor_color = Color(0.45, 0.85, 0.35, 1)
+entries = Array[ExtResource("7_entry")]([SubResource("Resource_moss")])
+max_alive = 4
+respawn_time = 40.0
+min_spacing = 2.0
+clearance_radius = 0.45
+clearance_height = 0.5
+leash_range = 0.0
+
+[node name="WildBerries" parent="SpawnAreas" instance=ExtResource("6_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, 12)
+size = Vector2(14, 10)
+editor_color = Color(0.9, 0.25, 0.35, 1)
+entries = Array[ExtResource("7_entry")]([SubResource("Resource_bush")])
+max_alive = 4
+respawn_time = 60.0
+min_spacing = 3.5
+clearance_radius = 0.7
+leash_range = 0.0
+
+[node name="CopperOre" parent="SpawnAreas" instance=ExtResource("6_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, -19.5)
+size = Vector2(6, 9)
+editor_color = Color(0.9, 0.55, 0.25, 1)
+entries = Array[ExtResource("7_entry")]([SubResource("Resource_copper")])
+max_alive = 4
+respawn_time = 45.0
+placement = 1
+min_spacing = 3.0
+clearance_radius = 0.5
+clearance_height = 1.2
+leash_range = 0.0
+
+[node name="IronOre" parent="SpawnAreas" instance=ExtResource("6_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, -8)
+size = Vector2(6, 8)
+editor_color = Color(0.55, 0.55, 0.65, 1)
+entries = Array[ExtResource("7_entry")]([SubResource("Resource_iron")])
+max_alive = 2
+respawn_time = 90.0
+placement = 1
+min_spacing = 3.0
+clearance_radius = 0.5
+clearance_height = 1.2
+leash_range = 0.0
+
+[node name="ManaFlowers" parent="SpawnAreas" instance=ExtResource("6_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 0, 28)
+shape = 1
+radius = 6.0
+editor_color = Color(0.4, 0.65, 1, 1)
+entries = Array[ExtResource("7_entry")]([SubResource("Resource_mana")])
+max_alive = 2
+respawn_time = 120.0
+min_spacing = 3.0
+leash_range = 0.0
+
+[node name="Glowcaps" parent="SpawnAreas" instance=ExtResource("6_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 0, -2)
+shape = 1
+radius = 4.0
+editor_color = Color(0.4, 1, 0.7, 1)
+entries = Array[ExtResource("7_entry")]([SubResource("Resource_glowcap")])
+max_alive = 3
+respawn_time = 30.0
+min_spacing = 1.5
+leash_range = 0.0
+
+[node name="Signs" type="Node3D" parent="."]
+
+[node name="SlimeSign" type="Label3D" parent="Signs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 3.5, 11)
+billboard = 1
+text = "Slimes
+max 6, respawn 30 s, leash 15 m"
+font_size = 48
+outline_size = 10
+
+[node name="MossSign" type="Label3D" parent="Signs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 2.5, -12)
+billboard = 1
+text = "Healing Moss by the pond"
+font_size = 48
+outline_size = 10
+
+[node name="BerrySign" type="Label3D" parent="Signs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 2.5, 6)
+billboard = 1
+text = "Wild Berry bushes (regrow)"
+font_size = 48
+outline_size = 10
+
+[node name="OreSign" type="Label3D" parent="Signs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 5, -2)
+billboard = 1
+text = "Ravine: Copper (south half, max 4) and Iron (north half, max 2) on the walls"
+font_size = 48
+outline_size = 10
+
+[node name="ManaSign" type="Label3D" parent="Signs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 3, 22)
+billboard = 1
+text = "Mana Flowers deep in the trees (max 2, 120 s)"
+font_size = 48
+outline_size = 10
+
+[node name="GlowcapSign" type="Label3D" parent="Signs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 2.5, 3)
+billboard = 1
+text = "Glowcap Herbs"
+font_size = 48
+outline_size = 10

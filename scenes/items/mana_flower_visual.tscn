@@ -1,0 +1,92 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_stem"]
+albedo_color = Color(0.25, 0.52, 0.34, 1)
+roughness = 0.8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_stem"]
+material = SubResource("StandardMaterial3D_stem")
+top_radius = 0.01
+bottom_radius = 0.018
+height = 0.4
+radial_segments = 8
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_leaf"]
+albedo_color = Color(0.3, 0.62, 0.38, 1)
+roughness = 0.6
+cull_mode = 2
+
+[sub_resource type="SphereMesh" id="SphereMesh_leaf"]
+material = SubResource("StandardMaterial3D_leaf")
+radial_segments = 10
+rings = 5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_petal"]
+albedo_color = Color(0.45, 0.72, 1, 1)
+emission_enabled = true
+emission = Color(0.3, 0.6, 1, 1)
+emission_energy_multiplier = 2.0
+cull_mode = 2
+
+[sub_resource type="SphereMesh" id="SphereMesh_petal"]
+radius = 1.0
+height = 2.0
+radial_segments = 12
+rings = 6
+
+[sub_resource type="SphereMesh" id="SphereMesh_core"]
+radius = 0.03
+height = 0.06
+radial_segments = 12
+rings = 6
+
+[node name="ManaFlowerVisual" type="Node3D"]
+
+[node name="Stem" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+mesh = SubResource("CylinderMesh_stem")
+
+[node name="Leaf1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 0.008, -0.004, 0, 0.06, 0.11, 0, 0.08, 0.06)
+mesh = SubResource("SphereMesh_leaf")
+
+[node name="Leaf2" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.04, 0, 0, 0, 0.008, 0.004, 0, 0.06, -0.11, 0, 0.12, -0.06)
+mesh = SubResource("SphereMesh_leaf")
+
+[node name="Petal1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, -0.0069, 0.0737, 0, 0.0098, 0.0516, -0.05, 0, 0, 0.065, 0.4, 0)
+cast_shadow = 0
+material_override = SubResource("StandardMaterial3D_petal")
+mesh = SubResource("SphereMesh_petal")
+
+[node name="Petal2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.0476, -0.0021, 0.0228, 0, 0.0098, 0.0516, -0.0155, -0.0065, 0.0701, 0.0201, 0.4, 0.0618)
+cast_shadow = 0
+material_override = SubResource("StandardMaterial3D_petal")
+mesh = SubResource("SphereMesh_petal")
+
+[node name="Petal3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.0294, 0.0056, -0.0596, 0, 0.0098, 0.0516, 0.0405, -0.004, 0.0433, -0.0526, 0.4, 0.0382)
+cast_shadow = 0
+material_override = SubResource("StandardMaterial3D_petal")
+mesh = SubResource("SphereMesh_petal")
+
+[node name="Petal4" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.0294, 0.0056, -0.0596, 0, 0.0098, 0.0516, 0.0405, 0.004, -0.0433, -0.0526, 0.4, -0.0382)
+cast_shadow = 0
+material_override = SubResource("StandardMaterial3D_petal")
+mesh = SubResource("SphereMesh_petal")
+
+[node name="Petal5" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.0476, -0.0021, 0.0228, 0, 0.0098, 0.0516, -0.0155, 0.0065, -0.0701, 0.0201, 0.4, -0.0618)
+cast_shadow = 0
+material_override = SubResource("StandardMaterial3D_petal")
+mesh = SubResource("SphereMesh_petal")
+
+[node name="Core" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.41, 0)
+cast_shadow = 0
+material_override = SubResource("StandardMaterial3D_petal")
+mesh = SubResource("SphereMesh_core")

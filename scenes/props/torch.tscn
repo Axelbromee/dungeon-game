@@ -1,22 +1,22 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://jhcao0nd7c4v"]
 
-[ext_resource type="Script" path="res://scripts/effects/flicker_light.gd" id="1_flicker"]
-[ext_resource type="PackedScene" path="res://KayKit/Assets/gltf/torch_mounted.gltf" id="2_model"]
-[ext_resource type="Material" path="res://materials/effects/fire_particle.tres" id="4_fire"]
-[ext_resource type="ParticleProcessMaterial" path="res://materials/effects/fire_flame_process.tres" id="5_flame"]
-[ext_resource type="Script" path="res://scripts/props/fire_light_prop.gd" id="6_prop"]
+[ext_resource type="Script" uid="uid://dlw1lxnbemers" path="res://scripts/effects/flicker_light.gd" id="1_flicker"]
+[ext_resource type="PackedScene" uid="uid://ktdw4ao6k6kc" path="res://KayKit/Assets/gltf/torch_mounted.gltf" id="2_model"]
+[ext_resource type="Material" uid="uid://1r4bq6asvrrr" path="res://materials/effects/fire_particle.tres" id="4_fire"]
+[ext_resource type="Material" uid="uid://pe4f6rlc405s" path="res://materials/effects/fire_flame_process.tres" id="5_flame"]
+[ext_resource type="Script" uid="uid://jcataqtb5s1m" path="res://scripts/props/fire_light_prop.gd" id="6_prop"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_flame"]
 material = ExtResource("4_fire")
 size = Vector2(0.22, 0.22)
 
-[node name="Torch" type="Node3D"]
+[node name="Torch" type="Node3D" unique_id=1293104851]
 script = ExtResource("6_prop")
 
-[node name="Model" parent="." instance=ExtResource("2_model")]
+[node name="Model" parent="." unique_id=1254132454 instance=ExtResource("2_model")]
 transform = Transform3D(0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 0, 0, 0)
 
-[node name="Flame" type="GPUParticles3D" parent="."]
+[node name="Flame" type="GPUParticles3D" parent="." unique_id=2115459042]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.47, 0.23)
 cast_shadow = 0
 amount = 32
@@ -24,7 +24,7 @@ lifetime = 0.6
 process_material = ExtResource("5_flame")
 draw_pass_1 = SubResource("QuadMesh_flame")
 
-[node name="Light" type="OmniLight3D" parent="."]
+[node name="Light" type="OmniLight3D" parent="." unique_id=731092222]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.66, 0.38)
 light_color = Color(1, 0.55, 0.22, 1)
 light_energy = 3.0

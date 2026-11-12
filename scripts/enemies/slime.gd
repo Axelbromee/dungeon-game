@@ -8,13 +8,14 @@ extends CharacterBody3D
 ##                slams straight down onto its landing shadow -> splash
 ##   FIRE_ATTACK  stops, glows as a warning, shoots a small fireball
 ##   HURT         short flinch + knockback (only from IDLE / HOP, with cooldown)
+##   RETURN       chased past its leash: hops home, ignoring the player
 ##   DEAD         flattens, fades, drops loot
 ## Damage always lands and flashes, but only IDLE / HOP can be interrupted,
 ## so fireball spam can't stunlock its attacks.
 
 signal died(slime: Slime)
 
-enum State { IDLE, HOP, HURT, DEAD, JUMP_ATTACK, FIRE_ATTACK, DODGE }
+enum State { IDLE, HOP, HURT, DEAD, JUMP_ATTACK, FIRE_ATTACK, DODGE, RETURN }
 enum JumpPhase { WINDUP, RISE, HANG, SLAM, RECOVER }
 enum FirePhase { WINDUP, RECOVER }
 
@@ -30,6 +31,16 @@ enum FirePhase { WINDUP, RECOVER }
 @export var detect_range: float = 12.0
 ## Gives up and idles when the player gets farther than this.
 @export var lose_range: float = 18.0
+
+@export_group("Leash")
+## How far from home it will chase before hopping back. 0 = no leash.
+## A SpawnArea sets this and the home point on the slimes it spawns.
+@export var leash_range: float = 0.0
+## While going home it ignores the player until it's this close to home
+## (a fraction of the leash range).
+@export_range(0.05, 1.0) var leash_return_fraction: float = 0.4
+## Stops trying to get home after this many seconds (e.g. stuck on a wall).
+@export var leash_return_timeout: float = 12.0
 
 @export_group("Hop")
 ## Seconds spent on the ground between hops.
@@ -189,6 +200,9 @@ enum FirePhase { WINDUP, RECOVER }
 
 var state: State = State.IDLE
 var health: float = 0.0
+## Home point of the leash: where it started, unless set_leash() set it.
+var leash_center: Vector3 = Vector3.ZERO
+var _leash_center_set: bool = false
 
 var _player: Player
 var _state_timer: float = 0.0
@@ -252,6 +266,16 @@ func _ready() -> void:
 	_shadow.visible = false
 	_jump_cooldown_timer = randf_range(0.5, jump_attack_cooldown)
 	_fire_cooldown_timer = randf_range(1.0, fire_cooldown)
+	if not _leash_center_set:
+		leash_center = global_position
+
+
+## Keeps the slime near `center`: it won't chase farther than `range_m`
+## from it. Called by SpawnArea before the slime enters the scene.
+func set_leash(center: Vector3, range_m: float) -> void:
+	leash_center = center
+	leash_range = range_m
+	_leash_center_set = true
 
 
 func _physics_process(delta: float) -> void:
@@ -283,6 +307,8 @@ func _physics_process(delta: float) -> void:
 			target_squash = _state_fire_attack(delta)
 		State.DODGE:
 			target_squash = _state_dodge(delta)
+		State.RETURN:
+			target_squash = _state_return(delta)
 		State.DEAD:
 			_apply_friction(delta)
 			move_and_slide()
@@ -301,7 +327,7 @@ func _state_idle(delta: float) -> float:
 		return 0.0
 	if _can_fire_attack():
 		_set_state(State.FIRE_ATTACK)
-	elif _player_in_range(detect_range):
+	elif _player_in_range(detect_range) and _player_inside_leash():
 		_set_state(State.HOP)
 	return sin(_t * idle_wobble_speed) * idle_wobble
 
@@ -309,6 +335,9 @@ func _state_idle(delta: float) -> float:
 func _state_hop(delta: float) -> float:
 	if not _player_in_range(lose_range):
 		_set_state(State.IDLE)
+		return 0.0
+	if _beyond_leash():
+		_set_state(State.RETURN)
 		return 0.0
 	_face(_player.global_position, delta)
 	_try_contact()
@@ -399,6 +428,42 @@ func _prune_dodge_rolls() -> void:
 			_dodge_rolled.erase(id)
 
 
+## Hops back toward the leash centre, ignoring the player, then idles.
+func _state_return(delta: float) -> float:
+	var home_distance := _flat_distance(global_position, leash_center)
+	if home_distance <= leash_range * leash_return_fraction or _state_timer > leash_return_timeout:
+		_set_state(State.IDLE)
+		return 0.0
+	_face(leash_center, delta)
+	if not is_on_floor():
+		return clampf(velocity.y * air_stretch_per_speed, -0.25, 0.35)
+	_apply_friction(delta)
+	_hop_timer -= delta
+	if _hop_timer <= 0.0:
+		_hop_toward(leash_center)
+		return 0.0
+	if _hop_timer <= hop_windup:
+		return windup_squash
+	return sin(_t * idle_wobble_speed) * idle_wobble
+
+
+func _beyond_leash() -> bool:
+	return leash_range > 0.0 and _flat_distance(global_position, leash_center) > leash_range
+
+
+## Without a leash, always true. With one, only chase a player who is
+## inside the leash circle (so it doesn't hop out and straight back).
+func _player_inside_leash() -> bool:
+	if leash_range <= 0.0:
+		return true
+	return _player != null and is_instance_valid(_player) \
+		and _flat_distance(_player.global_position, leash_center) <= leash_range
+
+
+static func _flat_distance(a: Vector3, b: Vector3) -> float:
+	return Vector2(a.x - b.x, a.z - b.z).length()
+
+
 func _state_hurt(delta: float) -> float:
 	if is_on_floor():
 		_apply_friction(delta * 0.3)  # Let the knockback slide a bit.
@@ -419,7 +484,7 @@ func _set_state(new_state: State) -> void:
 	state = new_state
 	_state_timer = 0.0
 	match new_state:
-		State.HOP:
+		State.HOP, State.RETURN:
 			_hop_timer = minf(_hop_timer, hop_interval * 0.5)
 		State.JUMP_ATTACK:
 			_jump_phase = JumpPhase.WINDUP

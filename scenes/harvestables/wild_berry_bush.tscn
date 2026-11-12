@@ -1,0 +1,99 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/interaction/harvestable.gd" id="1_harvest"]
+[ext_resource type="PackedScene" path="res://KayKit/Assets4/gltf/Bush_1_C_Color1.gltf" id="2_bush"]
+[ext_resource type="Resource" path="res://items/wild_berries.tres" id="3_item"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_bush"]
+radius = 0.75
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_berry"]
+albedo_color = Color(0.86, 0.2, 0.27, 1)
+roughness = 0.5
+
+[sub_resource type="SphereMesh" id="SphereMesh_berry"]
+material = SubResource("StandardMaterial3D_berry")
+radius = 0.045
+height = 0.09
+radial_segments = 10
+rings = 5
+
+[node name="WildBerryBush" type="Area3D"]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+script = ExtResource("1_harvest")
+item = ExtResource("3_item")
+amount = 2
+amount_max = 4
+verb = "Pick"
+regrow_time = 90.0
+regrow_nodes = Array[NodePath]([NodePath("Berries")])
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+shape = SubResource("SphereShape3D_bush")
+
+[node name="Model" parent="." instance=ExtResource("2_bush")]
+
+[node name="Berries" type="Node3D" parent="."]
+
+[node name="Berry1" type="MeshInstance3D" parent="Berries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.342, 0.666, -0.018)
+mesh = SubResource("SphereMesh_berry")
+
+[node name="Berry2" type="MeshInstance3D" parent="Berries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.315, 0.686, 0.018)
+mesh = SubResource("SphereMesh_berry")
+
+[node name="Berry3" type="MeshInstance3D" parent="Berries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.095, 0.646, 0.355)
+mesh = SubResource("SphereMesh_berry")
+
+[node name="Berry4" type="MeshInstance3D" parent="Berries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.099, 0.653, 0.346)
+mesh = SubResource("SphereMesh_berry")
+
+[node name="Berry5" type="MeshInstance3D" parent="Berries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.095, 0.625, 0.379)
+mesh = SubResource("SphereMesh_berry")
+
+[node name="Berry6" type="MeshInstance3D" parent="Berries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.298, 0.599, 0.290)
+mesh = SubResource("SphereMesh_berry")
+
+[node name="Berry7" type="MeshInstance3D" parent="Berries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.275, 0.630, 0.271)
+mesh = SubResource("SphereMesh_berry")
+
+[node name="Berry8" type="MeshInstance3D" parent="Berries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.317, 0.658, -0.157)
+mesh = SubResource("SphereMesh_berry")
+
+[node name="Berry9" type="MeshInstance3D" parent="Berries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.268, 0.670, -0.207)
+mesh = SubResource("SphereMesh_berry")
+
+[node name="Berry10" type="MeshInstance3D" parent="Berries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.289, 0.662, -0.193)
+mesh = SubResource("SphereMesh_berry")
+
+[node name="Berry11" type="MeshInstance3D" parent="Berries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.003, 0.671, -0.336)
+mesh = SubResource("SphereMesh_berry")
+
+[node name="Berry12" type="MeshInstance3D" parent="Berries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.036, 0.671, -0.335)
+mesh = SubResource("SphereMesh_berry")
+
+[node name="Berry13" type="MeshInstance3D" parent="Berries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.276, 0.489, -0.405)
+mesh = SubResource("SphereMesh_berry")
+
+[node name="Berry14" type="MeshInstance3D" parent="Berries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.317, 0.513, -0.358)
+mesh = SubResource("SphereMesh_berry")
+
+[node name="Berry15" type="MeshInstance3D" parent="Berries"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.287, 0.541, -0.360)
+mesh = SubResource("SphereMesh_berry")
