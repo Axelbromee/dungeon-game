@@ -1,19 +1,33 @@
 @tool
 class_name KitDoor
 extends KitPiece
-## Plank door with iron bands that swings open / closed with E. Sized for a
-## KitWall doorway; put it at the doorway's origin. The leaf is its own body
-## on the interactable layer so the player can target it.
+## Door that swings open / closed with E: the KayKit doorway's own leaf at
+## its real size, so it fits a KitWall doorway exactly. Put it at the
+## doorway's origin. The leaf is its own body on the interactable layer so
+## the player can target it.
 
-@export var width: float = 1.15
-@export var height: float = 2.15
-@export var thickness: float = 0.07
+## Not used: the leaf has the KayKit doorway's size (kept for old scenes).
+@export var width: float = 2.3
+## Not used: the leaf has the KayKit doorway's size (kept for old scenes).
+@export var height: float = 2.87
+## Not used: the leaf has the KayKit doorway's size (kept for old scenes).
+@export var thickness: float = 0.78
 ## Degrees; positive swings toward -Z (away from the front).
 @export var open_angle: float = 100.0
 @export var open_time: float = 0.45
 @export var hinge_on_left: bool = true
 @export var start_open: bool = false
+## A locked door stays shut; E only shows `locked_text`.
+@export var locked: bool = false
+@export var locked_text: String = "Locked"
+## Not used by the KayKit leaf (kept so existing scenes load unchanged).
 @export_range(3, 9) var planks: int = 5
+
+## The KayKit leaf: its size and how far its hinge sits from the middle.
+const LEAF_SIZE := Vector3(2.0, 2.75, 0.78)
+const HINGE_X := 0.82
+const MODEL := "wall_doorway"
+const PART := "wall_doorway_door"
 
 var is_open: bool = false
 
@@ -25,36 +39,33 @@ var _tween: Tween
 func _build() -> void:
 	var side := -1.0 if hinge_on_left else 1.0
 	_pivot = Node3D.new()
-	_pivot.position = Vector3(side * width * 0.5, 0, 0)
+	_pivot.position = Vector3(side * HINGE_X, 0, 0)
 	add_generated(_pivot)
 	_leaf = StaticBody3D.new()
 	_leaf.collision_layer = LAYER_WORLD | LAYER_INTERACTABLE
 	_pivot.add_child(_leaf)
 
-	# Leaf geometry, measured from the hinge.
+	# Leaf geometry, measured from the hinge. A right-hinged door is the
+	# same leaf turned around.
 	var dir := -side
-	var plank_w := width / planks
-	var mats := ["plank_a", "plank_b", "plank_c"]
-	for i in planks:
-		add_box(Vector3(plank_w - 0.01, height, thickness), Vector3(dir * (i + 0.5) * plank_w, height * 0.5, 0), mat(mats[i % 3]), false, Vector3.ZERO, _leaf)
-	add_collision_box(Vector3(width, height, thickness), Vector3(dir * width * 0.5, height * 0.5, 0), Vector3.ZERO, _leaf)
-	var iron := mat("iron")
-	for y in [0.35, height - 0.35]:
-		add_box(Vector3(width * 0.92, 0.06, thickness + 0.02), Vector3(dir * width * 0.48, y, 0), iron, false, Vector3.ZERO, _leaf)
-	# Ring handles on both sides + keyhole plate.
-	for face in [1.0, -1.0]:
-		add_cylinder(0.05, 0.015, Vector3(dir * width * 0.85, height * 0.47, face * (thickness * 0.5 + 0.02)), mat("brass"), false, Vector3(90, 0, 0), _leaf, 12)
-	add_box(Vector3(0.06, 0.12, thickness + 0.03), Vector3(dir * width * 0.85, height * 0.43, 0), iron, false, Vector3.ZERO, _leaf)
+	var turn := Basis(Vector3.UP, 0.0 if hinge_on_left else PI)
+	var hinge := KitPiece.model_part_xform(kk(MODEL), PART).origin
+	add_model_xform(kk(MODEL), Transform3D(turn, turn * -hinge), _leaf, PackedStringArray([PART]))
+	add_collision_box(LEAF_SIZE, Vector3(dir * HINGE_X, LEAF_SIZE.y * 0.5, 0), Vector3.ZERO, _leaf)
 
 	is_open = start_open
 	_apply_angle(false)
 
 
 func get_interaction_text() -> String:
+	if locked:
+		return locked_text
 	return "Close door" if is_open else "Open door"
 
 
 func interact(_player: Player) -> void:
+	if locked:
+		return
 	is_open = not is_open
 	_apply_angle(true)
 

@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://ci66g5ridgl16"
+path="res://.godot/imported/sword_B.obj-1e416f92a98d7c53e90d8907adee4f67.mesh"
+
+[deps]
+
+files=["res://.godot/imported/sword_B.obj-1e416f92a98d7c53e90d8907adee4f67.mesh"]
+
+source_file="res://KayKit/Assets5/obj/sword_B.obj"
+dest_files=["res://.godot/imported/sword_B.obj-1e416f92a98d7c53e90d8907adee4f67.mesh", "res://.godot/imported/sword_B.obj-1e416f92a98d7c53e90d8907adee4f67.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

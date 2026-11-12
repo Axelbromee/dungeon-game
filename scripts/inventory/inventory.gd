@@ -112,6 +112,7 @@ func split_slot(index: int) -> int:
 		target = _find_empty(0, slot_count)
 	if target < 0:
 		return -1
+	@warning_ignore("integer_division")
 	move_slot(index, target, _counts[index] / 2)
 	return target
 
@@ -269,7 +270,10 @@ func to_data() -> Array:
 	var data: Array = []
 	for i in _items.size():
 		var item := _items[i]
-		data.append([item.resource_path, _counts[i]] if item and item.resource_path != "" else null)
+		if item and item.resource_path != "":
+			data.append([item.resource_path, _counts[i]])
+		else:
+			data.append(null)
 	return data
 
 

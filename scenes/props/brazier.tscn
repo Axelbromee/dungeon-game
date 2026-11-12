@@ -1,9 +1,10 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/flicker_light.gd" id="1_flicker"]
-[ext_resource type="Material" path="res://materials/iron.tres" id="2_iron"]
-[ext_resource type="Material" path="res://materials/fire_particle.tres" id="3_fire"]
-[ext_resource type="ParticleProcessMaterial" path="res://materials/fire_flame_process.tres" id="4_flame"]
+[ext_resource type="Script" path="res://scripts/effects/flicker_light.gd" id="1_flicker"]
+[ext_resource type="Material" path="res://materials/surfaces/iron.tres" id="2_iron"]
+[ext_resource type="Material" path="res://materials/effects/fire_particle.tres" id="3_fire"]
+[ext_resource type="ParticleProcessMaterial" path="res://materials/effects/fire_flame_process.tres" id="4_flame"]
+[ext_resource type="Script" path="res://scripts/props/fire_light_prop.gd" id="5_prop"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_base"]
 material = ExtResource("2_iron")
@@ -35,6 +36,11 @@ material = ExtResource("3_fire")
 size = Vector2(0.45, 0.45)
 
 [node name="Brazier" type="StaticBody3D"]
+script = ExtResource("5_prop")
+light_energy = 3.6
+light_range = 15.0
+light_color = Color(1, 0.5, 0.18, 1)
+flicker_amount = 0.3
 
 [node name="Base" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)

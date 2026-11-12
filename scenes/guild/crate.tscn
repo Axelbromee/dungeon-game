@@ -1,8 +1,0 @@
-[gd_scene format=3]
-
-[ext_resource type="Script" path="res://scripts/guild/furniture.gd" id="1_piece"]
-
-[node name="Crate" type="StaticBody3D"]
-script = ExtResource("1_piece")
-kind = 4
-size = Vector3(0.8, 0.8, 0.8)

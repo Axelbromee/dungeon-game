@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://d0qsyedmmh85e"
+path="res://.godot/imported/Textiles_B.obj-bc84573bcabffe217c4735a0cfa131b5.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Textiles_B.obj-bc84573bcabffe217c4735a0cfa131b5.mesh"]
+
+source_file="res://KayKit/Assets3/obj/Textiles_B.obj"
+dest_files=["res://.godot/imported/Textiles_B.obj-bc84573bcabffe217c4735a0cfa131b5.mesh", "res://.godot/imported/Textiles_B.obj-bc84573bcabffe217c4735a0cfa131b5.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

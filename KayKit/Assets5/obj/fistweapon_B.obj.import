@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bsmwotyvhg4l8"
+path="res://.godot/imported/fistweapon_B.obj-f703ab23ac1e1c41fd07567207cbfbe9.mesh"
+
+[deps]
+
+files=["res://.godot/imported/fistweapon_B.obj-f703ab23ac1e1c41fd07567207cbfbe9.mesh"]
+
+source_file="res://KayKit/Assets5/obj/fistweapon_B.obj"
+dest_files=["res://.godot/imported/fistweapon_B.obj-f703ab23ac1e1c41fd07567207cbfbe9.mesh", "res://.godot/imported/fistweapon_B.obj-f703ab23ac1e1c41fd07567207cbfbe9.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

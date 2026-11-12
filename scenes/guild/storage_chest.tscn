@@ -1,6 +1,0 @@
-[gd_scene format=3]
-
-[ext_resource type="Script" path="res://scripts/guild/storage_chest.gd" id="1_piece"]
-
-[node name="StorageChest" type="StaticBody3D"]
-script = ExtResource("1_piece")

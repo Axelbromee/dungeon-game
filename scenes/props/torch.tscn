@@ -1,46 +1,23 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/flicker_light.gd" id="1_flicker"]
-[ext_resource type="Material" path="res://materials/iron.tres" id="2_iron"]
-[ext_resource type="Material" path="res://materials/wood.tres" id="3_wood"]
-[ext_resource type="Material" path="res://materials/fire_particle.tres" id="4_fire"]
-[ext_resource type="ParticleProcessMaterial" path="res://materials/fire_flame_process.tres" id="5_flame"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_plate"]
-material = ExtResource("2_iron")
-size = Vector3(0.22, 0.35, 0.04)
-
-[sub_resource type="BoxMesh" id="BoxMesh_arm"]
-material = ExtResource("2_iron")
-size = Vector3(0.05, 0.05, 0.3)
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_handle"]
-material = ExtResource("3_wood")
-top_radius = 0.06
-bottom_radius = 0.04
-height = 0.45
-radial_segments = 10
+[ext_resource type="Script" path="res://scripts/effects/flicker_light.gd" id="1_flicker"]
+[ext_resource type="PackedScene" path="res://KayKit/Assets/gltf/torch_mounted.gltf" id="2_model"]
+[ext_resource type="Material" path="res://materials/effects/fire_particle.tres" id="4_fire"]
+[ext_resource type="ParticleProcessMaterial" path="res://materials/effects/fire_flame_process.tres" id="5_flame"]
+[ext_resource type="Script" path="res://scripts/props/fire_light_prop.gd" id="6_prop"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_flame"]
 material = ExtResource("4_fire")
 size = Vector2(0.22, 0.22)
 
 [node name="Torch" type="Node3D"]
+script = ExtResource("6_prop")
 
-[node name="WallPlate" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.02)
-mesh = SubResource("BoxMesh_plate")
-
-[node name="Arm" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.17)
-mesh = SubResource("BoxMesh_arm")
-
-[node name="Handle" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.94, 0.34, 0, -0.34, 0.94, 0, 0.1, 0.32)
-mesh = SubResource("CylinderMesh_handle")
+[node name="Model" parent="." instance=ExtResource("2_model")]
+transform = Transform3D(0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 0, 0, 0)
 
 [node name="Flame" type="GPUParticles3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.34, 0.4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.47, 0.23)
 cast_shadow = 0
 amount = 32
 lifetime = 0.6
@@ -48,7 +25,7 @@ process_material = ExtResource("5_flame")
 draw_pass_1 = SubResource("QuadMesh_flame")
 
 [node name="Light" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0.55)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.66, 0.38)
 light_color = Color(1, 0.55, 0.22, 1)
 light_energy = 3.0
 omni_range = 13.0

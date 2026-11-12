@@ -17,6 +17,7 @@ mass = 0.3
 physics_material_override = SubResource("PhysicsMaterial_pickup")
 continuous_cd = true
 script = ExtResource("1_pickup")
+default_item = "res://items/glowcap_herb.tres"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_herb")

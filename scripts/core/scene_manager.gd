@@ -2,7 +2,7 @@ extends CanvasLayer
 ## Autoload "SceneManager": fade to black, save the player, load another
 ## scene, then fade back in. The Player in the new scene restores itself from
 ## GameState and moves to the SpawnPoint whose spawn_id was requested.
-##   SceneManager.change_scene("res://scenes/guild/player_room.tscn", &"from_guild")
+##   SceneManager.change_scene("res://scenes/world/player_room.tscn", &"from_guild")
 
 signal scene_change_started(path: String)
 signal scene_change_finished(path: String)

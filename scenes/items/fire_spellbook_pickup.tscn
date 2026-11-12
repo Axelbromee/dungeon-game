@@ -1,33 +1,14 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/interaction/item_pickup.gd" id="1_pickup"]
+[ext_resource type="PackedScene" path="res://KayKit/Assets/gltf/journal_closed.gltf" id="2_model"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_book"]
 friction = 0.9
 bounce = 0.15
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_book"]
-size = Vector3(0.34, 0.072, 0.26)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_leather"]
-albedo_color = Color(0.32, 0.05, 0.03, 1)
-roughness = 0.65
-
-[sub_resource type="BoxMesh" id="BoxMesh_cover"]
-material = SubResource("StandardMaterial3D_leather")
-size = Vector3(0.34, 0.012, 0.26)
-
-[sub_resource type="BoxMesh" id="BoxMesh_spine"]
-material = SubResource("StandardMaterial3D_leather")
-size = Vector3(0.016, 0.072, 0.26)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pages"]
-albedo_color = Color(0.88, 0.82, 0.66, 1)
-roughness = 0.95
-
-[sub_resource type="BoxMesh" id="BoxMesh_pages"]
-material = SubResource("StandardMaterial3D_pages")
-size = Vector3(0.315, 0.05, 0.24)
+size = Vector3(0.34, 0.163, 0.245)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rune"]
 albedo_color = Color(1, 0.5, 0.15, 1)
@@ -63,31 +44,19 @@ mass = 0.8
 physics_material_override = SubResource("PhysicsMaterial_book")
 continuous_cd = true
 script = ExtResource("1_pickup")
+default_item = "res://items/fire_spellbook.tres"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_book")
 
-[node name="CoverBottom" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.03, 0)
-mesh = SubResource("BoxMesh_cover")
-
-[node name="CoverTop" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
-mesh = SubResource("BoxMesh_cover")
-
-[node name="Spine" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.162, 0, 0)
-mesh = SubResource("BoxMesh_spine")
-
-[node name="Pages" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.006, 0, 0)
-mesh = SubResource("BoxMesh_pages")
+[node name="Model" parent="." instance=ExtResource("2_model")]
+transform = Transform3D(0, 0.43, 0, -0.43, 0, 0, 0, 0, 0.43, 0.019, 0, -0.058)
 
 [node name="RuneRing" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.01, 0.0375, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.083, 0)
 mesh = SubResource("CylinderMesh_ring")
 
 [node name="Rune" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.01, 0.039, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0845, 0)
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_rune")

@@ -1,26 +1,31 @@
 @tool
 class_name KitRailing
 extends KitPiece
-## Wooden railing along X: posts, top and bottom rails, balusters.
-## Origin at floor level in the middle.
+## Railing along X: KayKit stone barriers at their real size (4 m pieces, a
+## 2 m half piece for the rest; 1.1 m tall, 0.5 m deep). `length` snaps to
+## the 2 m grid. Origin at floor level in the middle.
 
 @export var length: float = 2.0
-@export var height: float = 1.0
+## Not used: the barrier is 1.1 m tall (kept so existing scenes load).
+@export var height: float = 1.1
+## Not used by the KayKit barrier (kept so existing scenes load unchanged).
 @export var baluster_spacing: float = 0.2
+
+const MODULE := 4.0
+const HALF := 2.0
+const HEIGHT := 1.1
+const DEPTH := 0.5
 
 
 func _build() -> void:
-	var half := length * 0.5
-	var wood := mat("wood")
-	var dark := mat("wood_dark")
-	var posts := maxi(int(ceil(length / 1.0)), 1) + 1
-	for i in posts:
-		var x := -half + length * i / float(posts - 1)
-		add_box(Vector3(0.1, height + 0.08, 0.1), Vector3(x, (height + 0.08) * 0.5, 0), dark, false)
-	add_box(Vector3(length, 0.07, 0.11), Vector3(0, height, 0), wood, false)
-	add_box(Vector3(length, 0.05, 0.07), Vector3(0, 0.12, 0), wood, false)
-	var count := int(length / baluster_spacing)
-	for i in range(1, count):
-		var x := -half + i * baluster_spacing
-		add_box(Vector3(0.035, height - 0.16, 0.035), Vector3(x, height * 0.5 + 0.04, 0), wood, false)
-	add_collision_box(Vector3(length, height, 0.12), Vector3(0, height * 0.5, 0))
+	var total := maxf(snappedf(length, GRID), GRID)
+	var x := -total * 0.5
+	var end := total * 0.5 - 0.01
+	while x < end:
+		if end - x >= MODULE - 0.02:
+			add_model(kk("barrier"), 1.0, Vector3(x + MODULE * 0.5, 0, 0))
+			x += MODULE
+		else:
+			add_model(kk("barrier_half"), 1.0, Vector3(x + HALF * 0.5, 0, 0))
+			x += HALF
+	add_collision_box(Vector3(total, HEIGHT, DEPTH), Vector3(0, HEIGHT * 0.5, 0))

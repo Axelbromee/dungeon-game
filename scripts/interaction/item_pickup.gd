@@ -4,11 +4,16 @@ extends RigidBody3D
 ## inventory). Tumbles and bounces, and can be picked up with the interact
 ## key. Lives on physics layer 3 ("interactable") and collides with the world.
 
+## Set per placed pickup in the Inspector. Left empty, default_item is used.
 @export var item: InventoryItem
 @export_range(1, 999) var amount: int = 1
 @export var verb: String = "Pick up"
 ## Pickups that fall below this height are removed.
 @export var kill_height: float = -50.0
+## Item file used when `item` is empty, so the pickup scene works when simply
+## dragged into a level. It's a path, not a resource: the item already points
+## at this scene, and Godot refuses to load two resources that point at each other.
+@export_file("*.tres") var default_item: String = ""
 
 static var _highlight_material: StandardMaterial3D
 
@@ -16,6 +21,8 @@ var _meshes: Array[Node] = []
 
 
 func _ready() -> void:
+	if item == null and default_item != "":
+		item = load(default_item) as InventoryItem
 	_meshes = find_children("*", "MeshInstance3D", true, false)
 
 

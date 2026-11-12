@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/props/breakable.gd" id="1_break"]
+[ext_resource type="PackedScene" path="res://KayKit/Assets/gltf/barrel_small.gltf" id="2_model"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_barrel"]
+height = 0.775
+radius = 0.38
+
+[node name="Barrel" type="RigidBody3D"]
+mass = 15.0
+script = ExtResource("1_break")
+max_health = 60.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CylinderShape3D_barrel")
+
+[node name="Model" parent="." instance=ExtResource("2_model")]
+transform = Transform3D(0.76, 0, 0, 0, 0.76, 0, 0, 0, 0.76, 0, -0.3875, 0)

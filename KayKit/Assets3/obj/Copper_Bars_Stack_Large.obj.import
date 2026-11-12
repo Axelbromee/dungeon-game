@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://lx8yvutklfvv"
+path="res://.godot/imported/Copper_Bars_Stack_Large.obj-84962eea2258b6c8186107f7e5c8f232.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Copper_Bars_Stack_Large.obj-84962eea2258b6c8186107f7e5c8f232.mesh"]
+
+source_file="res://KayKit/Assets3/obj/Copper_Bars_Stack_Large.obj"
+dest_files=["res://.godot/imported/Copper_Bars_Stack_Large.obj-84962eea2258b6c8186107f7e5c8f232.mesh", "res://.godot/imported/Copper_Bars_Stack_Large.obj-84962eea2258b6c8186107f7e5c8f232.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

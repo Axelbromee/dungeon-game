@@ -1,0 +1,93 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="2_hud"]
+[ext_resource type="Script" path="res://scripts/core/spawn_point.gd" id="3_spawn"]
+[ext_resource type="PackedScene" path="res://scenes/building/floor_plank.tscn" id="4_floor_plank"]
+[ext_resource type="PackedScene" path="res://scenes/building/scene_door.tscn" id="5_scene_door"]
+
+[sub_resource type="Environment" id="Environment_player_room"]
+background_mode = 1
+background_color = Color(0.03, 0.025, 0.03, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.62, 0.52, 0.42, 1)
+ambient_light_energy = 0.45
+tonemap_mode = 3
+tonemap_exposure = 1.1
+glow_enabled = true
+glow_intensity = 0.8
+glow_hdr_threshold = 0.9
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bounds_x"]
+size = Vector3(7, 4, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bounds_z"]
+size = Vector3(0.5, 4, 7)
+
+[node name="PlayerRoom" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_player_room")
+
+[node name="Lighting" type="Node3D" parent="."]
+
+[node name="RoomLight" type="OmniLight3D" parent="Lighting"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6, 0)
+light_color = Color(1, 0.68, 0.35, 1)
+light_energy = 1.8
+omni_range = 8.0
+omni_attenuation = 1.3
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 1.8)
+
+[node name="HUD" parent="." node_paths=PackedStringArray("player") instance=ExtResource("2_hud")]
+player = NodePath("../Player")
+
+[node name="Spawns" type="Node3D" parent="."]
+
+[node name="Default" type="Marker3D" parent="Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 1.8)
+script = ExtResource("3_spawn")
+
+[node name="FromGuild" type="Marker3D" parent="Spawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 1.8)
+script = ExtResource("3_spawn")
+spawn_id = &"from_guild"
+
+[node name="Ground" type="Node3D" parent="."]
+
+[node name="Floor" parent="Ground" instance=ExtResource("4_floor_plank")]
+tiles_x = 3
+tiles_z = 3
+
+[node name="Bounds" type="StaticBody3D" parent="."]
+
+[node name="North" type="CollisionShape3D" parent="Bounds"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -3.25)
+shape = SubResource("BoxShape3D_bounds_x")
+
+[node name="South" type="CollisionShape3D" parent="Bounds"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 3.25)
+shape = SubResource("BoxShape3D_bounds_x")
+
+[node name="West" type="CollisionShape3D" parent="Bounds"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.25, 2, 0)
+shape = SubResource("BoxShape3D_bounds_z")
+
+[node name="East" type="CollisionShape3D" parent="Bounds"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.25, 2, 0)
+shape = SubResource("BoxShape3D_bounds_z")
+
+[node name="Building" type="Node3D" parent="."]
+
+[node name="Furniture" type="Node3D" parent="."]
+
+[node name="Exits" type="Node3D" parent="."]
+
+[node name="DoorToGuild" parent="Exits" instance=ExtResource("5_scene_door")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 3)
+target_scene = "res://scenes/world/guild_hall.tscn"
+target_spawn = &"from_room"
+prompt = "Return to the guild hall"
+sign_text = "GUILD HALL"

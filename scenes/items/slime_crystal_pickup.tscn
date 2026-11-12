@@ -51,6 +51,7 @@ mass = 0.3
 physics_material_override = SubResource("PhysicsMaterial_crystal")
 continuous_cd = true
 script = ExtResource("1_pickup")
+default_item = "res://items/slime_crystal.tres"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_crystal")

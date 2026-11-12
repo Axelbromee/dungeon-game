@@ -91,23 +91,6 @@ func grade_name() -> String:
 	return InventoryItem.Grade.keys()[adventurer_grade]
 
 
-static func stat_name(stat: Stat) -> String:
-	return (Stat.keys()[stat] as String).capitalize()
-
-
-func stat_effect_text(stat: Stat) -> String:
-	match stat:
-		Stat.VITALITY:
-			return "+%d max HP" % roundi(vitality_health_per_point)
-		Stat.MAGIC:
-			return "+%d%% fireball damage, +%d max mana" % [roundi(magic_damage_per_point * 100.0), roundi(magic_mana_per_point)]
-		Stat.ENDURANCE:
-			return "+%d max stamina, +%.1f/s regen" % [roundi(endurance_stamina_per_point), endurance_regen_per_point]
-		Stat.AGILITY:
-			return "+%d%% move speed" % roundi(agility_speed_per_point * 100.0)
-	return ""
-
-
 # --- Bonuses (used by the Player) ------------------------------------------
 
 func health_bonus() -> float:

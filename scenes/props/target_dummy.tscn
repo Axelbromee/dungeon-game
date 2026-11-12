@@ -1,9 +1,9 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/target_dummy.gd" id="1_dummy"]
-[ext_resource type="Material" path="res://materials/wood.tres" id="2_wood"]
-[ext_resource type="Material" path="res://materials/burlap.tres" id="3_burlap"]
-[ext_resource type="Material" path="res://materials/iron.tres" id="4_iron"]
+[ext_resource type="Script" path="res://scripts/props/target_dummy.gd" id="1_dummy"]
+[ext_resource type="Material" path="res://materials/surfaces/wood.tres" id="2_wood"]
+[ext_resource type="Material" path="res://materials/surfaces/burlap.tres" id="3_burlap"]
+[ext_resource type="Material" path="res://materials/surfaces/iron.tres" id="4_iron"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_post"]
 material = ExtResource("2_wood")

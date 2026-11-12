@@ -182,6 +182,7 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 	var count := inventory.get_count(index)
 	var amount := count
 	if Input.is_key_pressed(KEY_CTRL) and count >= 2:
+		@warning_ignore("integer_division")
 		amount = count / 2  # Ctrl+drag: carry half.
 	set_drag_preview(_make_preview(item, amount))
 	if amount == count:

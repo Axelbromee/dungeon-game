@@ -15,7 +15,15 @@ const LAYER_WORLD := 1
 const LAYER_PLAYER_ONLY := 2
 const LAYER_INTERACTABLE := 4
 
+## Folder of the KayKit dungeon models (meshes for the kit pieces).
+const KAYKIT := "res://KayKit/Assets/gltf/"
+
 static var _materials: Dictionary = {}
+
+
+## Path of a KayKit dungeon model by name, e.g. kk("wall").
+static func kk(model_name: String) -> String:
+	return KAYKIT + model_name + ".gltf"
 
 var _signature: String = ""
 var _generated: Array[Node] = []
@@ -125,6 +133,122 @@ func add_label(text: String, pos: Vector3, font_size: int = 48, color: Color = C
 	return label
 
 
+## A model (e.g. a KayKit .gltf) at uniform scale `s`, turned `rot_y_deg`
+## around Y, with the bottom centre of its bounds at `bottom` (in the
+## parent's space). Models are never stretched: pick a scale, use several
+## pieces, or a bigger model. `only` / `skip` pick mesh parts by node name;
+## the bounds are those of the picked parts. Returns the holder node.
+func add_model(path: String, s: float, bottom: Vector3, rot_y_deg: float = 0.0, parent: Node3D = null,
+		only: PackedStringArray = PackedStringArray(), skip: PackedStringArray = PackedStringArray()) -> Node3D:
+	return add_model_xform(path, uniform_xform(path, s, bottom, rot_y_deg, only, skip), parent, only, skip)
+
+
+## The transform add_model() uses: uniform scale, bottom centre at `bottom`.
+static func uniform_xform(path: String, s: float, bottom: Vector3, rot_y_deg: float = 0.0,
+		only: PackedStringArray = PackedStringArray(), skip: PackedStringArray = PackedStringArray()) -> Transform3D:
+	var src := model_aabb(path, only, skip)
+	var model_basis := Basis(Vector3.UP, deg_to_rad(rot_y_deg)).scaled_local(Vector3.ONE * s)
+	var placed := Transform3D(model_basis, Vector3.ZERO) * src
+	var centre := placed.get_center()
+	return Transform3D(model_basis, bottom - Vector3(centre.x, placed.position.y, centre.z))
+
+
+## A model with uniform scale: `height` tall, its bottom centre at `bottom`.
+func add_model_sized(path: String, bottom: Vector3, height: float, rot_y_deg: float = 0.0,
+		parent: Node3D = null) -> Node3D:
+	var src := model_aabb(path)
+	var s := height / maxf(src.size.y, 0.001)
+	var model_basis := Basis(Vector3.UP, deg_to_rad(rot_y_deg)).scaled_local(Vector3.ONE * s)
+	var centre := src.get_center()
+	var offset := model_basis * Vector3(centre.x, src.position.y, centre.z)
+	return add_model_xform(path, Transform3D(model_basis, bottom - offset), parent)
+
+
+## A model turned by `rot_deg` (Euler, degrees) with uniform scale so its
+## longest side is `longest`, its bottom centre at `bottom`.
+func add_model_posed(path: String, bottom: Vector3, longest: float, rot_deg: Vector3,
+		parent: Node3D = null) -> Node3D:
+	var src := model_aabb(path)
+	var rot := Basis.from_euler(rot_deg * (PI / 180.0))
+	var turned := Transform3D(rot, Vector3.ZERO) * src
+	var s := longest / maxf(turned.size[turned.get_longest_axis_index()], 0.001)
+	var model_basis := rot.scaled(Vector3.ONE * s)
+	var placed := Transform3D(model_basis, Vector3.ZERO) * src
+	var centre := placed.get_center()
+	return add_model_xform(path, Transform3D(model_basis, bottom - Vector3(centre.x, placed.position.y, centre.z)), parent)
+
+
+## A model with an explicit transform (model space -> parent space).
+func add_model_xform(path: String, xform: Transform3D, parent: Node3D = null,
+		only: PackedStringArray = PackedStringArray(), skip: PackedStringArray = PackedStringArray()) -> Node3D:
+	var holder := Node3D.new()
+	holder.transform = xform
+	for part in _filtered_parts(path, only, skip):
+		var instance := MeshInstance3D.new()
+		instance.mesh = part["mesh"]
+		instance.transform = part["xform"]
+		holder.add_child(instance)
+	add_generated(holder, parent)
+	return holder
+
+
+## Bounds of a model's meshes (optionally only some parts), in model space.
+static func model_aabb(path: String, only: PackedStringArray = PackedStringArray(),
+		skip: PackedStringArray = PackedStringArray()) -> AABB:
+	var result := AABB()
+	var first := true
+	for part in _filtered_parts(path, only, skip):
+		var box: AABB = part["xform"] * (part["mesh"] as Mesh).get_aabb()
+		result = box if first else result.merge(box)
+		first = false
+	return result
+
+
+## Transform of one named part inside its model (e.g. a lid's hinge).
+static func model_part_xform(path: String, part_name: String) -> Transform3D:
+	for part in model_parts(path):
+		if part["name"] == part_name:
+			return part["xform"]
+	return Transform3D.IDENTITY
+
+
+static var _models: Dictionary = {}
+
+## Every mesh in a model scene: [{name, mesh, xform}], xform relative to
+## the model root. Loaded once and shared.
+static func model_parts(path: String) -> Array:
+	if _models.has(path):
+		return _models[path]
+	var parts: Array = []
+	var scene := load(path) as PackedScene
+	if scene == null:
+		push_error("KitPiece: can't load model %s" % path)
+	else:
+		var root := scene.instantiate() as Node3D
+		for node in root.find_children("*", "MeshInstance3D", true, false):
+			var mesh_node := node as MeshInstance3D
+			var xform := Transform3D.IDENTITY
+			var walk: Node = mesh_node
+			while walk != null and walk != root:
+				xform = (walk as Node3D).transform * xform
+				walk = walk.get_parent()
+			parts.append({"name": String(mesh_node.name), "mesh": mesh_node.mesh, "xform": xform})
+		root.free()
+	_models[path] = parts
+	return parts
+
+
+static func _filtered_parts(path: String, only: PackedStringArray, skip: PackedStringArray) -> Array:
+	var result: Array = []
+	for part in model_parts(path):
+		if not only.is_empty() and not only.has(part["name"]):
+			continue
+		if skip.has(part["name"]):
+			continue
+		result.append(part)
+	return result
+
+
 ## Adds any node as a generated (rebuilt, never saved) child.
 func add_generated(node: Node, parent: Node = null) -> Node:
 	var target: Node = parent if parent else self
@@ -168,31 +292,31 @@ func make_rng(salt: int = 0) -> RandomNumberGenerator:
 ## stone, stone_wall, stone_pillar, plaster, iron, brass, cloth_red,
 ## cloth_blue, cloth_green, parchment, cork, glow_warm, glass, straw,
 ## blanket, linen, void.
-static func mat(name: String) -> Material:
-	if _materials.has(name):
-		return _materials[name]
+static func mat(material_name: String) -> Material:
+	if _materials.has(material_name):
+		return _materials[material_name]
 	var material: Material
-	match name:
+	match material_name:
 		"wood":
-			material = _tinted("res://materials/wood.tres", Color(1, 1, 1))
+			material = _tinted("res://materials/surfaces/wood.tres", Color(1, 1, 1))
 		"wood_dark":
-			material = _tinted("res://materials/wood.tres", Color(0.5, 0.42, 0.36))
+			material = _tinted("res://materials/surfaces/wood.tres", Color(0.5, 0.42, 0.36))
 		"wood_light":
-			material = _tinted("res://materials/wood.tres", Color(1.25, 1.15, 1.0))
+			material = _tinted("res://materials/surfaces/wood.tres", Color(1.25, 1.15, 1.0))
 		"plank_a":
-			material = _tinted("res://materials/wood.tres", Color(0.95, 0.88, 0.8))
+			material = _tinted("res://materials/surfaces/wood.tres", Color(0.95, 0.88, 0.8))
 		"plank_b":
-			material = _tinted("res://materials/wood.tres", Color(0.82, 0.74, 0.66))
+			material = _tinted("res://materials/surfaces/wood.tres", Color(0.82, 0.74, 0.66))
 		"plank_c":
-			material = _tinted("res://materials/wood.tres", Color(1.05, 0.95, 0.85))
+			material = _tinted("res://materials/surfaces/wood.tres", Color(1.05, 0.95, 0.85))
 		"stone":
-			material = load("res://materials/stone_floor.tres")
+			material = load("res://materials/surfaces/stone_floor.tres")
 		"stone_wall":
-			material = load("res://materials/stone_wall.tres")
+			material = load("res://materials/surfaces/stone_wall.tres")
 		"stone_pillar":
-			material = load("res://materials/stone_pillar.tres")
+			material = load("res://materials/surfaces/stone_pillar.tres")
 		"iron":
-			material = load("res://materials/iron.tres")
+			material = load("res://materials/surfaces/iron.tres")
 		"plaster":
 			material = _flat(Color(0.82, 0.76, 0.64), 0.95)
 		"brass":
@@ -233,7 +357,7 @@ static func mat(name: String) -> Material:
 			material = void_mat
 		_:
 			material = _flat(Color(1, 0, 1), 1.0)  # Magenta = unknown name.
-	_materials[name] = material
+	_materials[material_name] = material
 	return material
 
 

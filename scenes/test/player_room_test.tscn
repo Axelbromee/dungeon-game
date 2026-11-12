@@ -1,0 +1,151 @@
+[gd_scene format=3 uid="uid://daqqhqsg17mgw"]
+
+[ext_resource type="PackedScene" uid="uid://bnixwl4ts8xyx" path="res://scenes/player/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="2_hud"]
+[ext_resource type="Script" uid="uid://jpkm51xlmqjy" path="res://scripts/core/spawn_point.gd" id="3_spawn"]
+[ext_resource type="PackedScene" path="res://scenes/building/floor_plank.tscn" id="4_floor_plank"]
+[ext_resource type="PackedScene" path="res://scenes/building/wall.tscn" id="5_wall"]
+[ext_resource type="PackedScene" path="res://scenes/building/wall_window.tscn" id="6_wall_window"]
+[ext_resource type="PackedScene" path="res://scenes/building/wall_corner.tscn" id="7_wall_corner"]
+[ext_resource type="PackedScene" path="res://scenes/building/roof.tscn" id="8_roof"]
+[ext_resource type="PackedScene" path="res://scenes/guild/furniture/bed.tscn" id="9_bed"]
+[ext_resource type="PackedScene" path="res://scenes/guild/stations/storage_chest.tscn" id="10_storage_chest"]
+[ext_resource type="PackedScene" path="res://scenes/guild/stations/furniture_spot.tscn" id="11_furniture_spot"]
+[ext_resource type="PackedScene" path="res://scenes/guild/furniture/lantern.tscn" id="12_lantern"]
+[ext_resource type="PackedScene" path="res://scenes/guild/furniture/banner.tscn" id="13_banner"]
+[ext_resource type="PackedScene" path="res://scenes/guild/furniture/table.tscn" id="14_table"]
+[ext_resource type="PackedScene" path="res://scenes/guild/furniture/chair.tscn" id="15_chair"]
+[ext_resource type="PackedScene" path="res://scenes/building/scene_door.tscn" id="16_scene_door"]
+
+[sub_resource type="Environment" id="Environment_room"]
+background_mode = 1
+background_color = Color(0.03, 0.025, 0.03, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.62, 0.52, 0.42, 1)
+ambient_light_energy = 0.45
+tonemap_mode = 3
+tonemap_exposure = 1.1
+glow_enabled = true
+glow_intensity = 0.8
+glow_hdr_threshold = 0.9
+
+[node name="PlayerRoomTest" type="Node3D" unique_id=1830404622]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1985008996]
+environment = SubResource("Environment_room")
+
+[node name="Player" parent="." unique_id=495258424 instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 1.8)
+
+[node name="HUD" parent="." unique_id=859567983 node_paths=PackedStringArray("player") instance=ExtResource("2_hud")]
+player = NodePath("../Player")
+
+[node name="Spawns" type="Node3D" parent="." unique_id=1909319335]
+
+[node name="Default" type="Marker3D" parent="Spawns" unique_id=1324670113]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 1.8)
+script = ExtResource("3_spawn")
+
+[node name="FromGuild" type="Marker3D" parent="Spawns" unique_id=375730965]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 1.8)
+script = ExtResource("3_spawn")
+spawn_id = &"from_guild"
+
+[node name="Room" type="Node3D" parent="." unique_id=1732298103]
+
+[node name="Floor" parent="Room" unique_id=950639374 instance=ExtResource("4_floor_plank")]
+tiles_x = 3
+tiles_z = 3
+
+[node name="Ceiling" parent="Room" unique_id=1313314004 instance=ExtResource("8_roof")]
+tiles_x = 3
+tiles_z = 3
+
+[node name="NorthWall1" parent="Room" unique_id=697730781 instance=ExtResource("5_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -3)
+
+[node name="NorthWall2" parent="Room" unique_id=963930671 instance=ExtResource("6_wall_window")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="NorthWall3" parent="Room" unique_id=1470613437 instance=ExtResource("5_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -3)
+
+[node name="SouthWall1" parent="Room" unique_id=34990822 instance=ExtResource("5_wall")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -2, 0, 3)
+
+[node name="SouthWall2" parent="Room" unique_id=1727864618 instance=ExtResource("5_wall")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 2, 0, 3)
+
+[node name="DoorToGuild" parent="Room" unique_id=643008766 instance=ExtResource("16_scene_door")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 3)
+target_scene = "res://scenes/test/guild_kit_test.tscn"
+target_spawn = &"from_room"
+prompt = "Return to the guild hall"
+sign_text = "GUILD HALL"
+
+[node name="WestWall1" parent="Room" unique_id=1692588848 instance=ExtResource("5_wall")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -3, 0, -2)
+
+[node name="WestWall2" parent="Room" unique_id=1680478690 instance=ExtResource("6_wall_window")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -3, 0, 0)
+
+[node name="WestWall3" parent="Room" unique_id=1507197913 instance=ExtResource("5_wall")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -3, 0, 2)
+
+[node name="EastWall1" parent="Room" unique_id=271880106 instance=ExtResource("5_wall")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 3, 0, -2)
+
+[node name="EastWall2" parent="Room" unique_id=612999678 instance=ExtResource("5_wall")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 3, 0, 0)
+
+[node name="EastWall3" parent="Room" unique_id=2108335473 instance=ExtResource("5_wall")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 3, 0, 2)
+
+[node name="CornerNW" parent="Room" unique_id=54480439 instance=ExtResource("7_wall_corner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, -3)
+
+[node name="CornerNE" parent="Room" unique_id=2044933867 instance=ExtResource("7_wall_corner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -3)
+
+[node name="CornerSW" parent="Room" unique_id=1906968254 instance=ExtResource("7_wall_corner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 3)
+
+[node name="CornerSE" parent="Room" unique_id=841744329 instance=ExtResource("7_wall_corner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 3)
+
+[node name="Furniture" type="Node3D" parent="." unique_id=115904478]
+
+[node name="Bed" parent="Furniture" unique_id=1477737423 instance=ExtResource("9_bed")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9, 0, -1.75)
+collision_layer = 5
+
+[node name="StorageChest" parent="Furniture" unique_id=727950450 instance=ExtResource("10_storage_chest")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 0, -2.5)
+collision_layer = 5
+
+[node name="CraftingSpot" parent="Furniture" unique_id=1736273915 instance=ExtResource("11_furniture_spot")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, 0, -1.9)
+
+[node name="PotionSpot" parent="Furniture" unique_id=1972816246 instance=ExtResource("11_furniture_spot")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, 0, 1)
+text = "Potion station
+(coming soon)"
+size = Vector2(1.4, 0.9)
+
+[node name="Table" parent="Furniture" unique_id=1347678630 instance=ExtResource("14_table")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 0, 1.6)
+size = Vector3(0.9, 0.75, 0.7)
+
+[node name="Chair" parent="Furniture" unique_id=1552341678 instance=ExtResource("15_chair")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -1.45, 0, 1.6)
+
+[node name="Banner" parent="Furniture" unique_id=859472473 instance=ExtResource("13_banner")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -2.86, 2.6, -0.9)
+length = 1.2
+
+[node name="Lantern" parent="Furniture" unique_id=1842230407 instance=ExtResource("12_lantern")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+chain_length = 0.6
+light_enabled = true
+light_energy = 1.8
+light_range = 8.0

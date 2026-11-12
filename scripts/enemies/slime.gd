@@ -61,7 +61,7 @@ enum FirePhase { WINDUP, RECOVER }
 @export var jump_shake_speed: float = 45.0
 ## Peak height of the leap above the take-off point (m). Automatically
 ## lowered if the ceiling is in the way.
-@export var jump_height: float = 5
+@export var jump_height: float = 5.0
 ## Gap kept between the top of the slime and the ceiling at the apex.
 @export var jump_ceiling_margin: float = 0.3
 ## Leaps never travel farther than this horizontally.
@@ -222,15 +222,15 @@ var _knockback_cooldown_timer: float = 0.0
 ## True during the HURT state caused by a hit, so that hit's knockback lands.
 var _knockback_armed: bool = false
 
+var _shockwave_material: StandardMaterial3D
+var _shockwave_tween: Tween
+
 @onready var _visual: Node3D = $Visual
 @onready var _body_mesh: MeshInstance3D = $Visual/Body
 @onready var _health_label: Label3D = $HealthLabel
 @onready var _shadow: MeshInstance3D = $LandingShadow
 @onready var _splash: GPUParticles3D = $Splash
 @onready var _shockwave: MeshInstance3D = $Shockwave
-
-var _shockwave_material: StandardMaterial3D
-var _shockwave_tween: Tween
 
 
 func _ready() -> void:

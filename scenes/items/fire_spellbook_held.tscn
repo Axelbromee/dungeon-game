@@ -1,27 +1,8 @@
 [gd_scene format=3]
 
-[ext_resource type="Material" path="res://materials/fire_particle.tres" id="1_soft"]
-[ext_resource type="ParticleProcessMaterial" path="res://materials/fire_flame_process.tres" id="2_flame"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_leather"]
-albedo_color = Color(0.32, 0.05, 0.03, 1)
-roughness = 0.65
-
-[sub_resource type="BoxMesh" id="BoxMesh_cover"]
-material = SubResource("StandardMaterial3D_leather")
-size = Vector3(0.17, 0.01, 0.25)
-
-[sub_resource type="BoxMesh" id="BoxMesh_spine"]
-material = SubResource("StandardMaterial3D_leather")
-size = Vector3(0.03, 0.02, 0.25)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pages"]
-albedo_color = Color(0.9, 0.84, 0.68, 1)
-roughness = 0.95
-
-[sub_resource type="BoxMesh" id="BoxMesh_pages"]
-material = SubResource("StandardMaterial3D_pages")
-size = Vector3(0.155, 0.022, 0.235)
+[ext_resource type="Material" path="res://materials/effects/fire_particle.tres" id="1_soft"]
+[ext_resource type="ParticleProcessMaterial" path="res://materials/effects/fire_flame_process.tres" id="2_flame"]
+[ext_resource type="PackedScene" path="res://KayKit/Assets/gltf/journal_open.gltf" id="3_model"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rune"]
 transparency = 1
@@ -39,68 +20,17 @@ height = 0.002
 radial_segments = 24
 rings = 1
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ink"]
-albedo_color = Color(0.25, 0.12, 0.08, 1)
-roughness = 1.0
-
-[sub_resource type="BoxMesh" id="BoxMesh_line"]
-material = SubResource("StandardMaterial3D_ink")
-size = Vector3(0.11, 0.001, 0.006)
-
 [sub_resource type="QuadMesh" id="QuadMesh_ember"]
 material = ExtResource("1_soft")
 size = Vector2(0.05, 0.05)
 
 [node name="FireSpellbookHeld" type="Node3D"]
 
-[node name="Spine" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.008, 0)
-mesh = SubResource("BoxMesh_spine")
+[node name="Model" parent="." instance=ExtResource("3_model")]
+transform = Transform3D(0.362, 0, 0, 0, 0, 0.362, 0, -0.362, 0, 0, 0.005, -0.018)
 
-[node name="LeftHalf" type="Node3D" parent="."]
-transform = Transform3D(0.978, -0.208, 0, 0.208, 0.978, 0, 0, 0, 1, 0, 0, 0)
-
-[node name="Cover" type="MeshInstance3D" parent="LeftHalf"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.085, 0, 0)
-mesh = SubResource("BoxMesh_cover")
-
-[node name="Pages" type="MeshInstance3D" parent="LeftHalf"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.082, 0.016, 0)
-mesh = SubResource("BoxMesh_pages")
-
-[node name="Line1" type="MeshInstance3D" parent="LeftHalf"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.082, 0.028, -0.07)
-mesh = SubResource("BoxMesh_line")
-
-[node name="Line2" type="MeshInstance3D" parent="LeftHalf"]
-transform = Transform3D(0.8, 0, 0, 0, 1, 0, 0, 0, 1, -0.09, 0.028, -0.04)
-mesh = SubResource("BoxMesh_line")
-
-[node name="Line3" type="MeshInstance3D" parent="LeftHalf"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.082, 0.028, -0.01)
-mesh = SubResource("BoxMesh_line")
-
-[node name="Line4" type="MeshInstance3D" parent="LeftHalf"]
-transform = Transform3D(0.6, 0, 0, 0, 1, 0, 0, 0, 1, -0.095, 0.028, 0.02)
-mesh = SubResource("BoxMesh_line")
-
-[node name="Line5" type="MeshInstance3D" parent="LeftHalf"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.082, 0.028, 0.05)
-mesh = SubResource("BoxMesh_line")
-
-[node name="RightHalf" type="Node3D" parent="."]
-transform = Transform3D(0.978, 0.208, 0, -0.208, 0.978, 0, 0, 0, 1, 0, 0, 0)
-
-[node name="Cover" type="MeshInstance3D" parent="RightHalf"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.085, 0, 0)
-mesh = SubResource("BoxMesh_cover")
-
-[node name="Pages" type="MeshInstance3D" parent="RightHalf"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.082, 0.016, 0)
-mesh = SubResource("BoxMesh_pages")
-
-[node name="Rune" type="MeshInstance3D" parent="RightHalf"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.082, 0.028, 0)
+[node name="Rune" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.927, -0.375, 0, 0.375, 0.927, 0, 0, 0, 1, 0.085, 0.075, 0)
 mesh = SubResource("CylinderMesh_rune")
 
 [node name="Embers" type="GPUParticles3D" parent="."]

@@ -44,6 +44,7 @@ mass = 0.2
 physics_material_override = SubResource("PhysicsMaterial_royal_jelly")
 continuous_cd = true
 script = ExtResource("1_pickup")
+default_item = "res://items/royal_jelly.tres"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape3D_royal_jelly")
