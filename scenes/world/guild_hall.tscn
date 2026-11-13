@@ -451,7 +451,7 @@ tiles_x = 2
 tiles_z = 9
 
 [node name="LandingFloor" parent="Structure/UpperFloor" unique_id=65150428 instance=ExtResource("12_floor_plank")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 4, -4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2794466, 4, -4)
 tiles_x = 2
 
 [node name="BalconyUnderside" parent="Structure/UpperFloor" unique_id=154324121 instance=ExtResource("11_roof")]
@@ -461,7 +461,7 @@ tiles_z = 9
 height = 3.65
 
 [node name="LandingUnderside" parent="Structure/UpperFloor" unique_id=2118006111 instance=ExtResource("11_roof")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.340644, 0, -4)
 tiles_x = 2
 height = 3.65
 
@@ -499,12 +499,12 @@ post_start = false
 post_end = false
 
 [node name="SouthEdge" parent="Structure/UpperFloor/Railings" unique_id=1078214958 instance=ExtResource("15_railing")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 4, -5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5982256, 4, -5)
 length = 8.0
 post_end = false
 
 [node name="LandingWestEdge" parent="Structure/UpperFloor/Railings" unique_id=2003628333 instance=ExtResource("15_railing")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2, 4, -4)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2.6114721, 4, -4)
 post_end = false
 
 [node name="Stations" type="Node3D" parent="." unique_id=1679082641]
@@ -960,6 +960,9 @@ transform = Transform3D(0.18, 0, 0, 0, 0.18, 0, 0, 0, 0.18, 7.7, 0.78, -9.6)
 
 [node name="Outside" type="Node3D" parent="." unique_id=1212131277]
 script = ExtResource("49_outside")
+forest_radius = 150.0
+ground_size = 300.0
+path_length = 134.825
 
 [node name="Sun" type="DirectionalLight3D" parent="Outside" unique_id=33389525]
 transform = Transform3D(0.8575, 0.3024, -0.4162, 0, 0.809, 0.5878, 0.5145, -0.504, 0.6937, 0, 30, 0)

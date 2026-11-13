@@ -1,8 +1,12 @@
-[gd_resource type="StandardMaterial3D" format=3]
+[gd_resource type="ShaderMaterial" format=3 uid="uid://b71c77f4r5adh"]
+
+[ext_resource type="Shader" uid="uid://yiex64yyrm60" path="res://shaders/world/floor1_water.gdshader" id="1_rrrht"]
 
 [resource]
-transparency = 1
-cull_mode = 2
-albedo_color = Color(0.36, 0.72, 0.78, 0.82)
-metallic_specular = 0.6
-roughness = 0.2
+render_priority = 0
+shader = ExtResource("1_rrrht")
+shader_parameter/water_color = Color(0.36, 0.72, 0.78, 0.82)
+shader_parameter/streak_color = Color(0.8, 0.94, 0.97, 0.9)
+shader_parameter/white_color = Color(0.93, 0.97, 1, 0.92)
+shader_parameter/flow_speed = 1.4
+shader_parameter/streak_scale = 1.0

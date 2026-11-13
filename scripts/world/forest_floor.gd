@@ -22,7 +22,9 @@ extends Node3D
 ##   lights, one per chamber). The inside is on render layer 2, which the sun
 ##   skips; daylight seems to spill a few metres in from the mouth. The
 ##   `cave_darkness` area fades to a dark ambient light inside.
-## - Water (lake + stream) with collision on layer 5 only (spawn areas avoid
+## - Water: the lake, a pool at the edge cliff foot and the stream from the pool
+##   into the lake (one strip overlapping both, streaks moving with the flow);
+##   collision on layer 5 only (spawn areas avoid
 ##   it; the player wades through).
 ## - Rock skin: many smaller KayKit rocks (mostly small and medium, a few
 ##   large), turned at random, overlapping and half buried, densely cover the
@@ -47,6 +49,11 @@ const NATURE := "res://KayKit/Assets4/gltf/%s_Color1.gltf"
 const RESOURCE := "res://KayKit/Assets3/gltf/%s.gltf"
 const TERRAIN_MATERIAL := "res://materials/world/floor1_terrain.tres"
 const WATER_MATERIAL := "res://materials/world/water.tres"
+## The pool at the cliff foot where the stream starts (the waterfall scene,
+## scenes/world/waterfall.tscn, is placed above it by hand).
+const POOL_RADIUS := 7.0
+## Columns across the stream's water strip (about 1 m wide each).
+const STREAM_COLUMNS := 8
 const WATER_LAYER := 16  # Physics layer 5.
 const SCENERY_LAYER := 32  # Physics layer 6: only spawn areas look at it.
 ## Render layer 2: the cave's inside and everything in it. The sun's cull mask
@@ -90,12 +97,9 @@ const CLIFF_TIERS := {
 		"Rock_3_E", "Rock_3_F"], 0.9, 2.0],
 	"rubble": [["Rock_1_A", "Rock_1_B", "Rock_1_C", "Rock_2_A", "Rock_2_B"], 1.0, 2.5],
 }
-## Grids for the cliff skin: the main layer (medium, a few large; drawn far)
-## and the fine layer (small rocks and rubble; drawn near).
-const CLIFF_ROCK_SPACING := 3.0
-const CLIFF_FINE_SPACING := 2.0
-## Grid for the cave's wall and ceiling skin (on the cave's floor plan).
-const CAVE_SKIN_SPACING := 1.8
+## Share of `cliff_rock_density` that goes into the main layer (medium, a few
+## large; drawn far); the rest is the fine layer (small rocks and rubble).
+const CLIFF_MAIN_SHARE := 0.31
 ## Head room kept under rocks hanging from the cave ceiling (metres above the
 ## floor), and more along the entrance walkway.
 const CAVE_HEADROOM := 2.8
@@ -175,11 +179,14 @@ const TAKEN_MAX_RADIUS := 8.0
 @export var lake_radius: float = 40.0
 @export var lake_depth: float = 3.5
 @export var water_level: float = 0.0
-## Stream from the lake; it ends under the edge cliffs.
+## Stream into the lake (points from its lake end): it starts at a waterfall
+## where it reaches the edge cliffs (its far end runs into them) and flows
+## down to the lake.
 @export var stream: PackedVector2Array = PackedVector2Array([Vector2(-130, 95), Vector2(-112.5, 125), Vector2(-117.5, 157.5), Vector2(-100, 185), Vector2(-110, 235)])
 @export var stream_half_width: float = 3.0
-## Water level drop per metre along the stream.
-@export var stream_drop: float = 0.012
+## How much the water level rises per metre up the stream, from the lake
+## shore to the waterfall pool.
+@export var stream_drop: float = 0.02
 @export var plain_center: Vector2 = Vector2(125, 87.5)
 @export var plain_radius: float = 75.0
 ## Dirt paths (each a line of points).
@@ -229,6 +236,28 @@ const TAKEN_MAX_RADIUS := 8.0
 ## ...with a trunk this wide (scaling is always uniform, so both decide the scale).
 @export var trunk_width: Vector2 = Vector2(3, 5)
 
+@export_group("Cliff Rocks")
+## Rocks per square metre of cliff wall (edge cliffs and the cave's spur),
+## counted along the wall's own surface, so steep faces get as many as gentle
+## ones. About a third go into the main layer (medium and a few large, drawn
+## far), the rest into the fine layer (small rocks and rubble, drawn near).
+@export_range(0.05, 5.0, 0.01) var cliff_rock_density: float = 1.1
+## Size of each rock (its longest side, metres): min / max.
+@export var cliff_rock_size: Vector2 = Vector2(0.2, 10.5)
+## How much of each rock is buried in the wall (0 = just touching it, 0.95 =
+## almost hidden). More sinking = flatter, more overlapping rock.
+@export_range(0.0, 0.95, 0.01) var cliff_rock_sink: float = 0.78
+
+@export_group("Cave Rocks")
+## Rocks per square metre of the cave's walls and ceiling (along the surface).
+@export_range(0.05, 5.0, 0.01) var cave_rock_density: float = 0.9
+## Size of each rock (its longest side, metres): min / max. Rocks at the foot
+## of the walls are kept thin whatever this says.
+@export var cave_rock_size: Vector2 = Vector2(0.3, 10.5)
+## How much of each rock is buried in the wall or ceiling (0 = just touching,
+## 0.95 = almost hidden).
+@export_range(0.0, 0.95, 0.01) var cave_rock_sink: float = 0.78
+
 @export_group("Scene")
 @export var nature_root: NodePath = NodePath("../Nature")
 @export var water_root: NodePath = NodePath("../Water")
@@ -249,8 +278,20 @@ var _detail: FastNoiseLite
 var _pads: Array[Dictionary] = []
 ## Places the outline can't push cliffs into: Vector3(x, z, radius).
 var _protect: Array[Vector3] = []
+## Waterfalls (Waterfall scenes) placed in the level: cliff rocks are kept off
+## their path. Each {"from", "to" (local X/Z, foot to past the top), "half"
+## (half their width plus room)}.
+var _waterfalls: Array[Dictionary] = []
 var _holes: Array[Dictionary] = []
 var _cave_level: float = 0.0
+## The stream (metres along it from its lake end): where it leaves the lake,
+## where its pool is; the pool; and the water path (lake end to pool middle).
+var _shore_along: float = 0.0
+var _pool_along: float = 0.0
+var _pool_centre := Vector2.ZERO
+var _pool_level: float = 0.0
+var _has_pool: bool = false
+var _water_path := PackedVector2Array()
 ## Cliff height before the cave is cut out (the cave's outer roof uses it).
 var _tops := PackedFloat32Array()
 ## 1 where a vertex is inside the cave's outline (covered or at the mouth).
@@ -258,6 +299,10 @@ var _inside := PackedByteArray()
 ## 1 where a vertex is inside the cave and under rock (not at the open mouth).
 var _covered := PackedByteArray()
 var _cave_box := Rect2()
+## The cave mesh's floor height and its ceiling's height above it, per grid
+## vertex (index -> metres), as built, so rocks follow the drawn surface.
+var _cave_floors := {}
+var _cave_ceilings := {}
 ## Built meshes used by the MultiMesh batches (flowers, crystals, mushrooms).
 var _custom_meshes: Dictionary = {}
 var _generated: Array[Node] = []
@@ -288,16 +333,50 @@ func height_at(x: float, z: float) -> float:
 		return 0.0
 	var local := Vector2(x - global_position.x, z - global_position.z)
 	if _on_cave_floor(local):
-		return _cave_floor(local) + global_position.y
-	var fx := (x - global_position.x + size * 0.5) / cell
-	var fz := (z - global_position.z + size * 0.5) / cell
+		return _mesh_cave_floor(local) + global_position.y
+	var cell_at := _cell_at(local)
+	var a := int(cell_at.y) * _n + int(cell_at.x)
+	return _tri_lerp(_heights[a], _heights[a + 1], _heights[a + _n], _heights[a + _n + 1],
+		cell_at.z, cell_at.w) + global_position.y
+
+
+## The grid cell under a local X/Z and where in it: Vector4(ix, iz, tx, tz),
+## ix and iz whole numbers.
+func _cell_at(p: Vector2) -> Vector4:
+	var fx := (p.x + size * 0.5) / cell
+	var fz := (p.y + size * 0.5) / cell
 	var ix := clampi(floori(fx), 0, _n - 2)
 	var iz := clampi(floori(fz), 0, _n - 2)
-	var tx := clampf(fx - ix, 0.0, 1.0)
-	var tz := clampf(fz - iz, 0.0, 1.0)
-	var top := lerpf(_heights[iz * _n + ix], _heights[iz * _n + ix + 1], tx)
-	var bottom := lerpf(_heights[(iz + 1) * _n + ix], _heights[(iz + 1) * _n + ix + 1], tx)
-	return lerpf(top, bottom, tz) + global_position.y
+	return Vector4(ix, iz, clampf(fx - ix, 0.0, 1.0), clampf(fz - iz, 0.0, 1.0))
+
+
+## A value on the rendered triangles of one grid cell (corners at (0,0),
+## (1,0), (0,1), (1,1); split along the (1,0)-(0,1) diagonal like the meshes),
+## so things placed with it sit exactly on what's drawn.
+static func _tri_lerp(v00: float, v10: float, v01: float, v11: float, tx: float, tz: float) -> float:
+	if tx + tz <= 1.0:
+		return v00 + (v10 - v00) * tx + (v01 - v00) * tz
+	return v11 + (v01 - v11) * (1.0 - tx) + (v10 - v11) * (1.0 - tz)
+
+
+## When the editor reloads this script on an already open scene, settings
+## added since the scene was opened can come up empty (Nil) instead of with
+## their defaults. Gives any such Inspector setting its default value.
+func _fill_missing_settings() -> void:
+	var script := get_script() as Script
+	if script == null:
+		return
+	for property in get_property_list():
+		var usage: int = property["usage"]
+		if not (usage & PROPERTY_USAGE_SCRIPT_VARIABLE and usage & PROPERTY_USAGE_EDITOR):
+			continue
+		if property["type"] == TYPE_NIL or property["type"] == TYPE_CALLABLE or property["type"] == TYPE_OBJECT:
+			continue
+		var property_name: String = property["name"]
+		if typeof(get(property_name)) == TYPE_NIL:
+			var value: Variant = script.get_property_default_value(property_name)
+			if typeof(value) != TYPE_NIL:
+				set(property_name, value)
 
 
 func _make_signature() -> String:
@@ -310,6 +389,7 @@ func _make_signature() -> String:
 
 
 func _rebuild() -> void:
+	_fill_missing_settings()
 	_signature = _make_signature()
 	for node in _generated:
 		if is_instance_valid(node):
@@ -367,6 +447,8 @@ func _collect_pads() -> void:
 			var extent := area.radius if area.shape == SpawnArea.Shape.CIRCLE else area.size.length() * 0.5
 			var centre := _to_local_xz(area.global_position)
 			_protect.append(Vector3(centre.x, centre.y, extent + edge_margin + 5.0))
+	_collect_waterfalls()
+	_find_pool()
 	for i in portals.size():
 		var portal := get_node_or_null(portals[i]) as Node3D
 		if portal == null:
@@ -401,15 +483,29 @@ func _raw(p: Vector2) -> Vector4:
 		h = lerpf(shore, bed, wet)
 		sand = maxf(sand, 1.0 - smoothstep(lake_radius + 2.0, lake_radius + 7.0, dl))
 
-	# Stream: a shallow channel in a small valley, water dropping slowly.
-	var sp := _project(p, stream)
+	# Stream: a shallow channel in a small valley, its water rising slowly
+	# upstream towards the waterfall.
+	# Carved along the whole water path (pool to lake). Inside the lake it only
+	# ever lowers the ground, so no bank rises out of the lake.
+	var sp := _project(p, _water_path) if _water_path.size() >= 2 else Vector2(INF, 0.0)
 	var w := stream_half_width
 	if sp.x < w + 20.0:
-		var surface := water_level - sp.y * stream_drop
+		var surface := _stream_level(sp.y)
 		var bed := surface - 0.15 - 0.8 * (1.0 - pow(clampf(sp.x / w, 0.0, 1.0), 2.0))
 		var bank := lerpf(surface + 0.25, maxf(h, surface + 0.25), smoothstep(w + 1.5, w + 20.0, sp.x))
-		h = lerpf(bank, bed, 1.0 - smoothstep(w - 1.2, w + 1.5, sp.x))
+		var carved := lerpf(bank, bed, 1.0 - smoothstep(w - 1.2, w + 1.5, sp.x))
+		h = minf(h, carved) if dl < lake_radius + 2.0 else carved
 		sand = maxf(sand, 1.0 - smoothstep(w + 0.6, w + 3.0, sp.x))
+
+	# Pool at the foot of the waterfall: a small bowl, banks above its water.
+	# (Its rim never rises across the stream's channel.)
+	var dp := p.distance_to(_pool_centre)
+	if _has_pool and dp < POOL_RADIUS + 8.0:
+		var pool_bed := _pool_level - 0.15 - 1.2 * (1.0 - pow(clampf(dp / POOL_RADIUS, 0.0, 1.0), 2.0))
+		var pool_shore := lerpf(_pool_level + 0.3, maxf(h, _pool_level + 0.3), smoothstep(POOL_RADIUS + 1.0, POOL_RADIUS + 8.0, dp))
+		var pool_h := lerpf(pool_shore, pool_bed, 1.0 - smoothstep(POOL_RADIUS - 1.5, POOL_RADIUS + 1.0, dp))
+		h = minf(h, pool_h) if sp.x < w + 2.0 else pool_h
+		sand = maxf(sand, 1.0 - smoothstep(POOL_RADIUS + 1.0, POOL_RADIUS + 3.0, dp))
 
 	# Paths: worn dirt, slightly sunk.
 	var pd := _path_distance(p)
@@ -521,8 +617,7 @@ func _build_terrain() -> void:
 			var centre := _grid_point(ix, iz) + Vector2(cell, cell) * 0.5
 			if _in_hole(centre) or _is_cave_quad(ix, iz):
 				continue
-			@warning_ignore("integer_division")
-			var key := Vector2i(ix / GROUND_CHUNK_CELLS, iz / GROUND_CHUNK_CELLS)
+			var key := Vector2i(floori(float(ix) / GROUND_CHUNK_CELLS), floori(float(iz) / GROUND_CHUNK_CELLS))
 			if not chunks.has(key):
 				chunks[key] = MeshData.new()
 			var data: MeshData = chunks[key]
@@ -806,8 +901,10 @@ func _build_cave() -> void:
 	# keeps its full height at the open mouth too, so the opening is as tall
 	# as the cave there (the rock above ends in a lip at the vault's edge
 	# instead of sloping down into the opening).
-	var floors := {}
-	var ceilings := {}
+	_cave_floors.clear()
+	_cave_ceilings.clear()
+	var floors := _cave_floors
+	var ceilings := _cave_ceilings
 	for iz in range(z0, z1 + 1):
 		for ix in range(x0, x1 + 1):
 			var p := _grid_point(ix, iz)
@@ -1007,71 +1104,159 @@ func _snap_nodes() -> void:
 
 # --- Water --------------------------------------------------------------------
 
+## The water: the lake and the pool (flat, at their own levels) and the
+## stream, one strip of water along `_water_path` from inside the pool to
+## inside the lake. The strip overlaps both, its ends sitting just under
+## their surfaces and fading out there, so there's no gap and no seam.
 func _build_water() -> void:
 	var root := _root(water_root)
 	var material := load(WATER_MATERIAL) as Material
+	var data := WaterData.new()
+	_water_disc(data, lake_center, lake_radius + 6.0, water_level)
+	if _has_pool:
+		_water_disc(data, _pool_centre, POOL_RADIUS + 1.5, _pool_level)
+		_stream_strip(data)
+	var surface := MeshInstance3D.new()
+	surface.name = "Water"
+	surface.mesh = _water_mesh(data, material)
+	surface.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_add_generated(surface, root)
+	var body := _water_body("WaterSurface", root)
+	var shape := ConcavePolygonShape3D.new()
+	shape.set_faces(data.vertices)
+	shape.backface_collision = true
+	var collider := CollisionShape3D.new()
+	collider.shape = shape
+	body.add_child(collider)
 
-	var lake := MeshInstance3D.new()
-	lake.name = "Lake"
-	var plane := PlaneMesh.new()
-	plane.size = Vector2.ONE * (lake_radius + 6.0) * 2.0
-	plane.subdivide_width = 16
-	plane.subdivide_depth = 16
-	lake.mesh = plane
-	lake.material_override = material
-	lake.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	lake.position = Vector3(lake_center.x, water_level, lake_center.y)
-	_add_generated(lake, root)
-	var lake_body := _water_body("LakeSurface", root)
-	var disc := CylinderShape3D.new()
-	disc.radius = lake_radius + 2.0
-	disc.height = 0.2
-	var disc_collider := CollisionShape3D.new()
-	disc_collider.shape = disc
-	disc_collider.position = Vector3(lake_center.x, water_level, lake_center.y)
-	lake_body.add_child(disc_collider)
 
-	# Stream ribbon from the lake shore on, following the water level.
-	var total := _line_length(stream)
-	var st := SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var faces := PackedVector3Array()
-	var prev_l := Vector3.ZERO
-	var prev_r := Vector3.ZERO
-	var started := false
+## Water triangles being collected: flat-shaded, with the data the water
+## shader reads (UV and COLOR, see shaders/world/floor1_water.gdshader).
+class WaterData:
+	var vertices := PackedVector3Array()
+	var normals := PackedVector3Array()
+	var uvs := PackedVector2Array()
+	var colors := PackedColorArray()
+
+	func tri(points: Array, tex: Array, flow: Array) -> void:
+		var p0: Vector3 = points[0]
+		var p1: Vector3 = points[1]
+		var p2: Vector3 = points[2]
+		var normal := (p2 - p0).cross(p1 - p0).normalized()
+		if normal.y < 0.0:
+			normal = -normal
+		for k in 3:
+			vertices.append(points[k])
+			normals.append(normal)
+			uvs.append(tex[k])
+			colors.append(flow[k])
+
+
+func _water_mesh(data: WaterData, material: Material) -> ArrayMesh:
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = data.vertices
+	arrays[Mesh.ARRAY_NORMAL] = data.normals
+	arrays[Mesh.ARRAY_TEX_UV] = data.uvs
+	arrays[Mesh.ARRAY_COLOR] = data.colors
+	var mesh := ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	mesh.surface_set_material(0, material)
+	return mesh
+
+
+## A flat, still disc of water (its edge ends under the banks).
+func _water_disc(data: WaterData, centre: Vector2, radius: float, level: float) -> void:
+	var still := Color(0.0, 0.25, 0.0, 1.0)
+	var segments := 48
+	var middle := Vector3(centre.x, level, centre.y)
+	for i in segments:
+		var a0 := TAU * i / segments
+		var a1 := TAU * (i + 1) / segments
+		var e0 := middle + Vector3(cos(a0), 0.0, sin(a0)) * radius
+		var e1 := middle + Vector3(cos(a1), 0.0, sin(a1)) * radius
+		data.tri([middle, e1, e0], [Vector2.ZERO, Vector2.ZERO, Vector2.ZERO], [still, still, still])
+
+
+## The stream: one strip along `_water_path`, from inside the pool to inside
+## the lake. Its surface follows _stream_level() (the pool's level down to the
+## lake's); inside the pool and the lake it lies just under their surface and
+## fades out, so the three meet without a gap, a step or a double layer.
+## UV.y grows towards the lake, so the streaks drift that way.
+func _stream_strip(data: WaterData) -> void:
+	var total := _line_length(_water_path)
+	var half := stream_half_width + 1.2
+	var rows: Array = []
 	var along := 0.0
-	while along <= total:
-		var at := _point_along(stream, along)
-		var ahead := _point_along(stream, minf(along + 0.5, total)) - _point_along(stream, maxf(along - 0.5, 0.0))
-		var side := Vector2(-ahead.y, ahead.x).normalized() * (stream_half_width + 1.2)
-		var y := water_level - along * stream_drop
-		var l := Vector3(at.x - side.x, y, at.y - side.y)
-		var r := Vector3(at.x + side.x, y, at.y + side.y)
-		if at.distance_to(lake_center) > lake_radius + 3.0:
-			if started:
-				for v in [prev_l, prev_r, r, prev_l, r, l]:
-					st.set_normal(Vector3.UP)
-					st.add_vertex(v)
-					faces.append(v)
-			started = true
-		prev_l = l
-		prev_r = r
-		along += 1.0
-	if faces.is_empty():
-		return
-	var ribbon := MeshInstance3D.new()
-	ribbon.name = "Stream"
-	ribbon.mesh = st.commit()
-	ribbon.material_override = material
-	ribbon.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	_add_generated(ribbon, root)
-	var stream_body := _water_body("StreamSurface", root)
-	var stream_shape := ConcavePolygonShape3D.new()
-	stream_shape.set_faces(faces)
-	stream_shape.backface_collision = true
-	var stream_collider := CollisionShape3D.new()
-	stream_collider.shape = stream_shape
-	stream_body.add_child(stream_collider)
+	while true:
+		var at := _point_along(_water_path, along)
+		var ahead := _point_along(_water_path, minf(along + 0.5, total)) - _point_along(_water_path, maxf(along - 0.5, 0.0))
+		var side := Vector2(-ahead.y, ahead.x).normalized()
+		var level := _stream_level(along)
+		# Streaks only where it flows: they fade out towards the lake and the pool.
+		var flow := smoothstep(lake_radius - 4.0, lake_radius + 2.0, at.distance_to(lake_center)) \
+			* smoothstep(POOL_RADIUS - 2.0, POOL_RADIUS + 4.0, at.distance_to(_pool_centre))
+		var row := []
+		for k in STREAM_COLUMNS + 1:
+			var offset := lerpf(-half, half, float(k) / STREAM_COLUMNS)
+			var spot := at + side * offset
+			# Over the lake's / pool's water disc the strip lies just under it and
+			# is hidden, so there is only ever one layer of water: no double
+			# layer (darker patch) and no gap where they meet.
+			# (From 1 m in from the disc's edge, so the strip's fade happens under
+			# the disc and never leaves thinner water at its edge.)
+			var covered := spot.distance_to(lake_center) < lake_radius + 6.0 - 1.0 \
+				or spot.distance_to(_pool_centre) < POOL_RADIUS + 1.5 - 1.0
+			var y := level - 0.02 if covered else level
+			var color := Color(flow, 0.25, 0.0, 0.0 if covered else 1.0)
+			row.append([Vector3(spot.x, y, spot.y), Vector2(offset, -along), color])
+		rows.append(row)
+		if along >= total:
+			break
+		along = minf(along + 1.0, total)
+	for i in rows.size() - 1:
+		var a: Array = rows[i]
+		var b: Array = rows[i + 1]
+		for k in STREAM_COLUMNS:
+			data.tri([a[k][0], a[k + 1][0], b[k][0]], [a[k][1], a[k + 1][1], b[k][1]], [a[k][2], a[k + 1][2], b[k][2]])
+			data.tri([a[k + 1][0], b[k + 1][0], b[k][0]], [a[k + 1][1], b[k + 1][1], b[k][1]], [a[k + 1][2], b[k + 1][2], b[k][2]])
+
+
+## Water level along `_water_path` (metres from its lake end): the lake's
+## level up to the shore, then rising `stream_drop` per metre up to the
+## pool's level.
+func _stream_level(along: float) -> float:
+	return water_level + clampf(along - _shore_along, 0.0, maxf(_pool_along - _shore_along, 0.0)) * stream_drop
+
+
+## Where the stream leaves the lake, and its pool at the foot of the edge
+## cliff (where the stream reaches it), then the stream's water path: the
+## stream from its lake end to the pool's middle.
+func _find_pool() -> void:
+	var total := _line_length(stream)
+	var along := 0.0
+	while along < total and _point_along(stream, along).distance_to(lake_center) < lake_radius:
+		along += 0.5
+	_shore_along = along
+	var foot := total
+	while along < total:
+		if _edge(_point_along(stream, along)) < edge_band:
+			foot = along
+			break
+		along += 0.5
+	_has_pool = stream.size() >= 2
+	_pool_along = maxf(foot - POOL_RADIUS * 0.6, _shore_along)
+	_pool_centre = _point_along(stream, _pool_along)
+	_pool_level = _stream_level(_pool_along)
+	_water_path = PackedVector2Array()
+	var walked := 0.0
+	for i in stream.size():
+		if i > 0:
+			walked += stream[i - 1].distance_to(stream[i])
+		if walked >= _pool_along:
+			break
+		_water_path.append(stream[i])
+	_water_path.append(_pool_centre)
 
 
 ## Water surfaces are only on layer 5: nothing collides with them, but spawn
@@ -1131,7 +1316,8 @@ func _zone(p: Vector2) -> StringName:
 	var dl := p.distance_to(lake_center)
 	if dl < lake_radius + 2.0:
 		return &"lake"
-	if _project(p, stream).x < stream_half_width + 2.0:
+	var sp := _project(p, _water_path) if _water_path.size() >= 2 else Vector2(INF, 0.0)
+	if sp.x < stream_half_width + 2.0 or (_has_pool and p.distance_to(_pool_centre) < POOL_RADIUS + 2.0):
 		return &"stream"
 	if _path_distance(p) < 3.8:
 		return &"path"
@@ -1153,6 +1339,44 @@ func _normal(p: Vector2) -> Vector3:
 	var hu := _h(p + Vector2(0, -cell))
 	var hd := _h(p + Vector2(0, cell))
 	return Vector3(hl - hr, 2.0 * cell, hu - hd).normalized()
+
+
+## Height of the outside surface as drawn at a local X/Z: over the cave the
+## cliff's rock above it, elsewhere the ground.
+func _outer_h(p: Vector2) -> float:
+	var c := _cell_at(p)
+	if _cave_floors.is_empty() or not _is_cave_quad(int(c.x), int(c.y)):
+		return _h(p)
+	var a := int(c.y) * _n + int(c.x)
+	var v := PackedFloat32Array()
+	for i: int in [a, a + 1, a + _n, a + _n + 1]:
+		var vault := float(_cave_floors.get(i, _heights[i])) + float(_cave_ceilings.get(i, 0.0))
+		v.append(maxf(_tops[i], vault))
+	return _tri_lerp(v[0], v[1], v[2], v[3], c.z, c.w)
+
+
+## Normal of the outside surface (see _outer_h).
+func _outer_normal(p: Vector2) -> Vector3:
+	var hl := _outer_h(p + Vector2(-cell, 0))
+	var hr := _outer_h(p + Vector2(cell, 0))
+	var hu := _outer_h(p + Vector2(0, -cell))
+	var hd := _outer_h(p + Vector2(0, cell))
+	return Vector3(hl - hr, 2.0 * cell, hu - hd).normalized()
+
+
+## True if a cliff rock (bounding sphere at `centre`, radius `r`) stays out of
+## the cave: wherever it is over the cave's outline (its mouth included) it
+## must be above the cave's ceiling, and it must leave the way in clear.
+func _clear_of_cave(centre: Vector3, r: float) -> bool:
+	var at := Vector2(centre.x, centre.z)
+	if not _cave_box.grow(r + 1.0).has_point(at):
+		return true
+	var low := centre.y - r
+	for k in 9:
+		var q := at if k == 8 else at + Vector2.from_angle(TAU * k / 8.0) * r
+		if _cave_sdf(q) < 0.5 and low < _mesh_vault(q) + 0.3:
+			return false
+	return not (_in_entrance_walkway(at, r) and low < _cave_level + CAVE_WALKWAY_HEADROOM)
 
 
 ## Height in this node's space at a local X/Z.
@@ -1253,8 +1477,10 @@ const CAVE_SKIN_TIERS := [["small", 0.52], ["medium", 0.42], ["large", 0.03]]
 ## buried, so they read as rough rock; steep slopes inside the floor get some
 ## too. Then the same for the cave's walls and ceiling.
 func _scatter_cliff_rocks(rng: RandomNumberGenerator) -> void:
-	_scatter_cliff_layer(rng, CLIFF_ROCK_SPACING, 1)
-	_scatter_cliff_layer(rng, CLIFF_FINE_SPACING, 2)
+	# One spot per grid cell, so the grid spacing follows from the density.
+	var density := maxf(cliff_rock_density, 0.01)
+	_scatter_cliff_layer(rng, sqrt(1.0 / (density * CLIFF_MAIN_SHARE)), 1)
+	_scatter_cliff_layer(rng, sqrt(1.0 / (density * (1.0 - CLIFF_MAIN_SHARE))), 2)
 	_scatter_cave_skin(rng)
 
 
@@ -1263,13 +1489,16 @@ func _scatter_cliff_rocks(rng: RandomNumberGenerator) -> void:
 func _scatter_cliff_layer(rng: RandomNumberGenerator, spacing: float, layer: int) -> void:
 	var half := size * 0.5
 	var steps := int(size / spacing)
+	# Steep slopes inside the floor keep their own density (one try per 3 x 3 m),
+	# whatever the cliff density.
+	var steep_try := minf((spacing / 3.0) * (spacing / 3.0), 1.0)
 	for ix in steps:
 		for iz in steps:
 			var p := Vector2(-half + (ix + rng.randf()) * spacing, -half + (iz + rng.randf()) * spacing)
 			var at := _cliff_position(p)
 			if at.x <= 0.0:
 				# Inside the floor: only steep slopes (not the clear strip).
-				if layer == 1:
+				if layer == 1 and rng.randf() < steep_try:
 					var zone := _zone(p)
 					if zone in [&"forest", &"plain", &"clearing"] and _normal(p).y < 0.72:
 						var steep_tier := _pick_tier(STEEP_TIERS, rng.randf())
@@ -1285,10 +1514,10 @@ func _scatter_cliff_layer(rng: RandomNumberGenerator, spacing: float, layer: int
 					break
 			# Steep faces get more rocks per spot, so they're covered as densely
 			# as gentler parts.
-			var count := clampi(ceili(1.0 / maxf(_normal(p).y, 0.3)), 1, 3)
+			var count := clampi(ceili(1.0 / maxf(_outer_normal(p).y, 0.1)), 1, 10)
 			for k in count:
 				var q := p + Vector2(rng.randf_range(-0.5, 0.5), rng.randf_range(-0.5, 0.5)) * spacing
-				var tier := _pick_tier(tiers, rng.randf())
+				var tier := _pick_tier(tiers, rng.randf(), true)
 				var q_at := _cliff_position(q)
 				if tier != "" and q_at.x > 0.0 and not is_nan(q_at.y):
 					_place_cliff_rock(rng, q, tier, q_at.y)
@@ -1307,12 +1536,28 @@ func _cliff_position(p: Vector2) -> Vector2:
 	return Vector2(u_spur, spur.y - spur.x if spur.x > -4.0 else NAN)
 
 
-static func _pick_tier(tiers: Array, roll: float) -> String:
+## Picks a tier: `roll` (0-1) against the chances. With `weights`, the chances
+## are only relative (something is always picked).
+static func _pick_tier(tiers: Array, roll: float, weights: bool = false) -> String:
+	if weights:
+		var total := 0.0
+		for entry: Array in tiers:
+			total += float(entry[1])
+		roll *= total
 	for entry: Array in tiers:
 		roll -= float(entry[1])
 		if roll < 0.0:
 			return entry[0]
 	return ""
+
+
+## A uniform scale for a wall rock of its tier (`spec`), kept so the rock's
+## longest side is within `size_range` (metres, min / max).
+func _rock_scale(rng: RandomNumberGenerator, model: String, spec: Array, size_range: Vector2) -> float:
+	var longest := maxf(KitPiece.model_aabb(model).get_longest_axis_size(), 0.01)
+	var low := maxf(size_range.x, 0.01) / longest
+	var high := maxf(size_range.y, size_range.x) / longest
+	return clampf(rng.randf_range(spec[1], spec[2]), low, maxf(low, high))
 
 
 ## A rock turned at random (any direction, uniform scale `s`), its centre
@@ -1332,21 +1577,24 @@ func _skin_xform(rng: RandomNumberGenerator, model: String, s: float, surface: V
 func _place_cliff_rock(rng: RandomNumberGenerator, p: Vector2, tier: String, behind_foot: float) -> void:
 	var spec: Array = CLIFF_TIERS[tier]
 	var model := NATURE % _pick(rng, spec[0])
-	var s := rng.randf_range(spec[1], spec[2])
+	var s := _rock_scale(rng, model, spec, cliff_rock_size)
 	var box := KitPiece.model_aabb(model)
 	var r := box.size.length() * 0.5 * s
 	if r * 0.8 > behind_foot + 1.0:
 		return  # Would stick out past the cliff foot into the floor.
 	if absf(p.x) + r > size * 0.5 or absf(p.y) + r > size * 0.5:
 		return
-	if _cave_box.grow(r + 6.0).has_point(p) and _cave_sdf(p) < r + 3.0:
-		return
-	if _in_entrance_walkway(p, r + 6.0):
-		return
 	for pad in _pads:
 		if p.distance_to(pad["centre"]) < float(pad["radius"]) + r + 6.0:
 			return
-	var xform := _skin_xform(rng, model, s, Vector3(p.x, _h(p), p.y), _normal(p), r * 0.45)
+	if _has_pool and p.distance_to(_pool_centre) < POOL_RADIUS + r + 1.0:
+		return  # Not in the pool.
+	if _on_waterfall(p, r):
+		return  # Not over a waterfall: it runs down the bare cliff face.
+	# On the outside rock as drawn (over the cave that's the cliff above it).
+	var xform := _skin_xform(rng, model, s, Vector3(p.x, _outer_h(p), p.y), _outer_normal(p), 2.0 * r * (1.0 - cliff_rock_sink))
+	if not _clear_of_cave(xform.origin + xform.basis * box.get_center(), r):
+		return
 	match tier:
 		"rubble":
 			_queue("CliffRubble", 48.0, model, xform, false, 90.0)
@@ -1368,19 +1616,22 @@ func _place_cliff_rock(rng: RandomNumberGenerator, p: Vector2, tier: String, beh
 func _scatter_cave_skin(rng: RandomNumberGenerator) -> void:
 	if cave_shapes.is_empty():
 		return
-	var nx := int(_cave_box.size.x / CAVE_SKIN_SPACING) + 1
-	var nz := int(_cave_box.size.y / CAVE_SKIN_SPACING) + 1
+	# One spot per grid cell (on the floor plan, more on steep walls), so the
+	# grid spacing follows from the density.
+	var spacing := sqrt(1.0 / maxf(cave_rock_density, 0.01))
+	var nx := int(_cave_box.size.x / spacing) + 1
+	var nz := int(_cave_box.size.y / spacing) + 1
 	for ix in nx:
 		for iz in nz:
-			var p := _cave_box.position + Vector2(ix + rng.randf(), iz + rng.randf()) * CAVE_SKIN_SPACING
-			if _cave_sdf(p) >= 0.0 or not _is_covered(p):
+			var p := _cave_box.position + Vector2(ix + rng.randf(), iz + rng.randf()) * spacing
+			if not _on_cave_wall_mesh(p):
 				continue
 			var slope := _vault_gradient(p).length()
-			var count := clampi(ceili(sqrt(1.0 + slope * slope)), 1, 4)
+			var count := clampi(ceili(sqrt(1.0 + slope * slope)), 1, 10)
 			for k in count:
-				var q := p + Vector2(rng.randf_range(-0.5, 0.5), rng.randf_range(-0.5, 0.5)) * CAVE_SKIN_SPACING
-				if _cave_sdf(q) < 0.0 and _is_covered(q):
-					_place_cave_skin_rock(rng, q, _pick_tier(CAVE_SKIN_TIERS, rng.randf()))
+				var q := p + Vector2(rng.randf_range(-0.5, 0.5), rng.randf_range(-0.5, 0.5)) * spacing
+				if _on_cave_wall_mesh(q):
+					_place_cave_skin_rock(rng, q, _pick_tier(CAVE_SKIN_TIERS, rng.randf(), true))
 
 
 ## Slope of the cave's inner surface (its walls and ceiling) at `p`.
@@ -1391,9 +1642,41 @@ func _vault_gradient(p: Vector2) -> Vector2:
 	return Vector2(dx, dz) / (2.0 * e)
 
 
-## Height of the cave's inner surface (its walls and ceiling) at `p`.
+## Height of the cave's inner surface (its walls and ceiling) at `p`, as drawn.
 func _vault(p: Vector2) -> float:
-	return _cave_floor(p) + _cave_height(p)
+	return _mesh_vault(p)
+
+
+## True where the cave mesh has walls or a ceiling over `p` (down to the
+## very foot of the walls, where they meet the floor).
+func _on_cave_wall_mesh(p: Vector2) -> bool:
+	if _cave_floors.is_empty():
+		return false
+	var c := _cell_at(p)
+	if not _is_cave_quad(int(c.x), int(c.y)):
+		return false
+	return _mesh_vault(p) - _mesh_cave_floor(p) > 0.02
+
+
+## Height of the cave mesh's floor at `p` (on its triangles).
+func _mesh_cave_floor(p: Vector2) -> float:
+	return _mesh_cave_value(p, false)
+
+
+## Height of the cave mesh's walls / ceiling at `p` (on its triangles).
+func _mesh_vault(p: Vector2) -> float:
+	return _mesh_cave_value(p, true)
+
+
+func _mesh_cave_value(p: Vector2, vault: bool) -> float:
+	var c := _cell_at(p)
+	var a := int(c.y) * _n + int(c.x)
+	var v := PackedFloat32Array()
+	for i: int in [a, a + 1, a + _n, a + _n + 1]:
+		if not _cave_floors.has(i):
+			return _cave_floor(p) + (_cave_height(p) if vault else 0.0)
+		v.append(float(_cave_floors[i]) + (float(_cave_ceilings[i]) if vault else 0.0))
+	return _tri_lerp(v[0], v[1], v[2], v[3], c.z, c.w)
 
 
 ## One rock on the cave's walls or ceiling, half buried in the rock and
@@ -1402,8 +1685,8 @@ func _vault(p: Vector2) -> float:
 func _place_cave_skin_rock(rng: RandomNumberGenerator, p: Vector2, tier: String) -> void:
 	if tier == "":
 		return
-	var floor_h := _cave_floor(p)
-	var ceiling := _cave_height(p)
+	var floor_h := _mesh_cave_floor(p)
+	var ceiling := _mesh_vault(p) - floor_h
 	var g := _vault_gradient(p)
 	var inward := Vector3(g.x, -1.0, g.y).normalized()  # Into the cave.
 	var walkway := _in_entrance_walkway(p, 0.0)
@@ -1412,9 +1695,9 @@ func _place_cave_skin_rock(rng: RandomNumberGenerator, p: Vector2, tier: String)
 		tier = "small"
 	var spec: Array = CLIFF_TIERS[tier]
 	var model := NATURE % _pick(rng, spec[0])
-	var s := rng.randf_range(spec[1], spec[2])
+	var s := _rock_scale(rng, model, spec, cave_rock_size)
 	var r1 := KitPiece.model_aabb(model).size.length() * 0.5  # Radius at scale 1.
-	var reach := r1 * s * 0.45
+	var reach := 2.0 * r1 * s * (1.0 - cave_rock_sink)
 	if wall_foot:
 		# Thin at the foot of the walls (still uniform scale: just smaller).
 		var limit := 0.3 if walkway else CAVE_WALL_FOOT_REACH
@@ -1432,6 +1715,42 @@ func _place_cave_skin_rock(rng: RandomNumberGenerator, p: Vector2, tier: String)
 	_queue("CaveSkin", 24.0, model, xform, false, 80.0)
 
 
+## Finds the Waterfall scenes placed in the level (anywhere under this
+## node's parent) and the strip of cliff each runs down: from just in front
+## of its foot to past its top (its measured cliff face, see Snap To Cliff),
+## as wide as the water plus some room. Move a waterfall, then press Rebuild.
+func _collect_waterfalls() -> void:
+	_waterfalls.clear()
+	var level := get_parent()
+	if level == null:
+		return
+	for node in level.find_children("*", "", true, false):
+		var fall := node as Waterfall
+		if fall == null:
+			continue
+		var back := -fall.global_basis.z
+		back.y = 0.0
+		if back.length() < 0.01:
+			continue
+		back = back.normalized()
+		var reach := Waterfall.RUN + 3.0
+		for point in fall.cliff_profile:
+			reach = maxf(reach, -point.x + Waterfall.RUN + 3.0)
+		_waterfalls.append({
+			"from": _to_local_xz(fall.global_position - back * 1.0),
+			"to": _to_local_xz(fall.global_position + back * reach),
+			"half": fall.width * 0.5 * 1.15 + 1.0,
+		})
+
+
+## True if a rock (centre `p`, radius `r`) would sit on a waterfall's path.
+func _on_waterfall(p: Vector2, r: float) -> bool:
+	for fall: Dictionary in _waterfalls:
+		if _segment_distance(p, fall["from"], fall["to"]) < float(fall["half"]) + r:
+			return true
+	return false
+
+
 ## A rock on a steep slope inside the floor (same rocks, smaller tiers),
 ## claiming its spot like the other rocks.
 func _place_steep_rock(rng: RandomNumberGenerator, p: Vector2, tier: String) -> void:
@@ -1441,7 +1760,7 @@ func _place_steep_rock(rng: RandomNumberGenerator, p: Vector2, tier: String) -> 
 	var box := KitPiece.model_aabb(model)
 	var radius := maxf(box.size.x, box.size.z) * 0.5 * s
 	if _path_distance(p) < radius + 1.5 or not _clear_of_edges(p, radius) or _in_entrance_walkway(p, radius) \
-			or not _claim(p, radius * 0.8):
+			or _on_waterfall(p, radius) or not _claim(p, radius * 0.8):
 		return
 	var xform := _xform(p, rng.randf() * TAU, s, -box.position.y * s - box.size.y * s * 0.3, 0.6)
 	var small := tier == "small" or tier == "rubble"
@@ -1713,7 +2032,7 @@ func _scatter_ground_cover(rng: RandomNumberGenerator) -> void:
 			_queue("Reeds", 48.0, NATURE % _pick(rng, REEDS), _xform(p, rng.randf() * TAU, rng.randf_range(1.6, 2.4), -0.05, 0.0), false, 70.0)
 	var total := _line_length(stream)
 	var along := 0.0
-	while along < total:
+	while along < minf(total, _pool_along):
 		along += rng.randf_range(0.6, 1.6)
 		var at := _point_along(stream, along)
 		if at.distance_to(lake_center) < lake_radius + 2.0:

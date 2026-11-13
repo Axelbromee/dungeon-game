@@ -13,11 +13,13 @@
 [ext_resource type="PackedScene" path="res://scenes/harvestables/healing_moss.tscn" id="11_moss"]
 [ext_resource type="PackedScene" path="res://scenes/harvestables/wild_berry_bush.tscn" id="12_bush"]
 [ext_resource type="PackedScene" path="res://scenes/harvestables/copper_ore_node.tscn" id="13_copper"]
-[ext_resource type="PackedScene" path="res://scenes/harvestables/iron_ore_node.tscn" id="14_iron"]
+[ext_resource type="PackedScene" uid="uid://c1lpuvgfq4sur" path="res://scenes/harvestables/iron_ore_node.tscn" id="14_iron"]
 [ext_resource type="PackedScene" path="res://scenes/harvestables/mana_flower.tscn" id="15_mana"]
 [ext_resource type="PackedScene" path="res://scenes/harvestables/glowcap_herb.tscn" id="16_glowcap"]
 [ext_resource type="Script" uid="uid://b1hqfkxw54ey6" path="res://scripts/effects/follow_player.gd" id="17_follow"]
 [ext_resource type="Material" uid="uid://1r4bq6asvrrr" path="res://materials/effects/fire_particle.tres" id="18_soft"]
+[ext_resource type="PackedScene" path="res://scenes/world/cave_entrance.tscn" id="19_entrance"]
+[ext_resource type="PackedScene" path="res://scenes/world/waterfall.tscn" id="20_hk4tn"]
 
 [sub_resource type="ProceduralSkyMaterial" id="Sky_material"]
 sky_top_color = Color(0.2, 0.38, 0.8, 1)
@@ -144,6 +146,11 @@ paths = Array[PackedVector2Array]([PackedVector2Array(0, 182, 15, 145, 55, 115, 
 cave_cliff = Rect2(50, -250, 212.5, 112.5)
 cave_shapes = Array[PackedFloat32Array]([PackedFloat32Array(100, -128, 100, -156, 7, 9), PackedFloat32Array(100, -170, 100, -170, 16, 14), PackedFloat32Array(100, -170, 117.5, -192.5, 7, 9), PackedFloat32Array(125, -207.5, 125, -207.5, 30, 22), PackedFloat32Array(125, -207.5, 170, -195, 7, 9), PackedFloat32Array(177.5, -192.5, 177.5, -192.5, 20, 16), PackedFloat32Array(125, -207.5, 75, -200, 6.5, 8.5), PackedFloat32Array(65, -197.5, 65, -197.5, 15, 13)])
 cave_roughness = 1.2
+cliff_rock_density = 0.5
+cliff_rock_sink = 0.5
+cave_rock_density = 0.5
+cave_rock_size = Vector2(0.3, 3)
+cave_rock_sink = 0.5
 
 [node name="Bounds" type="StaticBody3D" parent="Terrain" unique_id=814781527]
 
@@ -207,7 +214,7 @@ metadata/snap_offset = -3.2
 [node name="Spawns" type="Node3D" parent="." unique_id=1693889044]
 
 [node name="SlimesForestNorth" parent="Spawns" unique_id=1475343772 instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 137.5, 5.7162914, -25)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 137.5, 5.7209945, -25)
 shape = 1
 radius = 25.0
 editor_color = Color(0.95, 0.4, 0.35, 1)
@@ -234,7 +241,7 @@ max_drop = 15.0
 leash_range = 45.0
 
 [node name="SlimesLakeside" parent="Spawns" unique_id=1288996424 instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.497234, 3.0926948, 51.712395)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.497234, 3.0966017, 51.712395)
 size = Vector2(35, 25)
 editor_color = Color(0.95, 0.4, 0.35, 1)
 entries = Array[ExtResource("8_entry")]([SubResource("Entry_slime")])
@@ -247,7 +254,7 @@ max_drop = 15.0
 leash_range = 45.0
 
 [node name="MossLakeEast" parent="Spawns" unique_id=189172125 instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -92.5, 0.4455758, 62.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -92.5, 0.4322987, 62.5)
 size = Vector2(12.5, 60)
 editor_color = Color(0.45, 0.85, 0.35, 1)
 entries = Array[ExtResource("8_entry")]([SubResource("Entry_moss")])
@@ -260,7 +267,7 @@ max_drop = 5.0
 leash_range = 0.0
 
 [node name="MossLakeNorth" parent="Spawns" unique_id=1529293312 instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -137.5, 0.3394375, 17.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -137.5, 0.33605188, 17.5)
 size = Vector2(60, 12.5)
 editor_color = Color(0.45, 0.85, 0.35, 1)
 entries = Array[ExtResource("8_entry")]([SubResource("Entry_moss")])
@@ -273,7 +280,7 @@ max_drop = 5.0
 leash_range = 0.0
 
 [node name="MossStream" parent="Spawns" unique_id=2013078201 instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -112.5, -0.7378237, 145)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -112.5, 0.86893904, 145)
 size = Vector2(30, 45)
 editor_color = Color(0.45, 0.85, 0.35, 1)
 entries = Array[ExtResource("8_entry")]([SubResource("Entry_moss")])
@@ -286,7 +293,7 @@ max_drop = 5.0
 leash_range = 0.0
 
 [node name="BerriesMeadow" parent="Spawns" unique_id=59583205 instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 125, 3.3228168, 87.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 125, 3.3213143, 87.5)
 size = Vector2(100, 90)
 editor_color = Color(0.9, 0.25, 0.35, 1)
 entries = Array[ExtResource("8_entry")]([SubResource("Entry_bush")])
@@ -298,7 +305,7 @@ max_drop = 7.0
 leash_range = 0.0
 
 [node name="CopperCaveMain" parent="Spawns" unique_id=1628194622 instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 125, 7.912904, -207.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 125, 7.9191413, -207.5)
 shape = 1
 radius = 18.75
 editor_color = Color(0.9, 0.55, 0.25, 1)
@@ -334,7 +341,7 @@ wall_search_distance = 12.0
 leash_range = 0.0
 
 [node name="IronCaveEast" parent="Spawns" unique_id=1441946440 instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 177.5, 7.5875015, -192.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 177.5, 7.555388, -192.5)
 shape = 1
 radius = 12.5
 editor_color = Color(0.55, 0.55, 0.65, 1)
@@ -352,7 +359,7 @@ wall_search_distance = 14.0
 leash_range = 0.0
 
 [node name="OreCaveAlcove" parent="Spawns" unique_id=1991906226 instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 65, 7.7237983, -197.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 65, 7.795294, -197.5)
 shape = 1
 radius = 8.75
 editor_color = Color(0.75, 0.6, 0.45, 1)
@@ -368,7 +375,7 @@ max_drop = 3.5
 leash_range = 0.0
 
 [node name="ManaFlowerDeepWest" parent="Spawns" unique_id=1256386203 instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -185, 2.903645, -137.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -185, 2.9085827, -137.5)
 shape = 1
 radius = 12.5
 editor_color = Color(0.4, 0.65, 1, 1)
@@ -473,8 +480,20 @@ visibility_aabb = AABB(-32, -10, -32, 64, 22, 64)
 process_material = SubResource("Process_motes")
 draw_pass_1 = SubResource("Quad_mote")
 
+[node name="CaveEntrance" parent="." unique_id=972617870 instance=ExtResource("19_entrance")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 7.9, -132.51817)
+width = 11.4
+height = 5.2
+beam_thickness = 2.0
+
 [node name="Player" parent="." unique_id=1274020524 instance=ExtResource("1_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12, 182.5)
 
 [node name="HUD" parent="." unique_id=1803321454 node_paths=PackedStringArray("player") instance=ExtResource("2_hud")]
 player = NodePath("../Player")
+
+[node name="Waterfall" parent="." unique_id=1208491998 instance=ExtResource("20_hk4tn")]
+transform = Transform3D(-0.9806, 0, 0.1961, 0, 1, 0, -0.1961, 0, -0.9806, -104.8674, 2.8184862, 211.98354)
+height = 45.0079
+width = 6.7
+cliff_profile = PackedVector2Array(0, 0, -1, 2.6687086, -2, 6.2160416, -3, 11.180983, -4, 15.779353, -5, 19.875624, -6, 24.136074, -7, 28.122677, -8, 30.66988, -9, 31.815931, -10, 32.696613, -11, 33.94816, -12, 35.910736, -13, 37.955105, -14, 39.830544, -15, 41.51066, -16, 42.96541, -17, 44.101757, -18, 44.655964, -18, 45.0079)
