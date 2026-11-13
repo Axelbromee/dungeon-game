@@ -1,29 +1,15 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://b6rmqjd5po3qn"]
 
-[ext_resource type="Script" path="res://scripts/enemies/slime.gd" id="1_slime"]
-[ext_resource type="Resource" path="res://items/slime_jelly.tres" id="2_jelly"]
-[ext_resource type="Resource" path="res://items/magic_core_f.tres" id="3_core"]
+[ext_resource type="Script" uid="uid://gu850603o3im" path="res://scripts/enemies/slime.gd" id="1_slime"]
+[ext_resource type="Resource" uid="uid://hesmwihuuc34" path="res://items/slime_jelly.tres" id="2_jelly"]
+[ext_resource type="Resource" uid="uid://cqtcqkjrec3md" path="res://items/magic_core_f.tres" id="3_core"]
 [ext_resource type="PackedScene" path="res://scenes/spells/fireball.tscn" id="4_fireball"]
-[ext_resource type="Resource" path="res://items/slime_crystal.tres" id="5_crystal"]
-[ext_resource type="Resource" path="res://items/royal_jelly.tres" id="6_royal_jelly"]
-[ext_resource type="Resource" path="res://items/royal_crystal.tres" id="7_royal_crystal"]
+[ext_resource type="Resource" uid="uid://j0db34gt8kuc" path="res://items/slime_crystal.tres" id="5_crystal"]
+[ext_resource type="Resource" uid="uid://cb81pbnd8klqd" path="res://items/royal_jelly.tres" id="6_royal_jelly"]
+[ext_resource type="Resource" uid="uid://c1akob36cbnsd" path="res://items/royal_crystal.tres" id="7_royal_crystal"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_slime"]
 radius = 0.42
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_body"]
-transparency = 1
-albedo_color = Color(0.48, 0.84, 0.4, 0.75)
-roughness = 0.4
-emission_enabled = true
-emission = Color(0.2, 0.5, 0.22, 1)
-emission_energy_multiplier = 0.35
-
-[sub_resource type="SphereMesh" id="SphereMesh_body"]
-radius = 0.5
-height = 0.8
-radial_segments = 32
-rings = 16
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_core"]
 albedo_color = Color(0.2, 0.55, 0.32, 1)
@@ -61,6 +47,19 @@ height = 0.084
 radial_segments = 12
 rings = 6
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_body"]
+transparency = 1
+albedo_color = Color(0.48, 0.84, 0.4, 0.75)
+roughness = 0.4
+emission_enabled = true
+emission = Color(0.2, 0.5, 0.22, 1)
+emission_energy_multiplier = 0.35
+
+[sub_resource type="SphereMesh" id="SphereMesh_body"]
+height = 0.8
+radial_segments = 32
+rings = 16
+
 [sub_resource type="Gradient" id="Gradient_shadow"]
 offsets = PackedFloat32Array(0, 0.75, 0.93, 1)
 colors = PackedColorArray(0, 0, 0, 0.55, 0, 0, 0, 0.7, 0, 0, 0, 1, 0, 0, 0, 0)
@@ -81,7 +80,6 @@ albedo_texture = SubResource("GradientTexture2D_shadow")
 disable_receive_shadows = true
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_shadow"]
-size = Vector2(2, 2)
 
 [sub_resource type="Gradient" id="Gradient_ring"]
 offsets = PackedFloat32Array(0, 0.72, 0.9, 1)
@@ -101,30 +99,6 @@ shading_mode = 0
 albedo_color = Color(0.6, 1, 0.55, 1)
 albedo_texture = SubResource("GradientTexture2D_ring")
 disable_receive_shadows = true
-
-[sub_resource type="Gradient" id="Gradient_soft_drop"]
-offsets = PackedFloat32Array(0, 1)
-colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_soft_drop"]
-gradient = SubResource("Gradient_soft_drop")
-width = 32
-height = 32
-fill = 1
-fill_from = Vector2(0.5, 0.5)
-fill_to = Vector2(0.5, 0)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_drop"]
-transparency = 1
-shading_mode = 0
-vertex_color_use_as_albedo = true
-albedo_texture = SubResource("GradientTexture2D_soft_drop")
-billboard_mode = 3
-billboard_keep_scale = true
-
-[sub_resource type="QuadMesh" id="QuadMesh_drop"]
-material = SubResource("StandardMaterial3D_drop")
-size = Vector2(0.12, 0.12)
 
 [sub_resource type="Gradient" id="Gradient_drop"]
 offsets = PackedFloat32Array(0, 0.7, 1)
@@ -146,6 +120,7 @@ emission_ring_axis = Vector3(0, 1, 0)
 emission_ring_height = 0.05
 emission_ring_radius = 0.45
 emission_ring_inner_radius = 0.3
+emission_ring_cone_angle = 90.0
 direction = Vector3(0, 1, 0)
 spread = 60.0
 initial_velocity_min = 2.0
@@ -156,65 +131,89 @@ scale_max = 1.4
 scale_curve = SubResource("CurveTexture_drop")
 color_ramp = SubResource("GradientTexture1D_drop")
 
-[node name="Slime" type="CharacterBody3D"]
-collision_layer = 1
-collision_mask = 1
+[sub_resource type="Gradient" id="Gradient_soft_drop"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_soft_drop"]
+gradient = SubResource("Gradient_soft_drop")
+width = 32
+height = 32
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_drop"]
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = SubResource("GradientTexture2D_soft_drop")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_drop"]
+material = SubResource("StandardMaterial3D_drop")
+size = Vector2(0.12, 0.12)
+
+[node name="Slime" type="CharacterBody3D" unique_id=744870590]
 floor_snap_length = 0.2
 script = ExtResource("1_slime")
-jelly_item = ExtResource("2_jelly")
+fireball_scene = ExtResource("4_fireball")
 core_item = ExtResource("3_core")
+jelly_item = ExtResource("2_jelly")
 crystal_item = ExtResource("5_crystal")
 royal_jelly_item = ExtResource("6_royal_jelly")
 royal_crystal_item = ExtResource("7_royal_crystal")
-fireball_scene = ExtResource("4_fireball")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=74845348]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.42, 0)
 shape = SubResource("SphereShape3D_slime")
 
-[node name="Visual" type="Node3D" parent="."]
+[node name="Visual" type="Node3D" parent="." unique_id=1017655781]
 
-[node name="Core" type="MeshInstance3D" parent="Visual"]
+[node name="Core" type="MeshInstance3D" parent="Visual" unique_id=1048678605]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.32, -0.02)
 cast_shadow = 0
 mesh = SubResource("SphereMesh_core")
 
-[node name="EyeL" type="MeshInstance3D" parent="Visual"]
+[node name="EyeL" type="MeshInstance3D" parent="Visual" unique_id=720524712]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.52, 0.42)
 mesh = SubResource("SphereMesh_eye")
 
-[node name="PupilL" type="MeshInstance3D" parent="Visual"]
+[node name="PupilL" type="MeshInstance3D" parent="Visual" unique_id=1336374776]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15, 0.52, 0.49)
 mesh = SubResource("SphereMesh_pupil")
 
-[node name="EyeR" type="MeshInstance3D" parent="Visual"]
+[node name="EyeR" type="MeshInstance3D" parent="Visual" unique_id=1195511402]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.52, 0.42)
 mesh = SubResource("SphereMesh_eye")
 
-[node name="PupilR" type="MeshInstance3D" parent="Visual"]
+[node name="PupilR" type="MeshInstance3D" parent="Visual" unique_id=1483158886]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0.52, 0.49)
 mesh = SubResource("SphereMesh_pupil")
 
-[node name="Body" type="MeshInstance3D" parent="Visual"]
+[node name="Body" type="MeshInstance3D" parent="Visual" unique_id=1482316430]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
 material_override = SubResource("StandardMaterial3D_body")
 mesh = SubResource("SphereMesh_body")
 
-[node name="LandingShadow" type="MeshInstance3D" parent="."]
+[node name="LandingShadow" type="MeshInstance3D" parent="." unique_id=2137509820]
 top_level = true
 visible = false
-cast_shadow = 0
 material_override = SubResource("StandardMaterial3D_shadow")
+cast_shadow = 0
 mesh = SubResource("PlaneMesh_shadow")
 
-[node name="Shockwave" type="MeshInstance3D" parent="."]
+[node name="Shockwave" type="MeshInstance3D" parent="." unique_id=196400444]
 top_level = true
 visible = false
-cast_shadow = 0
 material_override = SubResource("StandardMaterial3D_ring")
+cast_shadow = 0
 mesh = SubResource("PlaneMesh_shadow")
 
-[node name="Splash" type="GPUParticles3D" parent="."]
+[node name="Splash" type="GPUParticles3D" parent="." unique_id=17462974]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 cast_shadow = 0
 emitting = false
@@ -226,13 +225,13 @@ visibility_aabb = AABB(-3, -2, -3, 6, 5, 6)
 process_material = SubResource("ParticleProcessMaterial_splash")
 draw_pass_1 = SubResource("QuadMesh_drop")
 
-[node name="HealthLabel" type="Label3D" parent="."]
+[node name="HealthLabel" type="Label3D" parent="." unique_id=821602933]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
-modulate = Color(0.75, 1, 0.75, 1)
+pixel_size = 0.0015
 billboard = 1
 no_depth_test = true
 fixed_size = true
-pixel_size = 0.0015
+modulate = Color(0.75, 1, 0.75, 1)
 text = "50 / 50"
 font_size = 22
 outline_size = 8

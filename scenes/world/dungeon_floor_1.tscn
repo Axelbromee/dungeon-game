@@ -1,48 +1,70 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://cpc8qy2shts1g"]
 
-[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" uid="uid://bnixwl4ts8xyx" path="res://scenes/player/player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="2_hud"]
-[ext_resource type="Script" path="res://scripts/core/spawn_point.gd" id="3_spawn"]
-[ext_resource type="Script" path="res://scripts/world/forest_floor.gd" id="4_floor"]
+[ext_resource type="Script" uid="uid://jpkm51xlmqjy" path="res://scripts/core/spawn_point.gd" id="3_spawn"]
+[ext_resource type="Script" uid="uid://cgmat4n4kvjb7" path="res://scripts/world/forest_floor.gd" id="4_floor"]
 [ext_resource type="PackedScene" path="res://scenes/guild/stations/dungeon_entrance.tscn" id="5_stairs"]
 [ext_resource type="PackedScene" path="res://scenes/props/magic_glow.tscn" id="6_glow"]
 [ext_resource type="PackedScene" path="res://scenes/world/spawn_area.tscn" id="7_area"]
-[ext_resource type="Script" path="res://scripts/world/spawn_entry.gd" id="8_entry"]
-[ext_resource type="PackedScene" path="res://scenes/enemies/slime.tscn" id="9_slime"]
-[ext_resource type="Script" path="res://scripts/world/ambience_zone.gd" id="10_ambience"]
+[ext_resource type="Script" uid="uid://dl2181yj2hj61" path="res://scripts/world/spawn_entry.gd" id="8_entry"]
+[ext_resource type="PackedScene" uid="uid://b6rmqjd5po3qn" path="res://scenes/enemies/slime.tscn" id="9_slime"]
+[ext_resource type="Script" uid="uid://ds1ywl15208gn" path="res://scripts/world/ambience_zone.gd" id="10_ambience"]
 [ext_resource type="PackedScene" path="res://scenes/harvestables/healing_moss.tscn" id="11_moss"]
 [ext_resource type="PackedScene" path="res://scenes/harvestables/wild_berry_bush.tscn" id="12_bush"]
 [ext_resource type="PackedScene" path="res://scenes/harvestables/copper_ore_node.tscn" id="13_copper"]
 [ext_resource type="PackedScene" path="res://scenes/harvestables/iron_ore_node.tscn" id="14_iron"]
 [ext_resource type="PackedScene" path="res://scenes/harvestables/mana_flower.tscn" id="15_mana"]
 [ext_resource type="PackedScene" path="res://scenes/harvestables/glowcap_herb.tscn" id="16_glowcap"]
-[ext_resource type="Script" path="res://scripts/effects/follow_player.gd" id="17_follow"]
-[ext_resource type="Material" path="res://materials/effects/fire_particle.tres" id="18_soft"]
+[ext_resource type="Script" uid="uid://b1hqfkxw54ey6" path="res://scripts/effects/follow_player.gd" id="17_follow"]
+[ext_resource type="Material" uid="uid://1r4bq6asvrrr" path="res://materials/effects/fire_particle.tres" id="18_soft"]
+
+[sub_resource type="ProceduralSkyMaterial" id="Sky_material"]
+sky_top_color = Color(0.2, 0.38, 0.8, 1)
+sky_horizon_color = Color(0.5, 0.72, 0.88, 1)
+sky_curve = 0.2
+ground_bottom_color = Color(0.08, 0.1, 0.13, 1)
+ground_horizon_color = Color(0.5, 0.72, 0.88, 1)
+sun_angle_max = 18.0
+sun_curve = 0.08
+
+[sub_resource type="Sky" id="Sky_magic"]
+sky_material = SubResource("Sky_material")
+
+[sub_resource type="Environment" id="Environment_floor1"]
+background_mode = 2
+sky = SubResource("Sky_magic")
+ambient_light_source = 2
+ambient_light_color = Color(0.5, 0.56, 0.66, 1)
+ambient_light_energy = 0.38
+glow_enabled = true
+glow_intensity = 0.35
+
+[sub_resource type="BoxShape3D" id="Bounds_x"]
+size = Vector3(502, 200, 1)
+
+[sub_resource type="BoxShape3D" id="Bounds_z"]
+size = Vector3(1, 200, 502)
 
 [sub_resource type="Resource" id="Entry_slime"]
 script = ExtResource("8_entry")
 scene = ExtResource("9_slime")
-weight = 1.0
 
 [sub_resource type="Resource" id="Entry_moss"]
 script = ExtResource("8_entry")
 scene = ExtResource("11_moss")
-weight = 1.0
 
 [sub_resource type="Resource" id="Entry_bush"]
 script = ExtResource("8_entry")
 scene = ExtResource("12_bush")
-weight = 1.0
 
 [sub_resource type="Resource" id="Entry_copper"]
 script = ExtResource("8_entry")
 scene = ExtResource("13_copper")
-weight = 1.0
 
 [sub_resource type="Resource" id="Entry_iron"]
 script = ExtResource("8_entry")
 scene = ExtResource("14_iron")
-weight = 1.0
 
 [sub_resource type="Resource" id="Entry_copper_floor"]
 script = ExtResource("8_entry")
@@ -57,46 +79,10 @@ weight = 25.0
 [sub_resource type="Resource" id="Entry_mana"]
 script = ExtResource("8_entry")
 scene = ExtResource("15_mana")
-weight = 1.0
 
 [sub_resource type="Resource" id="Entry_glowcap"]
 script = ExtResource("8_entry")
 scene = ExtResource("16_glowcap")
-weight = 1.0
-
-[sub_resource type="ProceduralSkyMaterial" id="Sky_material"]
-sky_top_color = Color(0.33, 0.35, 0.7, 1)
-sky_horizon_color = Color(0.56, 0.74, 0.76, 1)
-sky_curve = 0.2
-ground_bottom_color = Color(0.08, 0.1, 0.13, 1)
-ground_horizon_color = Color(0.56, 0.74, 0.76, 1)
-sun_angle_max = 18.0
-sun_curve = 0.08
-
-[sub_resource type="Sky" id="Sky_magic"]
-sky_material = SubResource("Sky_material")
-
-[sub_resource type="Environment" id="Environment_floor1"]
-background_mode = 2
-sky = SubResource("Sky_magic")
-ambient_light_source = 2
-ambient_light_color = Color(0.44, 0.52, 0.62, 1)
-ambient_light_energy = 0.52
-tonemap_mode = 3
-tonemap_exposure = 1.0
-glow_enabled = true
-glow_intensity = 0.7
-glow_hdr_threshold = 1.0
-fog_enabled = true
-fog_light_color = Color(0.5, 0.67, 0.69, 1)
-fog_density = 0.011
-fog_sky_affect = 0.35
-
-[sub_resource type="BoxShape3D" id="Bounds_x"]
-size = Vector3(202, 80, 1)
-
-[sub_resource type="BoxShape3D" id="Bounds_z"]
-size = Vector3(1, 80, 202)
 
 [sub_resource type="Gradient" id="Gradient_firefly"]
 offsets = PackedFloat32Array(0, 0.15, 0.3, 0.45, 0.6, 0.8, 1)
@@ -137,336 +123,325 @@ initial_velocity_min = 0.05
 initial_velocity_max = 0.15
 gravity = Vector3(0, 0.02, 0)
 scale_min = 0.5
-scale_max = 1.0
 color_ramp = SubResource("GradientTexture_mote")
 
 [sub_resource type="QuadMesh" id="Quad_mote"]
 material = ExtResource("18_soft")
 size = Vector2(0.045, 0.045)
 
-[node name="DungeonFloor1" type="Node3D"]
+[node name="DungeonFloor1" type="Node3D" unique_id=867429266]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1016345727]
 environment = SubResource("Environment_floor1")
 
-[node name="Terrain" type="Node3D" parent="."]
+[node name="Terrain" type="Node3D" parent="." unique_id=596814110]
 script = ExtResource("4_floor")
+edge_margin = 5.0
+clearing_radius = 20.0
+stream = PackedVector2Array(-130, 95, -112.5, 125, -117.5, 157.5, -100, 185, -110, 235)
+plain_radius = 55.0
+paths = Array[PackedVector2Array]([PackedVector2Array(0, 182, 15, 145, 55, 115, 95, 95), PackedVector2Array(15, 145, -25, 120, -65, 85, -92.5, 65), PackedVector2Array(15, 145, 25, 75, 35, 12.5, 5, -55, -35, -110, -85, -155, -140, -172), PackedVector2Array(35, 12.5, 75, -50, 100, -100, 100, -124)])
+cave_cliff = Rect2(50, -250, 212.5, 112.5)
+cave_shapes = Array[PackedFloat32Array]([PackedFloat32Array(100, -128, 100, -156, 7, 9), PackedFloat32Array(100, -170, 100, -170, 16, 14), PackedFloat32Array(100, -170, 117.5, -192.5, 7, 9), PackedFloat32Array(125, -207.5, 125, -207.5, 30, 22), PackedFloat32Array(125, -207.5, 170, -195, 7, 9), PackedFloat32Array(177.5, -192.5, 177.5, -192.5, 20, 16), PackedFloat32Array(125, -207.5, 75, -200, 6.5, 8.5), PackedFloat32Array(65, -197.5, 65, -197.5, 15, 13)])
+cave_roughness = 1.2
 
-[node name="Bounds" type="StaticBody3D" parent="Terrain"]
+[node name="Bounds" type="StaticBody3D" parent="Terrain" unique_id=814781527]
 
-[node name="North" type="CollisionShape3D" parent="Terrain/Bounds"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 30, -100.5)
+[node name="North" type="CollisionShape3D" parent="Terrain/Bounds" unique_id=1667937685]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 80, -250.5)
 shape = SubResource("Bounds_x")
 
-[node name="South" type="CollisionShape3D" parent="Terrain/Bounds"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 30, 100.5)
+[node name="South" type="CollisionShape3D" parent="Terrain/Bounds" unique_id=1053823113]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 80, 250.5)
 shape = SubResource("Bounds_x")
 
-[node name="West" type="CollisionShape3D" parent="Terrain/Bounds"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -100.5, 30, 0)
+[node name="West" type="CollisionShape3D" parent="Terrain/Bounds" unique_id=1090032216]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -250.5, 80, 0)
 shape = SubResource("Bounds_z")
 
-[node name="East" type="CollisionShape3D" parent="Terrain/Bounds"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100.5, 30, 0)
+[node name="East" type="CollisionShape3D" parent="Terrain/Bounds" unique_id=1209579466]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 250.5, 80, 0)
 shape = SubResource("Bounds_z")
 
-[node name="Nature" type="Node3D" parent="."]
+[node name="Nature" type="Node3D" parent="." unique_id=1445227610]
 
-[node name="Water" type="Node3D" parent="."]
+[node name="Water" type="Node3D" parent="." unique_id=1882199055]
 
-[node name="Portals" type="Node3D" parent="."]
+[node name="Portals" type="Node3D" parent="." unique_id=320249177]
 
-[node name="ArrivalStairs" parent="Portals" instance=ExtResource("5_stairs")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 76)
-footprint = Vector2(8, 10)
-opening_width = 4
-opening_depth = 8
+[node name="ArrivalStairs" parent="Portals" unique_id=492371178 instance=ExtResource("5_stairs")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 8.069661, 190)
+collision_layer = 5
 target_scene = "res://scenes/world/guild_hall.tscn"
 target_spawn = &"from_dungeon"
 sign_text = "GUILD"
 prompt = "Return to the guild"
 
-[node name="ArrivalGlow" parent="Portals" instance=ExtResource("6_glow")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 80)
+[node name="ArrivalGlow" parent="Portals" unique_id=2010950192 instance=ExtResource("6_glow")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.8696613, 194)
 metadata/snap_offset = -3.2
 
-[node name="Default" type="Marker3D" parent="Portals"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 68.5)
+[node name="Default" type="Marker3D" parent="Portals" unique_id=706465170]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.119025, 182.5)
 script = ExtResource("3_spawn")
 metadata/snap_offset = 0.05
 
-[node name="FromGuild" type="Marker3D" parent="Portals"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 68.5)
+[node name="FromGuild" type="Marker3D" parent="Portals" unique_id=578798269]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.119025, 182.5)
 script = ExtResource("3_spawn")
 spawn_id = &"from_guild"
 metadata/snap_offset = 0.05
 
-[node name="ExitStairs" parent="Portals" instance=ExtResource("5_stairs")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56, 0, -72)
-footprint = Vector2(8, 10)
-opening_width = 4
-opening_depth = 8
+[node name="ExitStairs" parent="Portals" unique_id=989481589 instance=ExtResource("5_stairs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -140, 5.9113336, -180)
+collision_layer = 5
 target_scene = ""
 auto_enter = false
 sign_text = "FLOOR 2 - COMING SOON"
 locked_text = "Floor 2 coming soon"
 
-[node name="ExitGlow" parent="Portals" instance=ExtResource("6_glow")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -56, 0, -76)
+[node name="ExitGlow" parent="Portals" unique_id=979113291 instance=ExtResource("6_glow")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -140, 2.7113335, -184)
 metadata/snap_offset = -3.2
 
-[node name="Spawns" type="Node3D" parent="."]
+[node name="Spawns" type="Node3D" parent="." unique_id=1693889044]
 
-[node name="SlimesForestWest" parent="Spawns" instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, 15)
-size = Vector2(20, 20)
-max_alive = 5
+[node name="SlimesForestNorth" parent="Spawns" unique_id=1475343772 instance=ExtResource("7_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 137.5, 5.7162914, -25)
+shape = 1
+radius = 25.0
 editor_color = Color(0.95, 0.4, 0.35, 1)
 entries = Array[ExtResource("8_entry")]([SubResource("Entry_slime")])
+max_alive = 5
 respawn_time = 180.0
 clearance_radius = 0.45
 clearance_height = 0.9
-leash_range = 18.0
-max_rise = 6.0
-max_drop = 6.0
+max_rise = 15.0
+max_drop = 15.0
+leash_range = 45.0
 
-[node name="SlimesForestNorth" parent="Spawns" instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 0, -10)
-size = Vector2(18, 16)
-max_alive = 5
+[node name="SlimesForestNorthWest" parent="Spawns" unique_id=391687135 instance=ExtResource("7_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -150, 7.0497627, -62.5)
+size = Vector2(50, 40)
 editor_color = Color(0.95, 0.4, 0.35, 1)
 entries = Array[ExtResource("8_entry")]([SubResource("Entry_slime")])
-respawn_time = 180.0
-clearance_radius = 0.45
-clearance_height = 0.9
-leash_range = 18.0
-max_rise = 6.0
-max_drop = 6.0
-
-[node name="SlimesForestNorthWest" parent="Spawns" instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -60, 0, -25)
-size = Vector2(20, 16)
 max_alive = 4
-editor_color = Color(0.95, 0.4, 0.35, 1)
-entries = Array[ExtResource("8_entry")]([SubResource("Entry_slime")])
 respawn_time = 180.0
 clearance_radius = 0.45
 clearance_height = 0.9
-leash_range = 18.0
-max_rise = 6.0
-max_drop = 6.0
+max_rise = 15.0
+max_drop = 15.0
+leash_range = 45.0
 
-[node name="SlimesLakeside" parent="Spawns" instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 0, -2)
-size = Vector2(14, 10)
+[node name="SlimesLakeside" parent="Spawns" unique_id=1288996424 instance=ExtResource("7_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.497234, 3.0926948, 51.712395)
+size = Vector2(35, 25)
+editor_color = Color(0.95, 0.4, 0.35, 1)
+entries = Array[ExtResource("8_entry")]([SubResource("Entry_slime")])
 max_alive = 5
-editor_color = Color(0.95, 0.4, 0.35, 1)
-entries = Array[ExtResource("8_entry")]([SubResource("Entry_slime")])
 respawn_time = 180.0
 clearance_radius = 0.45
 clearance_height = 0.9
-leash_range = 18.0
-max_rise = 6.0
-max_drop = 6.0
+max_rise = 15.0
+max_drop = 15.0
+leash_range = 45.0
 
-[node name="MossLakeEast" parent="Spawns" instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37, 0, 25)
-size = Vector2(5, 24)
+[node name="MossLakeEast" parent="Spawns" unique_id=189172125 instance=ExtResource("7_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -92.5, 0.4455758, 62.5)
+size = Vector2(12.5, 60)
 editor_color = Color(0.45, 0.85, 0.35, 1)
 entries = Array[ExtResource("8_entry")]([SubResource("Entry_moss")])
 max_alive = 3
 respawn_time = 45.0
 min_spacing = 2.0
 clearance_height = 0.5
+max_rise = 4.0
+max_drop = 5.0
 leash_range = 0.0
-max_rise = 2.0
-max_drop = 3.0
 
-[node name="MossLakeNorth" parent="Spawns" instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -55, 0, 7)
-size = Vector2(24, 5)
+[node name="MossLakeNorth" parent="Spawns" unique_id=1529293312 instance=ExtResource("7_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -137.5, 0.3394375, 17.5)
+size = Vector2(60, 12.5)
 editor_color = Color(0.45, 0.85, 0.35, 1)
 entries = Array[ExtResource("8_entry")]([SubResource("Entry_moss")])
 max_alive = 3
 respawn_time = 45.0
 min_spacing = 2.0
 clearance_height = 0.5
+max_rise = 4.0
+max_drop = 5.0
 leash_range = 0.0
-max_rise = 2.0
-max_drop = 3.0
 
-[node name="MossStream" parent="Spawns" instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -45, 0, 58)
-size = Vector2(12, 18)
+[node name="MossStream" parent="Spawns" unique_id=2013078201 instance=ExtResource("7_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -112.5, -0.7378237, 145)
+size = Vector2(30, 45)
 editor_color = Color(0.45, 0.85, 0.35, 1)
 entries = Array[ExtResource("8_entry")]([SubResource("Entry_moss")])
 max_alive = 3
 respawn_time = 45.0
 min_spacing = 2.0
 clearance_height = 0.5
+max_rise = 4.0
+max_drop = 5.0
 leash_range = 0.0
-max_rise = 2.0
-max_drop = 3.0
 
-[node name="BerriesMeadow" parent="Spawns" instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, 35)
-size = Vector2(40, 36)
+[node name="BerriesMeadow" parent="Spawns" unique_id=59583205 instance=ExtResource("7_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 125, 3.3228168, 87.5)
+size = Vector2(100, 90)
 editor_color = Color(0.9, 0.25, 0.35, 1)
 entries = Array[ExtResource("8_entry")]([SubResource("Entry_bush")])
 respawn_time = 60.0
 min_spacing = 5.0
 clearance_radius = 0.7
+max_rise = 7.0
+max_drop = 7.0
 leash_range = 0.0
-max_rise = 3.0
-max_drop = 3.0
 
-[node name="CopperCaveMain" parent="Spawns" instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, -83)
+[node name="CopperCaveMain" parent="Spawns" unique_id=1628194622 instance=ExtResource("7_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 125, 7.912904, -207.5)
 shape = 1
-radius = 7.5
+radius = 18.75
 editor_color = Color(0.9, 0.55, 0.25, 1)
 entries = Array[ExtResource("8_entry")]([SubResource("Entry_copper")])
 max_alive = 4
 respawn_time = 60.0
-wall_search_distance = 8.0
-render_layers = 2
 placement = 1
+min_spacing = 4.0
+render_layers = 2
 clearance_radius = 0.5
 clearance_height = 1.2
-min_spacing = 4.0
+max_rise = 3.0
+max_drop = 3.5
+wall_search_distance = 20.0
 leash_range = 0.0
-max_rise = 1.5
-max_drop = 2.0
 
-[node name="CopperCaveEntry" parent="Spawns" instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 0, -68)
+[node name="CopperCaveEntry" parent="Spawns" unique_id=1817426420 instance=ExtResource("7_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 7.8728256, -170)
 shape = 1
-radius = 4.0
+radius = 10.0
 editor_color = Color(0.9, 0.55, 0.25, 1)
 entries = Array[ExtResource("8_entry")]([SubResource("Entry_copper")])
 max_alive = 2
 respawn_time = 60.0
-wall_search_distance = 6.0
-render_layers = 2
 placement = 1
+min_spacing = 4.0
+render_layers = 2
 clearance_radius = 0.5
 clearance_height = 1.2
-min_spacing = 4.0
+max_rise = 3.0
+max_drop = 3.5
+wall_search_distance = 12.0
 leash_range = 0.0
-max_rise = 1.5
-max_drop = 2.0
 
-[node name="IronCaveEast" parent="Spawns" instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 71, 0, -77)
+[node name="IronCaveEast" parent="Spawns" unique_id=1441946440 instance=ExtResource("7_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 177.5, 7.5875015, -192.5)
 shape = 1
-radius = 5.0
+radius = 12.5
 editor_color = Color(0.55, 0.55, 0.65, 1)
 entries = Array[ExtResource("8_entry")]([SubResource("Entry_iron")])
 max_alive = 2
 respawn_time = 120.0
-wall_search_distance = 6.0
-render_layers = 2
 placement = 1
+min_spacing = 4.0
+render_layers = 2
 clearance_radius = 0.5
 clearance_height = 1.2
-min_spacing = 4.0
+max_rise = 3.0
+max_drop = 3.5
+wall_search_distance = 14.0
 leash_range = 0.0
-max_rise = 1.5
-max_drop = 2.0
 
-[node name="OreCaveAlcove" parent="Spawns" instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 0, -79)
+[node name="OreCaveAlcove" parent="Spawns" unique_id=1991906226 instance=ExtResource("7_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 65, 7.7237983, -197.5)
 shape = 1
-radius = 3.5
+radius = 8.75
 editor_color = Color(0.75, 0.6, 0.45, 1)
 entries = Array[ExtResource("8_entry")]([SubResource("Entry_copper_floor"), SubResource("Entry_iron_floor")])
-render_layers = 2
 max_alive = 3
 respawn_time = 90.0
 min_spacing = 4.0
+render_layers = 2
 clearance_radius = 0.5
 clearance_height = 1.2
+max_rise = 3.0
+max_drop = 3.5
 leash_range = 0.0
-max_rise = 1.5
-max_drop = 2.0
 
-[node name="ManaFlowerDeepWest" parent="Spawns" instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -80, 0, -55)
+[node name="ManaFlowerDeepWest" parent="Spawns" unique_id=1256386203 instance=ExtResource("7_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -185, 2.903645, -137.5)
 shape = 1
-radius = 5.0
+radius = 12.5
 editor_color = Color(0.4, 0.65, 1, 1)
 entries = Array[ExtResource("8_entry")]([SubResource("Entry_mana")])
 max_alive = 1
 respawn_time = 180.0
+max_rise = 12.0
+max_drop = 12.0
 leash_range = 0.0
-max_rise = 6.0
-max_drop = 6.0
 
-[node name="ManaFlowerDeepEast" parent="Spawns" instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82, 0, -12)
+[node name="ManaFlowerDeepEast" parent="Spawns" unique_id=820836207 instance=ExtResource("7_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 185, 5.0201306, -30)
 shape = 1
-radius = 5.0
+radius = 12.5
 editor_color = Color(0.4, 0.65, 1, 1)
 entries = Array[ExtResource("8_entry")]([SubResource("Entry_mana")])
 max_alive = 1
 respawn_time = 180.0
+max_rise = 12.0
+max_drop = 12.0
 leash_range = 0.0
-max_rise = 6.0
-max_drop = 6.0
 
-[node name="GlowcapShadeNorth" parent="Spawns" instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 0, -20)
-radius = 6.0
-max_alive = 3
+[node name="GlowcapShadeNorth" parent="Spawns" unique_id=2033092150 instance=ExtResource("7_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -62.5, 6.750208, -50)
 shape = 1
+radius = 15.0
 editor_color = Color(0.4, 1, 0.7, 1)
 entries = Array[ExtResource("8_entry")]([SubResource("Entry_glowcap")])
+max_alive = 3
 respawn_time = 40.0
 min_spacing = 2.0
+max_rise = 12.0
+max_drop = 12.0
 leash_range = 0.0
-max_rise = 6.0
-max_drop = 6.0
 
-[node name="GlowcapShadeFar" parent="Spawns" instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, -80)
-radius = 6.0
-max_alive = 3
+[node name="GlowcapShadeFar" parent="Spawns" unique_id=471029751 instance=ExtResource("7_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 4.658704, -188)
 shape = 1
+radius = 15.0
 editor_color = Color(0.4, 1, 0.7, 1)
 entries = Array[ExtResource("8_entry")]([SubResource("Entry_glowcap")])
+max_alive = 3
 respawn_time = 40.0
 min_spacing = 2.0
+max_rise = 12.0
+max_drop = 12.0
 leash_range = 0.0
-max_rise = 6.0
-max_drop = 6.0
 
-[node name="GlowcapShadeWest" parent="Spawns" instance=ExtResource("7_area")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -80, 0, 8)
-radius = 6.0
+[node name="GlowcapShadeWest" parent="Spawns" unique_id=1300209089 instance=ExtResource("7_area")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -185, 6.117078, 20)
+shape = 1
+radius = 15.0
+editor_color = Color(0.4, 1, 0.7, 1)
+entries = Array[ExtResource("8_entry")]([SubResource("Entry_glowcap")])
 max_alive = 2
-shape = 1
-editor_color = Color(0.4, 1, 0.7, 1)
-entries = Array[ExtResource("8_entry")]([SubResource("Entry_glowcap")])
 respawn_time = 40.0
 min_spacing = 2.0
+max_rise = 12.0
+max_drop = 12.0
 leash_range = 0.0
-max_rise = 6.0
-max_drop = 6.0
 
-[node name="Lighting" type="Node3D" parent="."]
+[node name="Lighting" type="Node3D" parent="." unique_id=598567373]
 
-[node name="Sun" type="DirectionalLight3D" parent="Lighting"]
+[node name="Sun" type="DirectionalLight3D" parent="Lighting" unique_id=636436259]
 transform = Transform3D(0.7682, 0.3452, -0.5392, 0, 0.8422, 0.5392, 0.6402, -0.4142, 0.647, 0, 40, 0)
 light_color = Color(1, 0.9, 0.78, 1)
 light_energy = 0.9
+light_cull_mask = 1048573
 shadow_enabled = true
 shadow_blur = 1.5
-light_cull_mask = 1048573
 directional_shadow_max_distance = 70.0
 
-[node name="LightShafts" type="Node3D" parent="Lighting"]
-
-[node name="CaveDarkness" type="Area3D" parent="Lighting" node_paths=PackedStringArray("world_environment")]
+[node name="CaveDarkness" type="Area3D" parent="Lighting" unique_id=1519418920 node_paths=PackedStringArray("world_environment")]
 collision_layer = 0
 monitorable = false
 script = ExtResource("10_ambience")
@@ -475,10 +450,10 @@ ambient_color = Color(0.26, 0.3, 0.42, 1)
 ambient_energy = 0.12
 fade_time = 1.5
 
-[node name="AmbientParticles" type="Node3D" parent="Lighting"]
+[node name="AmbientParticles" type="Node3D" parent="Lighting" unique_id=963602964]
 script = ExtResource("17_follow")
 
-[node name="Fireflies" type="GPUParticles3D" parent="Lighting/AmbientParticles"]
+[node name="Fireflies" type="GPUParticles3D" parent="Lighting/AmbientParticles" unique_id=841639382]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 cast_shadow = 0
 amount = 70
@@ -488,7 +463,7 @@ visibility_aabb = AABB(-30, -6, -30, 60, 14, 60)
 process_material = SubResource("Process_fireflies")
 draw_pass_1 = SubResource("Quad_firefly")
 
-[node name="MagicMotes" type="GPUParticles3D" parent="Lighting/AmbientParticles"]
+[node name="MagicMotes" type="GPUParticles3D" parent="Lighting/AmbientParticles" unique_id=246001204]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
 cast_shadow = 0
 amount = 120
@@ -498,8 +473,8 @@ visibility_aabb = AABB(-32, -10, -32, 64, 22, 64)
 process_material = SubResource("Process_motes")
 draw_pass_1 = SubResource("Quad_mote")
 
-[node name="Player" parent="." instance=ExtResource("1_player")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 68.5)
+[node name="Player" parent="." unique_id=1274020524 instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 12, 182.5)
 
-[node name="HUD" parent="." node_paths=PackedStringArray("player") instance=ExtResource("2_hud")]
+[node name="HUD" parent="." unique_id=1803321454 node_paths=PackedStringArray("player") instance=ExtResource("2_hud")]
 player = NodePath("../Player")

@@ -3,8 +3,9 @@
 [ext_resource type="Script" path="res://scripts/interaction/item_pickup.gd" id="1_pickup"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_jelly"]
+rough = true
 friction = 1.0
-bounce = 0.55
+bounce = 0.2
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_jelly"]
 radius = 0.11
@@ -30,6 +31,8 @@ rings = 8
 collision_layer = 4
 collision_mask = 1
 mass = 0.2
+linear_damp = 0.6
+angular_damp = 3.0
 physics_material_override = SubResource("PhysicsMaterial_jelly")
 continuous_cd = true
 script = ExtResource("1_pickup")

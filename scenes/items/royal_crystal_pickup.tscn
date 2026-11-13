@@ -3,8 +3,9 @@
 [ext_resource type="Script" path="res://scripts/interaction/item_pickup.gd" id="1_pickup"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_royal_crystal"]
-friction = 0.6
-bounce = 0.3
+rough = true
+friction = 1.0
+bounce = 0.1
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_royal_crystal"]
 size = Vector3(0.2, 0.27, 0.13)
@@ -52,6 +53,8 @@ rings = 1
 collision_layer = 4
 collision_mask = 1
 mass = 0.4
+linear_damp = 0.6
+angular_damp = 3.0
 physics_material_override = SubResource("PhysicsMaterial_royal_crystal")
 continuous_cd = true
 script = ExtResource("1_pickup")
