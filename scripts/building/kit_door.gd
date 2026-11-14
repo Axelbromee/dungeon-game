@@ -1,16 +1,16 @@
 @tool
 class_name KitDoor
 extends KitPiece
-## Door that swings open / closed with E: the KayKit doorway's own leaf at
-## its real size, so it fits a KitWall doorway exactly. Put it at the
+## Door that swings open / closed with E: the Medieval Village door leaf
+## (Door_1_Round) at its real size, so it fits a KitWall doorway exactly. Put it at the
 ## doorway's origin. The leaf is its own body on the interactable layer so
 ## the player can target it.
 
-## Not used: the leaf has the KayKit doorway's size (kept for old scenes).
+## Not used: the leaf has the model's size (kept for old scenes).
 @export var width: float = 2.3
-## Not used: the leaf has the KayKit doorway's size (kept for old scenes).
+## Not used: the leaf has the model's size (kept for old scenes).
 @export var height: float = 2.87
-## Not used: the leaf has the KayKit doorway's size (kept for old scenes).
+## Not used: the leaf has the model's size (kept for old scenes).
 @export var thickness: float = 0.78
 ## Degrees; positive swings toward -Z (away from the front).
 @export var open_angle: float = 100.0
@@ -20,14 +20,14 @@ extends KitPiece
 ## A locked door stays shut; E only shows `locked_text`.
 @export var locked: bool = false
 @export var locked_text: String = "Locked"
-## Not used by the KayKit leaf (kept so existing scenes load unchanged).
+## Not used by the model leaf (kept so existing scenes load unchanged).
 @export_range(3, 9) var planks: int = 5
 
-## The KayKit leaf: its size and how far its hinge sits from the middle.
-const LEAF_SIZE := Vector3(2.0, 2.75, 0.78)
-const HINGE_X := 0.82
-const MODEL := "wall_doorway"
-const PART := "wall_doorway_door"
+## The leaf (Door_1_Round: 1.12 x 2.32 x 0.12 m, hinge at the model's
+## origin, leaf toward +X): its size and how far its hinge sits from the middle.
+const LEAF_SIZE := Vector3(1.12, 2.32, 0.12)
+const HINGE_X := 0.56
+const MODEL := "Door_1_Round"
 
 var is_open: bool = false
 
@@ -49,8 +49,7 @@ func _build() -> void:
 	# same leaf turned around.
 	var dir := -side
 	var turn := Basis(Vector3.UP, 0.0 if hinge_on_left else PI)
-	var hinge := KitPiece.model_part_xform(kk(MODEL), PART).origin
-	add_model_xform(kk(MODEL), Transform3D(turn, turn * -hinge), _leaf, PackedStringArray([PART]))
+	add_model_xform(mv(MODEL), Transform3D(turn, Vector3.ZERO), _leaf)
 	add_collision_box(LEAF_SIZE, Vector3(dir * HINGE_X, LEAF_SIZE.y * 0.5, 0), Vector3.ZERO, _leaf)
 
 	is_open = start_open

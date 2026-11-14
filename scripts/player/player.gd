@@ -1,10 +1,11 @@
 class_name Player
 extends CharacterBody3D
-## First-person player controller: mouse look, walk/sprint, jump, mana, a
-## hold-to-charge fireball, world interaction and an inventory.
+## First-person player controller: mouse look, walk/sprint, jump, mana,
+## spells (learned spells, an 8-slot spell wheel, cast with the Grimoire),
+## world interaction and an inventory.
 
 signal mana_changed(current: float, maximum: float)
-## Mana the fireball being charged would cost if released now (0 = not charging).
+## Mana the spell being cast would cost if released now (0 = not casting).
 signal charge_cost_changed(cost: float)
 ## Prompt for the interactable currently in focus ("" = nothing in focus).
 signal interact_prompt_changed(text: String)
@@ -23,6 +24,16 @@ signal stamina_changed(current: float, maximum: float, exhausted: bool)
 signal info_shown(title: String, body: String)
 ## A storage chest was opened; the HUD shows it next to the bag.
 signal storage_opened(storage: Inventory, title: String, on_close: Callable)
+## Learned or equipped spells changed (Spell Library, wheel).
+signal spells_changed
+## The selected wheel slot or the spell in it changed (null = empty slot).
+signal selected_spell_changed(spell: Spell)
+## The spell wheel opened, closed or the slot under the mouse changed
+## (hovered_slot -1 = none).
+signal spell_wheel_changed(open: bool, hovered_slot: int)
+
+## Slots on the spell wheel.
+const SPELL_SLOTS := 8
 
 @export_group("Movement")
 ## Base speeds; Agility multiplies them.
@@ -88,16 +99,13 @@ signal storage_opened(storage: Inventory, title: String, on_close: Callable)
 ## Regeneration per second. Paused while charging.
 @export var mana_regen_per_second: float = 10.0
 
-@export_group("Fireball")
-@export var fireball_scene: PackedScene
-## Item that must be the selected hotbar item to charge/cast. Empty = always allowed.
-@export var spell_item: InventoryItem
-## Seconds of holding to reach full charge.
-@export var max_charge_time: float = 1.5
-## Cost of an uncharged shot; also the minimum mana needed to start casting.
-@export var min_mana_cost: float = 5.0
-## Cost of a fully charged shot.
-@export var max_mana_cost: float = 40.0
+@export_group("Spells")
+## Item that must be the selected hotbar item to cast (the Grimoire). Empty = always allowed.
+@export var grimoire_item: InventoryItem
+## New game: this spell is learned, equipped in wheel slot 1 and selected (the Fireball).
+@export var starting_spell: Spell
+## Mouse movement (pixels) needed on the open spell wheel to point at a slot.
+@export var spell_wheel_deadzone: float = 30.0
 ## How far ahead the crosshair ray looks when computing the aim point.
 @export var aim_distance: float = 100.0
 ## Layers the crosshair ray can hit (excludes the invisible stair ramps).
@@ -119,8 +127,8 @@ signal storage_opened(storage: Inventory, title: String, on_close: Callable)
 @export_group("Hotbar")
 ## Slots in the hotbar (first row of the inventory). Number keys 1-9 map to them.
 @export_range(1, 9) var hotbar_size: int = 9
-## New game: put the spell item (the Fire Spellbook) in hotbar slot 1, selected.
-@export var start_with_spell_item: bool = true
+## New game: put the Grimoire in hotbar slot 1, selected.
+@export var start_with_grimoire: bool = true
 ## Extra items given on a new game (into the bag).
 @export var starting_items: Array[InventoryItem] = []
 
@@ -131,8 +139,14 @@ var max_stamina: float = 100.0
 var stamina_regen: float = 20.0
 var speed_multiplier: float = 1.0
 var fireball_damage_multiplier: float = 1.0
-## Uncharged / fully charged direct damage of fireball_scene (before Magic).
-var fireball_base_damage: Vector2 = Vector2(10.0, 50.0)
+## Direct damage of the starting spell's projectile (the fireball), before Magic.
+var fireball_base_damage: float = 30.0
+## Every spell the player knows (Spell Library), in learning order.
+var learned_spells: Array[Spell] = []
+## The spell wheel: SPELL_SLOTS entries, null = empty slot.
+var equipped_spells: Array[Spell] = []
+## Wheel slot of the spell cast with the Grimoire.
+var selected_spell_slot: int = 0
 
 var stamina: float = 0.0:
 	set(value):
@@ -169,8 +183,11 @@ var _spawn_transform: Transform3D
 
 var _coyote_timer: float = 0.0
 var _jump_buffer_timer: float = 0.0
-var _charging_fireball: Fireball = null
-var _charge_time: float = 0.0
+## The cast in progress (LMB held), or null.
+var _caster: SpellCaster = null
+var _wheel_open: bool = false
+var _wheel_pointer: Vector2 = Vector2.ZERO
+var _wheel_hover: int = -1
 var _camera_base_y: float = 0.0
 var _ui_open: bool = false
 var _focused: Node3D = null
@@ -204,13 +221,18 @@ func _ready() -> void:
 	_spawn_transform = global_transform
 	_camera_base_y = camera_pivot.position.y
 	inventory.hotbar_size = hotbar_size
+	equipped_spells.resize(SPELL_SLOTS)
 	if GameState.has_player_data():
 		load_state(GameState.player_data)  # Coming from another scene.
 	else:
 		# New game.
-		if start_with_spell_item and spell_item:
-			inventory.set_slot(0, spell_item, 1)
+		if start_with_grimoire and grimoire_item:
+			inventory.set_slot(0, grimoire_item, 1)
 		selected_hotbar_index = 0
+		if starting_spell:
+			learned_spells.append(starting_spell)
+			equipped_spells[0] = starting_spell
+		selected_spell_slot = 0
 		for item in starting_items:
 			if item:
 				inventory.add_item(item, 1)
@@ -233,6 +255,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	var captured := Input.mouse_mode == Input.MOUSE_MODE_CAPTURED
 
 	if event.is_action_pressed("ui_cancel"):
+		_close_spell_wheel(false)
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		_cancel_charge()
 		return
@@ -244,13 +267,32 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		return
 
+	# Spell wheel: hold R. While it's open the mouse points at a slot instead
+	# of looking around, and LMB does nothing.
+	if event.is_action_pressed("spell_wheel"):
+		_open_spell_wheel()
+		return
+	if event.is_action_released("spell_wheel"):
+		_close_spell_wheel(true)
+		return
+	if _wheel_open:
+		if event is InputEventMouseMotion:
+			_point_spell_wheel(event.relative)
+		elif event.is_action("cast"):
+			return
+
 	var hotbar_step := _hotbar_scroll_step(event)
 	var hotbar_key := _hotbar_key_index(event)
 
 	if event is InputEventMouseMotion:
-		_look(event.relative)
+		if not _wheel_open:
+			_look(event.relative)
 	elif hotbar_step != 0:
-		select_hotbar(selected_hotbar_index + hotbar_step)
+		# Holding the Grimoire, the mouse wheel cycles the equipped spells.
+		if is_holding_grimoire():
+			cycle_spell(hotbar_step)
+		else:
+			select_hotbar(selected_hotbar_index + hotbar_step)
 	elif hotbar_key >= 0:
 		select_hotbar(hotbar_key)
 	elif event.is_action_pressed("drop_item"):
@@ -280,7 +322,7 @@ func _physics_process(delta: float) -> void:
 	_handle_dash(delta)
 	_try_step_up(delta)
 	move_and_slide()
-	_update_charge(delta)
+	_update_cast(delta)
 	_regen_mana(delta)
 	_update_stamina(delta)
 	_update_focus()
@@ -404,6 +446,9 @@ func save_state() -> Dictionary:
 		"mana": mana,
 		"stamina": stamina,
 		"selected_hotbar": selected_hotbar_index,
+		"learned_spells": learned_spells.map(func(spell: Spell) -> String: return spell.resource_path),
+		"equipped_spells": equipped_spells.map(func(spell: Spell) -> String: return spell.resource_path if spell else ""),
+		"selected_spell": selected_spell_slot,
 	}
 
 
@@ -416,6 +461,17 @@ func load_state(data: Dictionary) -> void:
 	stamina = float(data.get("stamina", max_stamina))
 	selected_hotbar_index = clampi(int(data.get("selected_hotbar", 0)), 0, hotbar_size - 1)
 	hotbar_selection_changed.emit(selected_hotbar_index)
+	learned_spells.clear()
+	for path in data.get("learned_spells", []):
+		var spell := _load_spell(str(path))
+		if spell and not knows_spell(spell):
+			learned_spells.append(spell)
+	var equipped: Array = data.get("equipped_spells", [])
+	for i in SPELL_SLOTS:
+		equipped_spells[i] = _load_spell(str(equipped[i])) if i < equipped.size() else null
+	selected_spell_slot = clampi(int(data.get("selected_spell", 0)), 0, SPELL_SLOTS - 1)
+	spells_changed.emit()
+	selected_spell_changed.emit(get_selected_spell())
 	if health <= 0.0:
 		health = max_health  # Never arrive dead.
 
@@ -505,11 +561,11 @@ func _apply_stats() -> void:
 
 
 func _read_fireball_damage() -> void:
-	if fireball_scene == null:
+	if starting_spell == null or starting_spell.scene == null:
 		return
-	var probe := fireball_scene.instantiate() as Fireball
+	var probe := starting_spell.scene.instantiate() as Fireball
 	if probe:
-		fireball_base_damage = Vector2(probe.min_damage, probe.max_damage)
+		fireball_base_damage = probe.damage
 		probe.free()
 
 
@@ -576,6 +632,7 @@ func apply_knockback(impulse: Vector3) -> void:
 
 func _die() -> void:
 	is_dead = true
+	_close_spell_wheel(false)
 	_cancel_charge()
 	held_item.visible = false
 	notified.emit("You died")
@@ -601,92 +658,65 @@ func _respawn() -> void:
 # --- Mana -------------------------------------------------------------------
 
 func _regen_mana(delta: float) -> void:
-	if _charging_fireball == null:
+	if _caster == null:
 		mana += mana_regen_per_second * delta
 
 
-## Highest charge ratio the current mana can pay for.
-func _affordable_charge_ratio() -> float:
-	if max_mana_cost <= min_mana_cost:
-		return 1.0 if mana >= min_mana_cost else 0.0
-	return clampf(inverse_lerp(min_mana_cost, max_mana_cost, mana), 0.0, 1.0)
+# --- Casting --------------------------------------------------------------
 
+## True if the selected hotbar item is the Grimoire (or no Grimoire is required).
+func is_holding_grimoire() -> bool:
+	return grimoire_item == null or grimoire_item.is_same_item(get_selected_item())
 
-func _cost_for(charge_ratio: float) -> float:
-	return lerpf(min_mana_cost, max_mana_cost, charge_ratio)
-
-
-# --- Fireball ---------------------------------------------------------------
 
 func _can_cast() -> bool:
-	return spell_item == null or spell_item.is_same_item(get_selected_item())
+	return is_holding_grimoire() and get_selected_spell() != null
 
 
 func _start_charge() -> void:
-	if _charging_fireball != null or fireball_scene == null:
+	if _caster != null:
+		return
+	if not is_holding_grimoire():
+		notified.emit("Select the %s on your hotbar to cast" % grimoire_item.item_name)
+		return
+	var spell := get_selected_spell()
+	if spell == null:
+		notified.emit("No spell selected: equip one in the Spell Library [%s]" % _action_key_label("inventory"))
+		return
+	var caster := spell.create_caster()
+	if caster != null and caster.start(spell, self):
+		_caster = caster
+
+
+func _update_cast(delta: float) -> void:
+	if _caster == null:
 		return
 	if not _can_cast():
-		notified.emit("Select the %s on your hotbar to cast" % spell_item.item_name)
+		_cancel_charge()  # Grimoire deselected or dropped mid-cast.
 		return
-	if mana < min_mana_cost:
-		return
-	_charging_fireball = fireball_scene.instantiate() as Fireball
-	_charging_fireball.damage_multiplier = fireball_damage_multiplier
-	# Charge from the held book if it has a cast point, else the muzzle.
-	var cast_point := held_item.get_cast_point()
-	(cast_point if cast_point else muzzle).add_child(_charging_fireball)
-	_charge_time = 0.0
-	_place_charging_fireball()
-
-
-func _update_charge(delta: float) -> void:
-	if _charging_fireball == null:
-		return
-	if not _can_cast():
-		_cancel_charge()  # Spellbook deselected or dropped mid-charge.
-		return
-	_charge_time = minf(_charge_time + delta, max_charge_time)
-	var time_ratio := _charge_time / max_charge_time if max_charge_time > 0.0 else 1.0
-	# Growth stops at whatever size the available mana can afford.
-	_charging_fireball.set_charge(minf(time_ratio, _affordable_charge_ratio()))
-	_place_charging_fireball()
-	charge_cost_changed.emit(_cost_for(_charging_fireball.charge_ratio))
-
-
-## Keep a growing fireball just above/ahead of the book, pushed out by its own
-## radius so a full charge floats in front of the hand instead of swallowing it.
-func _place_charging_fireball() -> void:
-	if _charging_fireball == null or _charging_fireball.get_parent() == muzzle:
-		return
-	var radius := _charging_fireball.get_radius()
-	var forward := -camera.global_basis.z
-	var anchor := (_charging_fireball.get_parent() as Node3D).global_position
-	_charging_fireball.global_position = anchor + forward * radius + Vector3.UP * radius * 0.6
+	_caster.update(delta)
+	charge_cost_changed.emit(_caster.pending_cost())
 
 
 func _release_charge() -> void:
-	if _charging_fireball == null:
+	if _caster == null:
 		return
-	var fireball := _charging_fireball
-	_charging_fireball = null
-
-	mana -= _cost_for(fireball.charge_ratio)
+	var caster := _caster
+	_caster = null
+	caster.release()
 	charge_cost_changed.emit(0.0)
-	fireball.reparent(get_tree().current_scene)  # Keeps global transform.
-	fireball.launch(_aim_direction(fireball.global_position), self)
 
 
 func _cancel_charge() -> void:
-	if _charging_fireball != null:
-		if is_instance_valid(_charging_fireball):
-			_charging_fireball.queue_free()
-		_charging_fireball = null
+	if _caster != null:
+		_caster.cancel()
+		_caster = null
 		charge_cost_changed.emit(0.0)
 
 
 ## Direction from `from` toward whatever the crosshair is pointing at, so the
 ## offset muzzle still converges on screen centre.
-func _aim_direction(from: Vector3) -> Vector3:
+func aim_direction(from: Vector3) -> Vector3:
 	var cam_origin := camera.global_position
 	var cam_forward := -camera.global_basis.z
 	var target := cam_origin + cam_forward * aim_distance
@@ -706,6 +736,7 @@ func _aim_direction(from: Vector3) -> Vector3:
 func set_ui_open(open: bool) -> void:
 	_ui_open = open
 	if open:
+		_close_spell_wheel(false)
 		_cancel_charge()
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	else:
@@ -814,10 +845,10 @@ func _on_inventory_slot_changed(index: int) -> void:
 		_refresh_held_item()
 
 
-## Show the selected item in the hand. If that takes the spellbook away
-## mid-charge, cancel first so the fireball isn't freed along with the book.
+## Show the selected item in the hand. If that takes the Grimoire away
+## mid-cast, cancel first so the spell isn't freed along with the book.
 func _refresh_held_item() -> void:
-	if _charging_fireball != null and not _can_cast():
+	if _caster != null and not _can_cast():
 		_cancel_charge()
 	held_item.set_item(get_selected_item())
 
@@ -848,6 +879,148 @@ func _hotbar_key_index(event: InputEvent) -> int:
 		var index := int(code - KEY_1)
 		return index if index < hotbar_size else -1
 	return -1
+
+
+# --- Spells -----------------------------------------------------------------
+
+## Teaches the player a spell (for whatever teaches spells: scrolls, trainers...).
+## Returns false if it was already known.
+func learn_spell(spell: Spell) -> bool:
+	if spell == null or knows_spell(spell):
+		return false
+	learned_spells.append(spell)
+	spells_changed.emit()
+	notified.emit("Learned %s" % spell.spell_name)
+	return true
+
+
+func knows_spell(spell: Spell) -> bool:
+	for known in learned_spells:
+		if known.is_same_spell(spell):
+			return true
+	return false
+
+
+## The spell in the selected wheel slot (null = empty slot).
+func get_selected_spell() -> Spell:
+	return equipped_spells[selected_spell_slot] if selected_spell_slot < equipped_spells.size() else null
+
+
+## Puts a learned spell on wheel slot `slot`. If it's already on another
+## slot, the two slots swap.
+func equip_spell(spell: Spell, slot: int) -> void:
+	if spell == null or not knows_spell(spell) or slot < 0 or slot >= SPELL_SLOTS:
+		return
+	var current := _equipped_slot_of(spell)
+	if current == slot:
+		return
+	var selected_before := get_selected_spell()
+	if current >= 0:
+		equipped_spells[current] = equipped_spells[slot]
+	equipped_spells[slot] = spell
+	_after_wheel_change(selected_before)
+
+
+## Swaps two wheel slots (either may be empty).
+func swap_spell_slots(a: int, b: int) -> void:
+	if a == b or a < 0 or b < 0 or a >= SPELL_SLOTS or b >= SPELL_SLOTS:
+		return
+	var selected_before := get_selected_spell()
+	var spell := equipped_spells[a]
+	equipped_spells[a] = equipped_spells[b]
+	equipped_spells[b] = spell
+	_after_wheel_change(selected_before)
+
+
+func unequip_spell_slot(slot: int) -> void:
+	if slot < 0 or slot >= SPELL_SLOTS or equipped_spells[slot] == null:
+		return
+	var selected_before := get_selected_spell()
+	equipped_spells[slot] = null
+	_after_wheel_change(selected_before)
+
+
+## Selects a wheel slot (an empty one too: then nothing is cast).
+func select_spell_slot(slot: int) -> void:
+	if slot < 0 or slot >= SPELL_SLOTS or slot == selected_spell_slot:
+		return
+	_cancel_charge()
+	selected_spell_slot = slot
+	selected_spell_changed.emit(get_selected_spell())
+
+
+## Moves the selection to the next equipped spell in `step`'s direction,
+## skipping empty slots.
+func cycle_spell(step: int) -> void:
+	var direction := signi(step)
+	if direction == 0:
+		return
+	for i in range(1, SPELL_SLOTS + 1):
+		var slot := posmod(selected_spell_slot + direction * i, SPELL_SLOTS)
+		if equipped_spells[slot] != null:
+			select_spell_slot(slot)
+			return
+
+
+func _equipped_slot_of(spell: Spell) -> int:
+	for i in equipped_spells.size():
+		if spell.is_same_spell(equipped_spells[i]):
+			return i
+	return -1
+
+
+func _after_wheel_change(selected_before: Spell) -> void:
+	spells_changed.emit()
+	var selected := get_selected_spell()
+	if selected != selected_before:
+		_cancel_charge()
+		selected_spell_changed.emit(selected)
+
+
+static func _load_spell(path: String) -> Spell:
+	if path == "" or not ResourceLoader.exists(path):
+		return null
+	return load(path) as Spell
+
+
+# --- Spell wheel --------------------------------------------------------------
+
+func is_spell_wheel_open() -> bool:
+	return _wheel_open
+
+
+func _open_spell_wheel() -> void:
+	if _wheel_open:
+		return
+	_cancel_charge()
+	_wheel_open = true
+	_wheel_pointer = Vector2.ZERO
+	_wheel_hover = -1
+	spell_wheel_changed.emit(true, _wheel_hover)
+
+
+## Releasing R selects the slot under the mouse (`select` false = just close).
+func _close_spell_wheel(select: bool) -> void:
+	if not _wheel_open:
+		return
+	_wheel_open = false
+	if select and _wheel_hover >= 0:
+		select_spell_slot(_wheel_hover)
+	_wheel_hover = -1
+	spell_wheel_changed.emit(false, -1)
+
+
+## Mouse motion moves a pointer from the wheel's centre; its direction picks
+## the slot (slot 0 at the top, then clockwise).
+func _point_spell_wheel(relative: Vector2) -> void:
+	_wheel_pointer = (_wheel_pointer + relative).limit_length(spell_wheel_deadzone * 4.0)
+	var hover := -1
+	if _wheel_pointer.length() >= spell_wheel_deadzone:
+		var angle := _wheel_pointer.angle() + PI * 0.5  # 0 = straight up.
+		hover = posmod(roundi(angle / (TAU / SPELL_SLOTS)), SPELL_SLOTS)
+	if hover != _wheel_hover:
+		_wheel_hover = hover
+		spell_wheel_changed.emit(true, hover)
 
 
 # --- Inventory --------------------------------------------------------------

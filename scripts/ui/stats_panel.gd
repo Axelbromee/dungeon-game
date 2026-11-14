@@ -38,9 +38,9 @@ func refresh() -> void:
 	_xp_bar.value = _stats.xp
 
 	var dmg := _player.fireball_base_damage * _player.fireball_damage_multiplier
-	_derived_label.text = "Max HP %d    Max mana %d    Max stamina %d\nFireball damage %d–%d    Stamina regen %.1f/s" % [
+	_derived_label.text = "Max HP %d    Max mana %d    Max stamina %d\nFireball damage %d    Stamina regen %.1f/s" % [
 		roundi(_player.max_health), roundi(_player.max_mana), roundi(_player.max_stamina),
-		roundi(dmg.x), roundi(dmg.y), _player.stamina_regen,
+		roundi(dmg), _player.stamina_regen,
 	]
 
 

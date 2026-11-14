@@ -12,8 +12,9 @@ extends KitWall
 @export var prompt: String = "Enter"
 @export var sign_text: String = ""
 
-## The KayKit door leaf (it spans x -1..1 in the doorway model).
-const LEAF_SIZE := Vector3(2.0, 2.75, 0.78)
+## The door leaf (Door_1_Round, hinge at its origin, leaf toward +X).
+const LEAF_SIZE := Vector3(1.12, 2.32, 0.12)
+const LEAF_MODEL := "Door_1_Round"
 ## Lowest sign height: just above the doorway's arch.
 const SIGN_MIN_Y := 3.2
 
@@ -21,19 +22,18 @@ const SIGN_MIN_Y := 3.2
 func _build() -> void:
 	style = Style.DOORWAY
 	super._build()
-	# Closed door leaf (its own body so it's targetable): the KayKit
-	# doorway's own leaf, placed where the model has it.
+	# Closed door leaf (its own body so it's targetable), centred in the
+	# doorway.
 	var leaf := StaticBody3D.new()
 	leaf.collision_layer = LAYER_WORLD | LAYER_INTERACTABLE
 	add_generated(leaf)
-	var wall_xform := uniform_xform(kk("wall_doorway"), 1.0, Vector3.ZERO, 0.0, PackedStringArray(), PackedStringArray([DOOR_PART]))
-	add_model_xform(kk("wall_doorway"), wall_xform, leaf, PackedStringArray([DOOR_PART]))
+	add_model_xform(mv(LEAF_MODEL), Transform3D(Basis.IDENTITY, Vector3(-LEAF_SIZE.x * 0.5, 0, 0)), leaf)
 	add_collision_box(LEAF_SIZE, Vector3(0, LEAF_SIZE.y * 0.5, 0), Vector3.ZERO, leaf)
 	if sign_text != "":
-		# No KayKit sign: a dark board with a label, on the wall's face.
+		# No sign model in the packs: a dark board with a label, on the wall's face.
 		var y := maxf(door_height + 0.32, SIGN_MIN_Y)
-		add_box(Vector3(1.3, 0.3, 0.05), Vector3(0, y, DEPTH * 0.5 + 0.03), mat("wood_dark"), false)
-		add_label(sign_text, Vector3(0, y, DEPTH * 0.5 + 0.06), 36)
+		add_box(Vector3(1.3, 0.3, 0.05), Vector3(0, y, BODY_DEPTH * 0.5 + 0.03), mat("wood_dark"), false)
+		add_label(sign_text, Vector3(0, y, BODY_DEPTH * 0.5 + 0.06), 36)
 
 
 func get_interaction_text() -> String:

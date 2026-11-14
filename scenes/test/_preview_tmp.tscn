@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://3y0frc2a3m6r"]
+
+[ext_resource type="PackedScene" uid="uid://ckps7tbvinln3" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Chair_1.gltf" id="1"]
+[ext_resource type="PackedScene" uid="uid://d1linolreq6co" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Bed_Twin1.gltf" id="2"]
+[ext_resource type="PackedScene" uid="uid://1s5j5xin6f47" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Banner_1.gltf" id="3"]
+[ext_resource type="PackedScene" uid="uid://kcxy6utpenya" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Banner_1_Cloth.gltf" id="4"]
+[ext_resource type="PackedScene" uid="uid://bv42vcglksabp" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Chandelier.gltf" id="5"]
+[ext_resource type="PackedScene" uid="uid://d340t038kvmyf" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Lantern_Wall.gltf" id="6"]
+[ext_resource type="PackedScene" uid="uid://brt742yhbq1dh" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Torch_Metal.gltf" id="7"]
+
+[node name="Preview" type="Node3D" unique_id=540491393]
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=345173463]
+transform = Transform3D(0.7, -0.5, 0.5, 0, 0.7, 0.7, -0.7, -0.5, 0.5, 0, 6, 0)
+
+[node name="Chair" parent="." unique_id=1874818407 instance=ExtResource("1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0)
+
+[node name="Bed" parent="." unique_id=1800318297 instance=ExtResource("2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0)
+
+[node name="Banner" parent="." unique_id=1308833259 instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1.6, 0)
+
+[node name="Cloth" parent="." unique_id=75635630 instance=ExtResource("4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 2.3, 0)
+
+[node name="Chandelier" parent="." unique_id=1432086735 instance=ExtResource("5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 2.5, 0)
+
+[node name="LanternWall" parent="." unique_id=733574259 instance=ExtResource("6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 1, 0)
+
+[node name="Torch" parent="." unique_id=576316911 instance=ExtResource("7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 1, 0)

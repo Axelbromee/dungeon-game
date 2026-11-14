@@ -5,8 +5,8 @@
 [resource]
 render_priority = 0
 shader = ExtResource("1_rrrht")
-shader_parameter/water_color = Color(0.36, 0.72, 0.78, 0.82)
-shader_parameter/streak_color = Color(0.8, 0.94, 0.97, 0.9)
+shader_parameter/water_color = Color(0.3, 0.68, 0.76, 0.84)
+shader_parameter/streak_color = Color(0.78, 0.95, 0.96, 0.9)
 shader_parameter/white_color = Color(0.93, 0.97, 1, 0.92)
 shader_parameter/flow_speed = 1.4
 shader_parameter/streak_scale = 1.0

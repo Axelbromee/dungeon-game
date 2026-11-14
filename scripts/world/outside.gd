@@ -4,7 +4,7 @@ extends Node3D
 ## The world around the guild hall, seen through its windows: a grassy
 ## ground with a dirt path from the front doors, a few trees near the hall
 ## that thicken into a forest reaching the horizon, plus bushes, rocks and
-## grass tufts (all KayKit nature models).
+## grass tufts (all Stylized Nature models).
 ##
 ## Built from code like the building kit: generated at runtime and live in
 ## the editor (rebuilt when a setting changes); generated nodes aren't saved,
@@ -16,34 +16,44 @@ extends Node3D
 ## MultiMeshes without shadows, split into pie slices around the hall so the
 ## camera only draws the slices it looks at.
 
-const NATURE := "res://KayKit/Assets4/gltf/%s_Color1.gltf"
+const NATURE := KitPiece.NATURE + "%s.gltf"
 const GROUND_MATERIAL := "res://materials/world/grass_ground.tres"
 const PATH_MATERIAL := "res://materials/world/dirt_path.tres"
 
 ## Small trees are used close to the walls, where big ones would poke into
 ## the building.
-const TREES_SMALL := ["Tree_1_A", "Tree_1_B", "Tree_2_A", "Tree_2_B", "Tree_3_A", "Tree_3_B", "Tree_4_A", "Tree_4_B"]
-const TREES_BIG := ["Tree_1_C", "Tree_2_C", "Tree_2_D", "Tree_2_E", "Tree_3_C", "Tree_4_C"]
-const TREES_BARE := ["Tree_Bare_1_B", "Tree_Bare_1_C", "Tree_Bare_2_B", "Tree_Bare_2_C"]
-## Distant forest: the lighter models (under ~1000 triangles each).
-const TREES_FAR := ["Tree_1_A", "Tree_1_B", "Tree_2_A", "Tree_2_B", "Tree_2_C", "Tree_3_A", "Tree_3_B", "Tree_4_A", "Tree_4_B", "Tree_4_C"]
-const BUSHES_SMALL := ["Bush_1_B", "Bush_1_C", "Bush_2_A", "Bush_2_B", "Bush_3_A", "Bush_4_A", "Bush_4_B"]
-const BUSHES := ["Bush_1_C", "Bush_1_D", "Bush_1_E", "Bush_1_F", "Bush_2_B", "Bush_2_C", "Bush_2_D", "Bush_2_E",
-		"Bush_3_B", "Bush_3_C", "Bush_4_C", "Bush_4_D", "Bush_4_E"]
-const BUSHES_FAR := ["Bush_1_D", "Bush_2_C", "Bush_3_B", "Bush_4_C"]
-const ROCKS_SMALL := ["Rock_1_A", "Rock_1_B", "Rock_1_C", "Rock_2_B", "Rock_3_A", "Rock_3_B", "Rock_3_C", "Rock_3_D", "Rock_3_E", "Rock_3_F"]
-const ROCKS_MEDIUM := ["Rock_1_D", "Rock_1_E", "Rock_1_F", "Rock_1_G", "Rock_1_H", "Rock_2_C", "Rock_2_D",
-		"Rock_3_G", "Rock_3_H", "Rock_3_I", "Rock_3_J", "Rock_3_K", "Rock_3_L"]
-const ROCKS_LARGE := ["Rock_1_J", "Rock_1_K", "Rock_1_N", "Rock_1_O", "Rock_2_E", "Rock_2_F", "Rock_2_G", "Rock_2_H",
-		"Rock_3_M", "Rock_3_N", "Rock_3_O", "Rock_3_Q", "Rock_3_R"]
-## Few variants so the scattered forest boulders stay a handful of MultiMeshes.
-const ROCKS_FAR := ["Rock_1_G", "Rock_1_J", "Rock_2_D", "Rock_2_E", "Rock_3_K", "Rock_3_Q"]
+const TREES_SMALL := ["CommonTree_1", "CommonTree_2", "CommonTree_5", "Pine_3", "Pine_5"]
+const TREES_BIG := ["CommonTree_3", "CommonTree_4", "Pine_1", "Pine_2", "Pine_4"]
+const TREES_BARE := ["DeadTree_1", "DeadTree_2", "DeadTree_3"]
+## Distant forest.
+const TREES_FAR := ["CommonTree_1", "CommonTree_2", "CommonTree_3", "CommonTree_4", "CommonTree_5", "Pine_1", "Pine_3", "Pine_5"]
+const BUSHES_SMALL := ["Bush_Common", "Bush_Common_Flowers"]
+const BUSHES := ["Bush_Common", "Bush_Common", "Bush_Common_Flowers"]
+const BUSHES_FAR := ["Bush_Common"]
+const ROCKS_SMALL := ["Pebble_Square_1", "Pebble_Square_3", "Pebble_Square_4", "Pebble_Square_5", "Pebble_Round_1", "Pebble_Round_3"]
+const ROCKS_MEDIUM := ["Rock_Medium_1", "Rock_Medium_2", "Rock_Medium_3"]
+const ROCKS_LARGE := ["Rock_Medium_1", "Rock_Medium_2", "Rock_Medium_3"]
+const ROCKS_FAR := ["Rock_Medium_1", "Rock_Medium_2", "Rock_Medium_3"]
+## Typical size of each kind at scale 1 (metres; trees and grass: height,
+## bushes: width, rocks: longest side): the scale ranges are for this size.
+const TREE_SMALL_SIZE := 4.6
+const TREE_BIG_SIZE := 7.5
+const TREE_BARE_SIZE := 5.4
+const TREE_FAR_SIZE := 5.5
+const BUSH_SMALL_SIZE := 0.75
+const BUSH_SIZE := 1.7
+const BUSH_FAR_SIZE := 1.5
+const ROCK_SMALL_SIZE := 0.85
+const ROCK_MEDIUM_SIZE := 1.6
+const ROCK_LARGE_SIZE := 3.5
+const ROCK_FAR_SIZE := 2.8
+const GRASS_SIZE := 0.7
 ## Trees claim this fraction of their crown width (trunk and lower crown):
 ## crowns may touch, but trunks, rocks and bushes never overlap.
 const TREE_FOOTPRINT := 0.5
 const TAKEN_CELL := 4.0
 const TAKEN_MAX_RADIUS := 6.0
-const GRASS := ["Grass_1_B", "Grass_1_C", "Grass_2_B", "Grass_2_C", "Grass_1_D", "Grass_2_D"]
+const GRASS := ["Grass_Common_Short", "Grass_Wispy_Short", "Grass_Common_Short", "Grass_Common_Tall"]
 
 ## Same seed, same layout. Change it to reshuffle everything.
 @export var layout_seed: int = 7
@@ -273,33 +283,37 @@ func _scatter_trees(rng: RandomNumberGenerator) -> void:
 			var growth := clampf((r - 60.0) / 240.0, 0.0, 1.0)
 			var chance := _tree_chance(d) * clump * forest_density / pow(1.0 + growth, 2.0)
 			if roll < chance and path_d > 3.0 + growth * 2.0:
-				var s := rng.randf_range(1.3, 1.8) * (1.0 + growth)
 				var model := _pick(rng, TREES_FAR)
+				var s := rng.randf_range(1.3, 1.8) * (1.0 + growth) * _fit(model, TREE_FAR_SIZE, FIT_HEIGHT)
 				if _claim(p, _radius(model, s, TREE_FOOTPRINT)):
 					_queue(_sector_name(p), model, _xform(p, yaw, s))
 			# Undergrowth and boulders between the trees (fog hides them further out).
 			if r < 160.0 and path_d > 1.0 and rng.randf() < 0.12 * clump:
 				var q := p + Vector2(rng.randf_range(-1.5, 1.5), rng.randf_range(-1.5, 1.5))
 				var bush := _pick(rng, BUSHES_FAR)
-				var bush_scale := rng.randf_range(1.0, 1.5)
+				var bush_scale := rng.randf_range(1.0, 1.5) * _fit(bush, BUSH_FAR_SIZE, FIT_WIDTH)
 				if _claim(q, _radius(bush, bush_scale)):
 					_queue(_sector_name(q), bush, _xform(q, rng.randf() * TAU, bush_scale))
 			if r < 200.0 and path_d > 1.0 and rng.randf() < 0.02:
 				var rock := _pick(rng, ROCKS_FAR)
-				var rock_scale := rng.randf_range(0.8, 1.4)
+				var rock_scale := rng.randf_range(0.8, 1.4) * _fit(rock, ROCK_FAR_SIZE, FIT_LONGEST)
 				if _claim(p, _radius(rock, rock_scale)):
 					_queue("Forest/Rocks", rock, _rock_xform(rng, p, rock_scale))
 
 
 func _place_near_tree(rng: RandomNumberGenerator, p: Vector2, d: float, yaw: float) -> void:
 	var model: String
+	var size: float
 	if rng.randf() < 0.07:
 		model = _pick(rng, TREES_BARE)
+		size = TREE_BARE_SIZE
 	elif d < 14.0 or rng.randf() < 0.5:
 		model = _pick(rng, TREES_SMALL)
+		size = TREE_SMALL_SIZE
 	else:
 		model = _pick(rng, TREES_BIG)
-	var s := rng.randf_range(1.15, 1.6)
+		size = TREE_BIG_SIZE
+	var s := rng.randf_range(1.15, 1.6) * _fit(model, size, FIT_HEIGHT)
 	# Keep the crown off the walls, and the tree out of the other trees.
 	if _radius(model, s) < d - 0.5 and _claim(p, _radius(model, s, TREE_FOOTPRINT)):
 		_place("Trees", model, _xform(p, yaw, s))
@@ -339,7 +353,7 @@ func _scatter_near_props(rng: RandomNumberGenerator) -> void:
 			if bush_roll < bush_chance * clump:
 				var bushes: Array = BUSHES_SMALL if d < 2.8 else BUSHES
 				var bush := _pick(rng, bushes)
-				var bush_scale := rng.randf_range(0.85, 1.3)
+				var bush_scale := rng.randf_range(0.85, 1.3) * _fit(bush, BUSH_SMALL_SIZE if d < 2.8 else BUSH_SIZE, FIT_WIDTH)
 				var bush_radius := _radius(bush, bush_scale)
 				# Clear of the walls, the path and everything else.
 				if d > bush_radius + 0.15 and path_d > bush_radius and _claim(p, bush_radius):
@@ -348,13 +362,16 @@ func _scatter_near_props(rng: RandomNumberGenerator) -> void:
 			# Rocks: small ones lining the path, the odd boulder further out.
 			var rock_chance := 0.012 if d < 12.0 else 0.03
 			var rocks: Array = ROCKS_SMALL
+			var rock_size := ROCK_SMALL_SIZE
 			if path_d > 0.1 and path_d < 1.2:
 				rock_chance = 0.08
 			elif d > 20.0 and rng.randf() < 0.25:
-				rocks = ROCKS_LARGE if rng.randf() < 0.35 else ROCKS_MEDIUM
+				var large := rng.randf() < 0.35
+				rocks = ROCKS_LARGE if large else ROCKS_MEDIUM
+				rock_size = ROCK_LARGE_SIZE if large else ROCK_MEDIUM_SIZE
 			if path_d > 0.1 and rock_roll < rock_chance:
 				var rock := _pick(rng, rocks)
-				var rock_scale := rng.randf_range(0.8, 1.25)
+				var rock_scale := rng.randf_range(0.8, 1.25) * _fit(rock, rock_size, FIT_LONGEST)
 				var rock_radius := _radius(rock, rock_scale)
 				if d > rock_radius + 0.2 and path_d > rock_radius * 0.5 and _claim(p, rock_radius):
 					_place("Rocks", rock, _rock_xform(rng, p, rock_scale))
@@ -374,9 +391,9 @@ func _scatter_grass(rng: RandomNumberGenerator) -> void:
 			continue
 		for _k in rng.randi_range(1, 4):
 			var q := c + Vector2(rng.randf_range(-0.8, 0.8), rng.randf_range(-0.8, 0.8))
-			var s := rng.randf_range(0.9, 1.5)
 			var yaw := rng.randf() * TAU
 			var model := _pick(rng, GRASS)
+			var s := rng.randf_range(0.9, 1.5) * _fit(model, GRASS_SIZE, FIT_HEIGHT)
 			if _wall_distance(q) < 0.2 or _path_distance(q) < 0.1 or not _is_free(q, 0.15):
 				continue  # Not into the walls, the path, rocks, bushes or trunks.
 			_queue("Grass", model, _xform(q, yaw, s), false)
@@ -415,12 +432,29 @@ func _claim(p: Vector2, radius: float) -> bool:
 	return true
 
 
+enum { FIT_HEIGHT, FIT_WIDTH, FIT_LONGEST }
+
+
+## Scale factor that makes a model `size` metres in the measured direction.
+static func _fit(path: String, size: float, how: int) -> float:
+	var box := KitPiece.model_aabb(path)
+	var measured: float
+	match how:
+		FIT_HEIGHT:
+			measured = box.end.y
+		FIT_WIDTH:
+			measured = maxf(box.size.x, box.size.z)
+		_:
+			measured = box.get_longest_axis_size()
+	return size / maxf(measured, 0.01)
+
+
 func _pick(rng: RandomNumberGenerator, names: Array) -> String:
 	return NATURE % names[rng.randi() % names.size()]
 
 
 ## Upright, turned `yaw` around Y, uniform scale `s`, origin on the ground
-## (the KayKit nature models have their roots / buried part below 0).
+## (the nature models have their roots / buried part below 0).
 func _xform(p: Vector2, yaw: float, s: float) -> Transform3D:
 	return Transform3D(Basis(Vector3.UP, yaw).scaled(Vector3.ONE * s), Vector3(p.x, 0.0, p.y))
 
@@ -437,7 +471,7 @@ func _place(container: String, path: String, xform: Transform3D) -> void:
 	var parent := _container(container)
 	for part in KitPiece.model_parts(path):
 		var instance := MeshInstance3D.new()
-		instance.name = path.get_file().get_basename().trim_suffix("_Color1")
+		instance.name = path.get_file().get_basename()
 		instance.mesh = part["mesh"]
 		instance.transform = xform * (part["xform"] as Transform3D)
 		parent.add_child(instance)
@@ -466,7 +500,7 @@ func _flush_batches() -> void:
 			for i in xforms.size():
 				multimesh.set_instance_transform(i, (xforms[i] as Transform3D) * part_xform)
 			var instance := MultiMeshInstance3D.new()
-			instance.name = path.get_file().get_basename().trim_suffix("_Color1")
+			instance.name = path.get_file().get_basename()
 			instance.multimesh = multimesh
 			if not batch["shadows"]:
 				instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF

@@ -1,15 +1,27 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://b8l227qq3d1t8"]
 
-[ext_resource type="Script" path="res://scripts/interaction/item_pickup.gd" id="1_pickup"]
-[ext_resource type="PackedScene" path="res://KayKit/Assets/gltf/journal_closed.gltf" id="2_model"]
+[ext_resource type="Script" uid="uid://bmniwh73jvdv4" path="res://scripts/interaction/item_pickup.gd" id="1_pickup"]
+[ext_resource type="PackedScene" uid="uid://bcjhssukgjyla" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Book_7.gltf" id="2_model"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_book"]
 rough = true
-friction = 1.0
 bounce = 0.1
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_book"]
-size = Vector3(0.34, 0.163, 0.245)
+size = Vector3(0.34, 0.072, 0.26)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_brass"]
+albedo_color = Color(0.55, 0.4, 0.15, 1)
+metallic = 0.9
+roughness = 0.35
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ring"]
+material = SubResource("StandardMaterial3D_brass")
+top_radius = 0.085
+bottom_radius = 0.085
+height = 0.003
+radial_segments = 24
+rings = 1
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rune"]
 albedo_color = Color(1, 0.5, 0.15, 1)
@@ -25,41 +37,27 @@ height = 0.004
 radial_segments = 24
 rings = 1
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_brass"]
-albedo_color = Color(0.55, 0.4, 0.15, 1)
-metallic = 0.9
-roughness = 0.35
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_ring"]
-material = SubResource("StandardMaterial3D_brass")
-top_radius = 0.085
-bottom_radius = 0.085
-height = 0.003
-radial_segments = 24
-rings = 1
-
-[node name="FireSpellbookPickup" type="RigidBody3D"]
+[node name="FireSpellbookPickup" type="RigidBody3D" unique_id=695099905]
 collision_layer = 4
-collision_mask = 1
 mass = 0.8
-linear_damp = 0.6
-angular_damp = 3.0
 physics_material_override = SubResource("PhysicsMaterial_book")
 continuous_cd = true
+linear_damp = 0.6
+angular_damp = 3.0
 script = ExtResource("1_pickup")
 default_item = "res://items/fire_spellbook.tres"
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=668477024]
 shape = SubResource("BoxShape3D_book")
 
-[node name="Model" parent="." instance=ExtResource("2_model")]
-transform = Transform3D(0, 0.43, 0, -0.43, 0, 0, 0, 0, 0.43, 0.019, 0, -0.058)
+[node name="Model" parent="." unique_id=2075161136 instance=ExtResource("2_model")]
+transform = Transform3D(0, 0, -1.03, 0, 1.03, 0, 1.03, 0, 0, 0, 0, 0)
 
-[node name="RuneRing" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.083, 0)
+[node name="RuneRing" type="MeshInstance3D" parent="." unique_id=1582819142]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0375, 0)
 mesh = SubResource("CylinderMesh_ring")
 
-[node name="Rune" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0845, 0)
+[node name="Rune" type="MeshInstance3D" parent="." unique_id=618148501]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.039, 0)
 cast_shadow = 0
 mesh = SubResource("CylinderMesh_rune")

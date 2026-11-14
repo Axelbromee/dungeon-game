@@ -1,7 +1,9 @@
 class_name InventoryUI
 extends Control
 ## Toggleable inventory window (the bag) + the always-visible hotbar, and an
-## optional storage section (an open chest) above the bag.
+## optional storage section (an open chest) above the bag. Tabs: Items,
+## Stats and Spells (the Spell Library). While the Grimoire is held, the
+## selected spell is shown next to the hotbar.
 ## Inventory slots [0, hotbar_size) are the hotbar, shown only in the bar at
 ## the bottom of the screen; the rest are the bag, shown in the window. While
 ## the window is open the hotbar accepts drags too. The Player owns which
@@ -44,6 +46,11 @@ var _storage_on_close: Callable = Callable()
 @onready var _stats_page: StatsPanel = $Window/Margin/VBox/StatsPage
 @onready var _items_tab: Button = $Window/Margin/VBox/Tabs/ItemsTab
 @onready var _stats_tab: Button = $Window/Margin/VBox/Tabs/StatsTab
+@onready var _spells_page: SpellLibraryUI = $Window/Margin/VBox/SpellsPage
+@onready var _spells_tab: Button = $Window/Margin/VBox/Tabs/SpellsTab
+@onready var _spell_indicator: Control = $SpellIndicator
+@onready var _spell_icon: TextureRect = $SpellIndicator/Icon
+@onready var _spell_name: Label = $SpellIndicator/Name
 @onready var _hotbar: HBoxContainer = $Hotbar
 @onready var _selected_label: Label = $SelectedLabel
 @onready var _tooltip: PanelContainer = $Tooltip
@@ -71,11 +78,14 @@ func setup(player: Player) -> void:
 		_views[i] = _make_slot(_grid, _inventory, i, false)
 
 	_stats_page.setup(player)
+	_spells_page.setup(player)
 	var tab_group := ButtonGroup.new()
 	_items_tab.button_group = tab_group
 	_stats_tab.button_group = tab_group
-	_items_tab.pressed.connect(_show_page.bind(false))
-	_stats_tab.pressed.connect(_show_page.bind(true))
+	_spells_tab.button_group = tab_group
+	_items_tab.pressed.connect(_show_page.bind(Page.ITEMS))
+	_stats_tab.pressed.connect(_show_page.bind(Page.STATS))
+	_spells_tab.pressed.connect(_show_page.bind(Page.SPELLS))
 	_sort_button.pressed.connect(_inventory.sort_bag)
 
 	_tooltip_style = (_tooltip.get_theme_stylebox("panel") as StyleBoxFlat).duplicate()
@@ -85,6 +95,8 @@ func setup(player: Player) -> void:
 
 	_inventory.slot_changed.connect(_on_slot_changed)
 	_player.hotbar_selection_changed.connect(_on_selection_changed)
+	_player.selected_spell_changed.connect(func(_spell: Spell) -> void: _update_spell_indicator())
+	_player.spells_changed.connect(_update_spell_indicator)
 	_drop_zone.dropped_outside.connect(func(source: Inventory, from_index: int, amount: int) -> void:
 		var inv := source if is_instance_valid(source) else _inventory
 		_drop(inv, from_index, inv.get_count(from_index) if amount <= 0 else amount)
@@ -116,7 +128,7 @@ func open_storage(storage: Inventory, title: String, on_close: Callable = Callab
 	storage.slot_changed.connect(_on_storage_slot_changed)
 	_storage_section.visible = true
 	_items_tab.button_pressed = true
-	_show_page(false)
+	_show_page(Page.ITEMS)
 	if is_open:
 		_update_tooltip()
 	else:
@@ -155,6 +167,7 @@ func _apply_open(open: bool) -> void:
 	_update_tooltip()
 	if not open:
 		_close_storage()
+		_spells_page.clear_pick()
 	# Hotbar is display-only while playing, drag-and-drop-able while open.
 	for slot in _hotbar_slots:
 		slot.set_read_only(not open)
@@ -175,11 +188,17 @@ func _close_storage() -> void:
 	_storage_on_close = Callable()
 
 
-func _show_page(stats: bool) -> void:
-	_items_page.visible = not stats
-	_stats_page.visible = stats
-	if stats:
+enum Page { ITEMS, STATS, SPELLS }
+
+
+func _show_page(page: Page) -> void:
+	_items_page.visible = page == Page.ITEMS
+	_stats_page.visible = page == Page.STATS
+	_spells_page.visible = page == Page.SPELLS
+	if page == Page.STATS:
 		_stats_page.refresh()
+	elif page == Page.SPELLS:
+		_spells_page.refresh()
 	_hover_inventory = null
 	_hover_index = -1
 	_update_tooltip()
@@ -213,6 +232,7 @@ func _on_slot_changed(index: int) -> void:
 		(_views[index] as InventorySlotUI).refresh()
 	if index == _player.selected_hotbar_index:
 		_update_selected_label()
+		_update_spell_indicator()
 	if _hover_inventory == _inventory and index == _hover_index:
 		_update_tooltip()  # Item moved/dropped/stacked under the cursor.
 
@@ -301,6 +321,17 @@ func _on_selection_changed(index: int) -> void:
 	for i in _hotbar_slots.size():
 		_hotbar_slots[i].set_selected(i == index)
 	_update_selected_label()
+	_update_spell_indicator()
+
+
+## The selected spell's icon and name next to the hotbar, while the
+## Grimoire is held.
+func _update_spell_indicator() -> void:
+	var spell := _player.get_selected_spell()
+	_spell_indicator.visible = _player.is_holding_grimoire()
+	_spell_icon.texture = spell.icon if spell else null
+	_spell_name.text = spell.spell_name if spell else "No spell selected"
+	_spell_name.add_theme_color_override("font_color", spell.get_grade_color().lightened(0.2) if spell else Color(0.65, 0.56, 0.45))
 
 
 func _update_selected_label() -> void:

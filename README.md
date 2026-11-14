@@ -20,10 +20,11 @@ Open the project in Godot and press **F5**. The game starts in the guild hall,
 | **Space** | Jump (uses stamina). Tap for a short hop, hold for a full jump |
 | **Ctrl** | Dodge dash in the move direction (or forward). You can't be hurt during it |
 | **Mouse** | Look |
-| **Left mouse (hold, then release)** | Charge and throw a fireball (only with the Fire Spellbook selected) |
+| **Left mouse** | Cast the selected spell (only with the Grimoire selected). Fireball: hold until the fireball forms (0.5 s), release to throw |
+| **R (hold)** | Spell wheel: move the mouse toward a spell, release R to select it. Looking pauses while it's open; the game keeps running |
 | **E** | Harvest, pick up, open, use |
 | **I** or **Tab** | Open / close the inventory |
-| **Mouse wheel** or **1–9** | Choose the hotbar slot (the item appears in your hand) |
+| **Mouse wheel** or **1–9** | Choose the hotbar slot (the item appears in your hand). While holding the Grimoire, the mouse wheel cycles your equipped spells instead; 1–9 still switch slots |
 | **Q** | Drop one of the selected hotbar item. With the inventory open: drop one from the slot under the mouse |
 | **Right-click a slot** | Split the stack in half (inventory open) |
 | **Esc** | Close the inventory, or release the mouse. Click the game to capture it again |
@@ -115,7 +116,7 @@ light off by default, so turn it on for only a few.
 | | Max | Details |
 |---|---|---|
 | **Health** | 100 | 0.6 s invulnerability after a hit, with a red screen flash. At 0: "You died", respawn at the last spawn point after 1.5 s with everything refilled. Inventory is kept |
-| **Mana** | 100 | Refills 10/s, paused while charging. A pale strip previews the current charge's cost |
+| **Mana** | 100 | Refills 10/s, paused while casting. Once a spell is ready to cast, a pale strip previews what releasing will cost |
 | **Stamina** | 100 | Sprint 15/s, jump 10, dash 25 (0.6 s cooldown). Refills 20/s after 1 s unused. At 0 the bar turns orange and sprint/jump/dash are locked until it's back to 20 |
 
 - **Movement:** walk 5 m/s, sprint 8 m/s. Speeds up and slows down smoothly, and steers less in the air.
@@ -123,24 +124,33 @@ light off by default, so turn it on for only a few.
 - **Stairs:** walks up ledges up to 0.35 m without jumping.
 - **Interacting:** targets what you look at within 2.6 m, or anything close and roughly in front of you. The target glows and "Press [E] to…" appears.
 - **Level & XP:** enemies give XP when they die. Level 2 needs 100 XP, and each level after needs 1.35× more. The thin purple bar above the hotbar shows progress, with "Lv N" beside it. Adventurer grade starts at F and can't be raised yet.
-- **Stats tab** (in the inventory window): level, XP, adventurer grade, max HP, max mana, max stamina, fireball damage range and stamina regen.
+- **Stats tab** (in the inventory window): level, XP, adventurer grade, max HP, max mana, max stamina, fireball damage and stamina regen.
 
-## Fireball (`scenes/spells/fireball.tscn`, `scenes/spells/fireball_explosion.tscn`)
+## Spells (`spells/`, `scripts/spells/`)
 
-- **Charging:** select the Fire Spellbook, then hold LMB. The fireball grows above the open book for up to 1.5 s, and stops growing at the size your mana can pay for.
-- **Mana cost:** 5 for a quick shot up to 40 for a full charge, paid on release. Esc, opening the inventory or switching slots cancels it for free.
-- **Flight:** aims at the crosshair. Bigger fireballs fly slower and drop faster.
-- **Direct hit:** 10–50 damage plus knockback.
+- **Grimoire:** the item you hold to cast. A new game starts with it in hotbar slot 1, selected, with **Fireball** learned and equipped (Player → **Start With Grimoire**, **Starting Spell**). LMB casts the selected spell; without the Grimoire in hand nothing is cast.
+- **Learning:** there's no way to learn spells in the game yet. Call `player.learn_spell(spell)` (it returns false if the spell is already known) from whatever should teach one.
+- **Spell Library** (the **Spells** tab of the inventory window): every learned spell with its icon, name, grade, mana cost and description, and the 8 spell wheel slots above it. Equip a spell by dragging it onto a slot, or click it and then a slot. Drag a slot onto another to swap them; right-click a slot or drag it back onto the list to unequip it.
+- **Spell wheel:** hold R to open it in the middle of the screen. Moving the mouse points at a slot (slot 1 at the top, then clockwise); releasing R selects it. While holding the Grimoire, the mouse wheel steps through the equipped spells (empty slots are skipped), and the selected spell's icon and name show to the right of the hotbar.
+- Learned spells, the wheel and the selected spell carry over between scenes like the inventory.
+
+## Fireball (`spells/fireball.tres`, `scenes/spells/fireball.tscn`, `scenes/spells/fireball_explosion.tscn`)
+
+- **Casting:** hold the Grimoire with Fireball selected, then hold LMB. At first there's no fireball, only embers spiralling inward to a point above the book, faster and denser as you hold. At 0.5 s (**Min Charge Time** on `spells/fireball.tres`) they collapse into the fireball, which forms in a quick, smooth burst: now it can be thrown; release LMB to shoot it. Holding longer changes nothing: it stays the same size and keeps flickering until you release. Releasing before it forms (or Esc, opening the inventory, switching slots or spells, opening the spell wheel) cancels for free: the embers scatter and fade (a formed fireball shrinks and fizzles out instead). The casting look is tuned on the Fireball scene (**Casting Look** group).
+- **Mana cost:** 22.5 per fireball (the spell's **Mana Cost**), paid on release; you need that much to start casting.
+- **Every fireball is the same:** size, speed, drop, damage and explosion are settings on the Fireball scene.
+- **Flight:** aims at the crosshair at 21 m/s, dropping at 8 m/s².
+- **Direct hit:** 30 damage plus knockback.
 - **Explosion:**
-  - Area damage within 1.5–4 m, bigger with charge.
-  - 5–30 damage at the centre, falling to 25% at the edge.
+  - Area damage within 2.75 m.
+  - 17.5 damage at the centre, falling to 25% at the edge.
   - The directly hit target doesn't also take splash.
   - Your own explosion never hurts or pushes you.
 
 ## Inventory & hand (`scripts/inventory/`, `scripts/ui/`, `scenes/ui/`)
 
 - **Slots:** 36, in rows of 9. The first 9 are the hotbar, which is always on screen (the selected slot has a gold border); the other 27 are the bag.
-- **Window:** has **Items** and **Stats** tabs. Opening it frees the mouse and blocks looking, casting and interacting; you can still walk. An open storage chest shows its slots above the bag; Shift+click moves a stack between them.
+- **Window:** has **Items**, **Stats** and **Spells** tabs. Opening it frees the mouse and blocks looking, casting and interacting; you can still walk. An open storage chest shows its slots above the bag; Shift+click moves a stack between them.
 - **Held item:** shown in your hand at the lower right. It sways with the mouse, bobs while you walk and rises in when you switch (`scripts/player/held_item_view.gd`).
 - **Dropping:** dropped items are tossed from chest height, tumble a little and soon settle (high friction, damping, little bounce; once landed and slow they stop completely). Pickups lying in the world have an outline in their grade colour (S gold, A red-orange, B purple, C blue, D green, E white, F grey), drawn as an inverted hull (`shaders/effects/pickup_outline.gdshader`); held items and inventory icons have none. Pick them up again with E.
 - **Icons:** generated at startup from each item's 3D model by the `IconBaker` autoload, and cached in `user://icon_cache`.
@@ -149,7 +159,7 @@ light off by default, so turn it on for only a few.
 
 | Item | Grade | Stack | Notes |
 |---|---|---|---|
-| Fire Spellbook | F | 1 | Needed to cast; fireballs charge from the open book in your hand. A new game starts with it in hotbar slot 1, selected (Player → **Start With Spell Item**) |
+| Grimoire | F | 1 | Needed to cast; spells form above the book in your hand. A new game starts with it in hotbar slot 1, selected (Player → **Start With Grimoire**) |
 | Glowcap Herb | F | 20 | Harvest the glowing plant with E; dropped herbs tumble and can be picked up |
 | Healing Moss | F | 20 | Gather a moss patch with E (1–2). Put its spawn areas near water |
 | Wild Berries | F | 20 | Pick a berry bush with E (2–4). The bush stays and regrows its berries in 90 s. Eating isn't in the game yet, so the stamina is description only |
@@ -297,8 +307,26 @@ logs) never count as ground or walls for spawn areas.
 ### Adding an item
 1. In the FileSystem dock, right-click `items/` → **New Resource → InventoryItem**. Set its name, grade, category, description, stacking and stack limit.
 2. To make it droppable, build a pickup scene in `scenes/items/`: a `RigidBody3D` on layer 3 with `scripts/interaction/item_pickup.gd` and some meshes. Set it as the item's **World Scene**, and set the pickup's **Default Item** to the item's file. Its icon is generated from these meshes.
-3. Tune how it sits in the hand under **Held In Hand**: offset, rotation and scale. For a custom hand model, set a held scene. A `Marker3D` named `CastPoint` in it marks where spells charge from.
+3. Tune how it sits in the hand under **Held In Hand**: offset, rotation and scale. For a custom hand model, set a held scene. A `Marker3D` named `CastPoint` in it marks where spells are cast from.
 4. A pickup scene can't hold its item directly, because the item already points at the scene and Godot refuses to load two resources that point at each other. That's why **Default Item** is a file path.
+
+### Adding a spell
+A spell is a `Spell` resource (`scripts/spells/spell.gd`): name, description,
+icon, grade, mana cost, and what casts it. It needs no new code if it casts
+like an existing spell.
+
+1. In the FileSystem dock, right-click `spells/` → **New Resource → Spell**. Set its name, description, icon (any texture) and grade.
+2. **Mana:** **Mana Cost** is spent on every cast (and is the least mana needed to start one).
+3. **Casting:** **Min Charge Time** is how long LMB must be held before the spell can be cast (releasing sooner cancels it for free; 0 = cast as soon as LMB is released). **Scene** is what the spell spawns. **Caster** is the script that casts it; leave it empty (or set `charged_projectile_caster.gd`) for a projectile cast like the fireball.
+4. For a projectile, build its scene like `scenes/spells/fireball.tscn`: the root needs `get_radius()`, `launch(direction, caster)` and a `damage_multiplier` property; `gather()`, `set_gather_progress(progress)`, `form()`, `scatter()` and `fizzle()` are optional (the casting look). The quickest way is to duplicate the fireball scene and change its look and numbers.
+5. Teach it with `player.learn_spell(load("res://spells/your_spell.tres"))`, or set it as the Player's **Starting Spell** to start a new game with it.
+
+For a spell that works differently (a beam, a shield, a teleport), add a
+script that extends `SpellCaster` (`scripts/spells/spell_caster.gd`) and set
+it as the spell's **Caster**. The Player calls `start(spell, player)` when LMB
+is pressed (return false if it can't be cast), `update(delta)` every physics
+frame while it's held, `release()` when it's let go and `cancel()` if the
+cast is interrupted; `pending_cost()` is shown on the mana bar while casting.
 
 ### Adding a building piece
 Extend `KitPiece` (`scripts/building/kit_piece.gd`) with `@tool`, export its
@@ -333,6 +361,7 @@ and `get_interaction_text()` to make it usable with E, and put it on
 project.godot          main scene: scenes/world/guild_hall.tscn
 KayKit/                KayKit model packs (dungeon kit, resources, nature, weapons); not moved or renamed
 items/                 InventoryItem definitions (.tres)
+spells/                Spell definitions (.tres)
 materials/
   surfaces/            wood, iron, burlap, stone floor / wall / pillar
   effects/             fire particle material and flame process
@@ -351,12 +380,12 @@ scenes/
   guild/stations/      quest_board, reception_desk, shop_counter, storage_chest, dungeon_entrance, furniture_spot
   props/               torch, brazier, target_dummy, barrel_breakable, crate_breakable, magic_glow
   harvestables/        glowcap_herb, healing_moss, wild_berry_bush, copper_ore_node, iron_ore_node, mana_flower
-  items/               pickups, held spellbook model, herb / moss / berry / flower visuals
+  items/               pickups, held Grimoire model, herb / moss / berry / flower visuals
 scripts/
   core/                game_state, scene_manager (autoloads), spawn_point
   player/              player, held_item_view, player_stats
-  ui/                  hud, inventory_ui, inventory_slot_ui, inventory_drop_zone, stats_panel
-  spells/              fireball, fireball_explosion
+  ui/                  hud, inventory_ui, inventory_slot_ui, inventory_drop_zone, stats_panel, spell_library_ui, spell_wheel_ui
+  spells/              spell, spell_caster, charged_projectile_caster, fireball, fireball_explosion
   enemies/             slime
   building/            kit_piece (base), kit_*, scene_door
   guild/furniture/     furniture, bed, banner, lantern, fireplace

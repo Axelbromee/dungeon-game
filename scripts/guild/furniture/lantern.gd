@@ -1,8 +1,9 @@
 @tool
 class_name KitLantern
 extends KitPiece
-## KayKit lantern hanging on an iron chain. Origin = the attach point on the ceiling.
-## The glass glows with emission; a real light is OFF by default (there's an
+## Fantasy Props chandelier (a candle ring on its own iron chain), hanging
+## from the ceiling. Origin = the attach point on the ceiling. The candle
+## flames glow with emission; a real light is OFF by default (there's an
 ## 8-lights-per-object limit), so only enable it on a few lanterns.
 
 @export var chain_length: float = 0.8
@@ -13,20 +14,26 @@ extends KitPiece
 @export var flicker: bool = true
 
 
+## Chandelier: 1.3 x 1.46 m, hanging from its top (model y 0.04); eight
+## candles on a ring of radius 0.56 with their tips at model y -0.92.
+const MODEL := "Chandelier"
+const MODEL_TOP := 0.04
+const MODEL_HEIGHT := 1.46
+const CANDLES := 8
+const CANDLE_RADIUS := 0.56
+const CANDLE_TIP := -0.92
+
+
 func _build() -> void:
-	var iron := mat("iron")
-	add_box(Vector3(0.12, 0.03, 0.12), Vector3(0, -0.015, 0), iron, false)
-	# Chain links (alternating orientation).
-	var link := 0.07
-	var links := maxi(int(chain_length / link), 1)
-	for i in links:
-		add_box(Vector3(0.02 if i % 2 == 0 else 0.035, link * 0.9, 0.035 if i % 2 == 0 else 0.02), Vector3(0, -(i + 0.5) * link, 0), iron, false)
-	var top := -links * link
-	# KayKit lantern hanging by its handle, with a warm glow inside.
-	var body_h := 0.42
-	add_model_sized(kk("lantern"), Vector3(0, top - body_h, 0), body_h)
-	var glow_y := top - body_h * 0.62
-	add_box(Vector3(0.1, 0.12, 0.1), Vector3(0, glow_y, 0), mat("glow_warm"), false)
+	# Scaled evenly so it hangs as low as the old chain + lantern did.
+	var s := (chain_length + 0.42) / MODEL_HEIGHT
+	add_model_xform(fp(MODEL), Transform3D(Basis.from_scale(Vector3.ONE * s), Vector3(0, -MODEL_TOP * s, 0)))
+	var glow_y := (CANDLE_TIP - MODEL_TOP) * s
+	var glow := mat("glow_warm")
+	for i in CANDLES:
+		var angle := TAU * i / CANDLES
+		var at := Vector3(cos(angle) * CANDLE_RADIUS * s, glow_y + 0.03 * s, sin(angle) * CANDLE_RADIUS * s)
+		add_box(Vector3(0.03, 0.06, 0.03) * s, at, glow, false)
 
 	if light_enabled:
 		var light := OmniLight3D.new()

@@ -4,6 +4,7 @@
 [ext_resource type="Script" path="res://scripts/ui/inventory_drop_zone.gd" id="2_drop"]
 [ext_resource type="PackedScene" path="res://scenes/ui/inventory_slot.tscn" id="3_slot"]
 [ext_resource type="Script" path="res://scripts/ui/stats_panel.gd" id="4_stats"]
+[ext_resource type="Script" path="res://scripts/ui/spell_library_ui.gd" id="5_spells"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_window"]
 content_margin_left = 4.0
@@ -177,6 +178,21 @@ theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_button_pressed")
 toggle_mode = true
 text = "Stats"
 
+[node name="SpellsTab" type="Button" parent="Window/Margin/VBox/Tabs"]
+custom_minimum_size = Vector2(90, 26)
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(0.78, 0.7, 0.58, 1)
+theme_override_colors/font_hover_color = Color(0.95, 0.88, 0.75, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.88, 0.6, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_button_pressed")
+toggle_mode = true
+text = "Spells"
+
 [node name="ItemsPage" type="VBoxContainer" parent="Window/Margin/VBox"]
 layout_mode = 2
 theme_override_constants/separation = 8
@@ -248,6 +264,12 @@ custom_minimum_size = Vector2(440, 0)
 layout_mode = 2
 script = ExtResource("4_stats")
 
+[node name="SpellsPage" type="VBoxContainer" parent="Window/Margin/VBox"]
+visible = false
+custom_minimum_size = Vector2(440, 0)
+layout_mode = 2
+script = ExtResource("5_spells")
+
 [node name="Hotbar" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 7
@@ -263,6 +285,39 @@ grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
 theme_override_constants/separation = 4
+
+[node name="SpellIndicator" type="HBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 228.0
+offset_top = -66.0
+offset_right = 448.0
+offset_bottom = -21.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="Icon" type="TextureRect" parent="SpellIndicator"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="SpellIndicator"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.55, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 13
+vertical_alignment = 1
 
 [node name="Tooltip" type="PanelContainer" parent="."]
 visible = false

@@ -1,10 +1,11 @@
 @tool
 class_name DungeonEntrance
 extends KitPiece
-## Stone archway over stairs that go down into a pit, built from KayKit
-## pieces (never stretched): floor tiles around the pit, 1 m dungeon walls
-## lining it with a portcullis at the back, stone stairs, barriers along
-## the sides, and two pillars with a stone beam and mounted torches.
+## Stone archway over stairs that go down into a pit, built from Medieval
+## Village and Fantasy Props pieces (never stretched): brick floor tiles
+## around the pit, brick walls lining it with a closed gate at the back,
+## stone steps, wooden railings along the sides, and two brick pillars with
+## a timber beam and mounted torches.
 ## Walking to the bottom (or pressing E at the arch) loads the dungeon scene.
 ## Origin at ground level in the middle of the footprint; you walk in from
 ## +Z (through the arch) and descend toward -Z. The pit sits at the back
@@ -37,15 +38,25 @@ extends KitPiece
 ## Prompt for E at the arch.
 @export var prompt: String = "Descend into the dungeon"
 
-## Where the flame sits on the KayKit mounted torch (model space).
-const TORCH_HEAD := Vector3(0.0, 0.62, 0.31)
-## KayKit stairs_long: 5 m wide, steps rise 4 m over 8 m; high end at z 0.
-const STAIRS_WIDTH := 5.0
+## Where the flame sits on the mounted torch (Torch_Metal, model space).
+const TORCH_HEAD := Vector3(0.0, 0.37, 0.27)
+const TORCH_MODEL := "Torch_Metal"
+## Stone steps (Stairs_Exterior_Straight: 2 wide, 1 m rise over 2 m, high
+## end toward model -Z), four in a row: steps rise 4 m over 8 m, scaled
+## evenly with the pit depth.
+const STEP_MODEL := "Stairs_Exterior_Straight"
 const STAIRS_RISE := 4.0
 const STAIRS_RUN := 8.0
+const STEP_MODULES := 4
 const WALL := 4.0
-const HALF := 2.0
-const TILE_DEPTH := 0.15
+const MODULE := 2.0
+const TILE_MODEL := "Floor_Brick"
+const TILE_DEPTH := 0.02
+const WALL_MODEL := "Wall_UnevenBrick_Straight"
+const GATE_WALL := "Wall_UnevenBrick_Door_Round"
+const GATE_DOOR := "Door_8_Round"
+const RAILING_MODEL := "Balcony_Simple_Straight"
+const BEAM_MODEL := "Roof_Log"
 ## Walls sit this far below ground so their tops don't fight the tiles.
 const WALL_SINK := 0.15
 
@@ -56,7 +67,8 @@ func _build() -> void:
 	collision_layer = LAYER_WORLD | LAYER_INTERACTABLE
 	var stairs_scale := pit_depth / STAIRS_RISE
 	var run := STAIRS_RUN * stairs_scale
-	var ow := maxf(ceilf(opening_width / GRID) * GRID, ceilf(STAIRS_WIDTH * stairs_scale / GRID) * GRID)
+	var module_w := MODULE * stairs_scale
+	var ow := maxf(ceilf(opening_width / GRID) * GRID, ceilf(module_w * 2.0 / GRID) * GRID)
 	var od := maxf(ceilf(opening_depth / GRID) * GRID, ceilf((run + 1.6) / GRID) * GRID)
 	var fx := maxf(snappedf(footprint.x, GRID), ow + 2.0 * GRID)
 	var fz := maxf(snappedf(footprint.y, GRID), od + GRID)
@@ -65,7 +77,7 @@ func _build() -> void:
 	var half_ow := ow * 0.5
 
 	# Floor tiles around the opening (top at y = 0) and at the pit bottom.
-	var stone := kk("floor_tile_small")
+	var stone := mv(TILE_MODEL)
 	var rng := make_rng(2)
 	for ix in roundi(fx / GRID):
 		for iz in roundi(fz / GRID):
@@ -81,50 +93,74 @@ func _build() -> void:
 	add_collision_box(Vector3(ow, slab, fz * 0.5 - z_front), Vector3(0, -slab * 0.5, (z_front + fz * 0.5) * 0.5))
 	add_collision_box(Vector3(ow, slab, od), Vector3(0, -pit_depth - slab * 0.5, (z_back + z_front) * 0.5))
 
-	# Pit walls: KayKit dungeon walls, tops just below ground, facing in.
+	# Pit walls: brick walls (brick face toward the pit), tops just below
+	# ground, with a band of the same brick up to the top.
 	var wall_y := -WALL - WALL_SINK
+	var depth := KitWall.BODY_DEPTH
 	for sx in [-1.0, 1.0]:
 		_wall_run(Vector3(sx * half_ow, wall_y, z_back), Vector3(0, 0, 1), od, -90.0 * sx)
-		add_collision_box(Vector3(1.0, pit_depth + 1.0, od), Vector3(sx * half_ow, -(pit_depth + 1.0) * 0.5, (z_back + z_front) * 0.5))
+		add_collision_box(Vector3(depth, pit_depth + 1.0, od), Vector3(sx * half_ow, -(pit_depth + 1.0) * 0.5, (z_back + z_front) * 0.5))
 	if absf(ow - WALL) < 0.01:
-		add_model(kk("wall_gated"), 1.0, Vector3(0, wall_y, z_back))
+		# Closed gate in the middle, brick either side and above.
+		var brick := KitWall.brick_material()
+		_wall_piece(GATE_WALL, Vector3(0, wall_y, z_back), 0.0)
+		for sx in [-1.0, 1.0]:
+			add_box(Vector3(1.0, KitWall.WALL_H, KitWall.BODY), Vector3(sx * 1.5, wall_y + KitWall.WALL_H * 0.5, z_back), brick, false)
+		add_box(Vector3(ow, WALL - KitWall.WALL_H, KitWall.BODY), Vector3(0, wall_y + (KitWall.WALL_H + WALL) * 0.5, z_back), brick, false)
+		var door := mv(GATE_DOOR)
+		var door_w := model_aabb(door).size.x
+		add_model_xform(door, Transform3D(Basis.IDENTITY, Vector3(-door_w * 0.5, wall_y, z_back)))
 	else:
 		_wall_run(Vector3(-half_ow, wall_y, z_back), Vector3(1, 0, 0), ow, 0.0)
-	add_collision_box(Vector3(ow, pit_depth + 1.0, 1.0), Vector3(0, -(pit_depth + 1.0) * 0.5, z_back))
+	add_collision_box(Vector3(ow, pit_depth + 1.0, depth), Vector3(0, -(pit_depth + 1.0) * 0.5, z_back))
 	_wall_run(Vector3(-half_ow, wall_y, z_front), Vector3(1, 0, 0), ow, 180.0)
 
-	# Stone stairs from the front edge down toward the back.
-	var turn := Basis(Vector3.UP, PI).scaled_local(Vector3.ONE * stairs_scale)
-	add_model_xform(kk("stairs_long"), Transform3D(turn, Vector3(0, -pit_depth, z_front)))
+	# Stone steps from the front edge down toward the back: rows of step
+	# modules (turned so they climb toward +Z), as many across as fit.
+	var step := mv(STEP_MODEL)
+	var step_src := model_aabb(step)
+	var across := maxi(floori((ow - 0.4) / module_w), 1)
+	for i in STEP_MODULES:
+		var top := -i * stairs_scale
+		var cz := z_front - (i + 0.5) * module_w
+		for k in across:
+			var cx := (k - (across - 1) * 0.5) * module_w
+			add_model(step, stairs_scale, Vector3(cx, top - step_src.size.y * stairs_scale, cz), 180.0)
 	var depth_per := run / steps
 	var rise_per := pit_depth / steps
+	var stairs_w := across * module_w
 	for i in steps - 1:
 		var top := -(i + 1) * rise_per
 		var h := pit_depth + top
-		add_collision_box(Vector3(ow - 1.0, h, depth_per), Vector3(0, top - h * 0.5, z_front - (i + 0.5) * depth_per))
+		add_collision_box(Vector3(stairs_w, h, depth_per), Vector3(0, top - h * 0.5, z_front - (i + 0.5) * depth_per))
 
-	# Stone barriers along both sides of the pit, on the surround.
+	# Wooden railings along both sides of the pit, on the surround.
+	var rail := mv(RAILING_MODEL)
+	var rail_src := model_aabb(rail)
 	for sx in [-1.0, 1.0]:
-		_barrier_run(Vector3(sx * (half_ow + 0.25), 0, z_back), od, sx)
-		add_collision_box(Vector3(0.5, 1.1, od), Vector3(sx * (half_ow + 0.25), 0.55, (z_back + z_front) * 0.5))
-		# The barrier is open at its end: a KayKit column closes the back end
-		# (the front end meets the arch pillar).
-		var post_at := Vector3(sx * (half_ow + 0.25), 0, z_back)
-		add_model(kk("column"), 0.8, post_at)
-		add_collision_box(Vector3(0.56, 1.12, 0.56), post_at + Vector3.UP * 0.56)
+		var rail_x: float = sx * (half_ow + rail_src.size.z * 0.5 + 0.05)
+		var d := 0.0
+		while d < od - 0.01:
+			add_model(rail, 1.0, Vector3(rail_x, 0, z_back + d + MODULE * 0.5), 90.0)
+			d += MODULE
+		add_collision_box(Vector3(rail_src.size.z, rail_src.size.y, od), Vector3(rail_x, rail_src.size.y * 0.5, (z_back + z_front) * 0.5))
 
-	# Archway at the top of the stairs: two pillars, a stone beam, torches.
-	var pillar_scale := arch_height / WALL
-	var pillar_w := 1.5 * pillar_scale
+	# Archway at the top of the stairs: two brick pillars, a timber beam, torches.
+	var post := KitPillar.post_footprint(arch_height)
+	var pillar_w := post.x
+	var pillar_d := post.y
 	var pillar_x := half_ow + pillar_w * 0.5
-	var pillar_z := z_front + pillar_w * 0.5
+	var pillar_z := z_front + pillar_d * 0.5
+	var torch_path := fp(TORCH_MODEL)
+	var torch_src := model_aabb(torch_path)
+	var torch_h := 0.7
+	var torch_s := torch_h / torch_src.size.y
 	for sx in [-1.0, 1.0]:
-		add_model(kk("pillar"), pillar_scale, Vector3(sx * pillar_x, 0, pillar_z))
-		add_collision_box(Vector3(pillar_w * 0.8, arch_height, pillar_w * 0.8), Vector3(sx * pillar_x, arch_height * 0.5, pillar_z))
-		# Mounted KayKit torch on the pillar's front, with flames (emission
-		# only, no light).
-		var torch_h := 0.7
-		var torch := add_model_sized(kk("torch_mounted"), Vector3(sx * pillar_x, 2.0, z_front + pillar_w + torch_h * 0.29), torch_h)
+		KitPillar.add_post(self, arch_height, 1, Vector3(sx * pillar_x, 0, pillar_z))
+		add_collision_box(Vector3(pillar_w, arch_height, pillar_d), Vector3(sx * pillar_x, arch_height * 0.5, pillar_z))
+		# Mounted torch on the pillar's front, with flames (emission only,
+		# no light).
+		var torch := add_model_sized(torch_path, Vector3(sx * pillar_x, 2.0, z_front + pillar_d + torch_src.size.z * torch_s * 0.5), torch_h)
 		var flame := GPUParticles3D.new()
 		flame.amount = 18
 		flame.lifetime = 0.7
@@ -135,12 +171,17 @@ func _build() -> void:
 		flame.draw_pass_1 = quad
 		flame.position = torch.transform * TORCH_HEAD
 		add_generated(flame)
-	# Beam: the KayKit stone barrier with end columns (4 x 1.4 x 0.7 m),
-	# scaled evenly so its columns sit on the pillars.
-	var beam_scale := pillar_x * 2.0 / (WALL - 0.7)
-	add_model(kk("barrier_column"), beam_scale, Vector3(0, arch_height, pillar_z))
-	add_collision_box(Vector3(pillar_x * 2.0 + 0.7 * beam_scale, 1.4 * beam_scale, 0.7 * beam_scale), Vector3(0, arch_height + 0.7 * beam_scale, pillar_z))
-	add_label(sign_text, Vector3(0, arch_height + 0.75 * beam_scale, pillar_z + 0.35 * beam_scale + 0.03), 64, Color(1.0, 0.8, 0.55))
+	# Beam: the timber roof log (10.7 m long along Z), turned along X and
+	# scaled evenly so it spans both pillars.
+	var beam := mv(BEAM_MODEL)
+	var beam_src := model_aabb(beam)
+	var beam_len := pillar_x * 2.0 + pillar_w
+	var beam_scale := beam_len / beam_src.size.z
+	var beam_h := beam_src.size.y * beam_scale
+	var beam_d := beam_src.size.x * beam_scale
+	add_model(beam, beam_scale, Vector3(0, arch_height, pillar_z), 90.0)
+	add_collision_box(Vector3(beam_len, beam_h, beam_d), Vector3(0, arch_height + beam_h * 0.5, pillar_z))
+	add_label(sign_text, Vector3(0, arch_height + beam_h * 0.5, pillar_z + beam_d * 0.5 + 0.03), 64, Color(1.0, 0.8, 0.55))
 
 	# Trigger at the bottom of the stairs (runtime only).
 	if not Engine.is_editor_hint() and auto_enter and locked_text.is_empty():
@@ -159,22 +200,24 @@ func _build() -> void:
 		add_generated(trigger)
 
 
-## Dungeon walls from `start` along `dir` (4 m pieces, a 2 m half for the rest).
+## Brick walls from `start` along `dir` (2 m modules), brick face turned
+## by `rot_y`, with the band of brick above.
 func _wall_run(start: Vector3, dir: Vector3, length: float, rot_y: float) -> void:
 	var d := 0.0
 	while d < length - 0.01:
-		var piece := WALL if length - d >= WALL - 0.02 else HALF
-		add_model(kk("wall" if piece == WALL else "wall_half"), 1.0, start + dir * (d + piece * 0.5), rot_y)
-		d += piece
+		_wall_piece(WALL_MODEL, start + dir * (d + MODULE * 0.5), rot_y)
+		d += MODULE
+	var along := dir.abs() * length
+	var size := Vector3(maxf(along.x, KitWall.BODY), WALL - KitWall.WALL_H, maxf(along.z, KitWall.BODY))
+	var mid := start + dir * length * 0.5
+	add_box(size, mid + Vector3(0, (KitWall.WALL_H + WALL) * 0.5, 0), KitWall.brick_material(), false)
 
 
-## Stone barriers along Z from `start` (4 m pieces, a 2 m half for the rest).
-func _barrier_run(start: Vector3, length: float, side: float) -> void:
-	var d := 0.0
-	while d < length - 0.01:
-		var piece := WALL if length - d >= WALL - 0.02 else HALF
-		add_model(kk("barrier" if piece == WALL else "barrier_half"), 1.0, start + Vector3(0, 0, d + piece * 0.5), -90.0 * side)
-		d += piece
+## One wall module, its brick face (model +Z) turned by `rot_y` and its
+## body centred on `at`.
+func _wall_piece(model: String, at: Vector3, rot_y: float) -> void:
+	var basis := Basis(Vector3.UP, deg_to_rad(rot_y))
+	add_model_xform(mv(model), Transform3D(basis, at - basis * Vector3(0, 0, KitWall.BODY_CENTRE)))
 
 
 func get_interaction_text() -> String:

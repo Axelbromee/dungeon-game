@@ -118,8 +118,11 @@ enum FirePhase { WINDUP, RECOVER }
 ## Seconds standing still after the shot.
 @export var fire_recover_time: float = 0.5
 @export var fireball_scene: PackedScene
-## Visual size of the projectile (0 = smallest fireball, 1 = full charge).
-@export_range(0.0, 1.0) var fire_charge: float = 0.15
+## Size of the projectile (1 = the fireball scene's base size).
+@export var fire_projectile_scale: float = 1.3
+## Size of its explosion burst, and the explosion's outward push.
+@export var fire_explosion_scale: float = 1.12
+@export var fire_blast_impulse: float = 5.55
 ## Direct-hit damage.
 @export var fire_damage: float = 12.0
 ## Explosion area: damage at the centre, falling off to the edge factor.
@@ -713,19 +716,16 @@ func _shoot_fireball() -> void:
 	if fireball == null:
 		return
 	# The slime decides the projectile's stats, not the player's fireball tuning.
-	fireball.min_damage = fire_damage
-	fireball.max_damage = fire_damage
-	fireball.min_knockback = fire_knockback
-	fireball.max_knockback = fire_knockback
-	fireball.min_speed = fire_projectile_speed
-	fireball.max_speed = fire_projectile_speed
-	fireball.min_gravity = fire_projectile_gravity
-	fireball.max_gravity = fire_projectile_gravity
-	fireball.min_splash_radius = fire_splash_radius
-	fireball.max_splash_radius = fire_splash_radius
-	fireball.min_splash_damage = fire_splash_damage
-	fireball.max_splash_damage = fire_splash_damage
+	fireball.damage = fire_damage
+	fireball.knockback = fire_knockback
+	fireball.speed = fire_projectile_speed
+	fireball.fall_acceleration = fire_projectile_gravity
+	fireball.splash_radius = fire_splash_radius
+	fireball.splash_damage = fire_splash_damage
 	fireball.splash_edge_factor = fire_splash_edge_factor
+	fireball.size_scale = fire_projectile_scale
+	fireball.explosion_scale = fire_explosion_scale
+	fireball.explosion_impulse = fire_blast_impulse
 	get_tree().current_scene.add_child(fireball)
 
 	var forward := global_basis.z  # Eyes are on local +Z.
@@ -733,7 +733,6 @@ func _shoot_fireball() -> void:
 	forward = forward.normalized()
 	var muzzle := global_position + Vector3.UP * fire_muzzle_height + forward * fire_muzzle_forward
 	fireball.global_position = muzzle
-	fireball.set_charge(fire_charge)
 
 	# Aim a little high so the arc drops onto the player's chest.
 	var target := _player.global_position + Vector3.UP * fire_aim_height

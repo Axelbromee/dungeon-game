@@ -15,12 +15,10 @@
 [ext_resource type="PackedScene" path="res://scenes/building/stairs.tscn" id="13_stairs"]
 [ext_resource type="PackedScene" path="res://scenes/building/pillar.tscn" id="14_pillar"]
 [ext_resource type="PackedScene" path="res://scenes/building/railing.tscn" id="15_railing"]
-[ext_resource type="PackedScene" uid="uid://dnk1wa7lft6ci" path="res://KayKit/Assets/gltf/column.gltf" id="16_column"]
 [ext_resource type="PackedScene" path="res://scenes/guild/stations/reception_desk.tscn" id="17_reception_desk"]
 [ext_resource type="PackedScene" path="res://scenes/guild/stations/quest_board.tscn" id="18_quest_board"]
 [ext_resource type="PackedScene" path="res://scenes/guild/stations/shop_counter.tscn" id="19_shop_counter"]
 [ext_resource type="PackedScene" path="res://scenes/guild/stations/dungeon_entrance.tscn" id="20_dungeon_entrance"]
-[ext_resource type="PackedScene" path="res://scenes/guild/furniture/fireplace.tscn" id="21_fireplace"]
 [ext_resource type="PackedScene" path="res://scenes/guild/furniture/table.tscn" id="22_table"]
 [ext_resource type="PackedScene" path="res://scenes/guild/furniture/chair.tscn" id="23_chair"]
 [ext_resource type="PackedScene" path="res://scenes/guild/furniture/bench.tscn" id="24_bench"]
@@ -31,29 +29,29 @@
 [ext_resource type="PackedScene" path="res://scenes/props/brazier.tscn" id="29_brazier"]
 [ext_resource type="PackedScene" uid="uid://jhcao0nd7c4v" path="res://scenes/props/torch.tscn" id="30_torch"]
 [ext_resource type="PackedScene" path="res://scenes/guild/furniture/banner.tscn" id="31_banner"]
-[ext_resource type="PackedScene" uid="uid://clvplvfwsdmb7" path="res://KayKit/Assets/gltf/sword_shield.gltf" id="32_sword_shield"]
-[ext_resource type="PackedScene" uid="uid://cenwmh8jp5j06" path="res://KayKit/Assets/gltf/keyring_hanging.gltf" id="33_keyring_hanging"]
-[ext_resource type="PackedScene" uid="uid://uy807h1bp1ec" path="res://KayKit/Assets/gltf/shelf_small_candles.gltf" id="34_shelf_small_candles"]
-[ext_resource type="PackedScene" uid="uid://j7fqqtgv8xgh" path="res://KayKit/Assets/gltf/keg.gltf" id="35_keg"]
-[ext_resource type="PackedScene" uid="uid://cuv4dcc7452g7" path="res://KayKit/Assets3/gltf/Wood_Log_Stack.gltf" id="36_Wood_Log_Stack"]
-[ext_resource type="PackedScene" uid="uid://diypkifmsoju1" path="res://KayKit/Assets/gltf/anvil.gltf" id="37_anvil"]
-[ext_resource type="PackedScene" uid="uid://cddudyh5yu6a3" path="res://KayKit/Assets/gltf/crates_stacked.gltf" id="38_crates_stacked"]
-[ext_resource type="PackedScene" uid="uid://bm852e5o5xish" path="res://KayKit/Assets/gltf/plate_food_A.gltf" id="39_plate_food_A"]
-[ext_resource type="PackedScene" uid="uid://sq3jsrcq8rro" path="res://KayKit/Assets/gltf/candle_lit.gltf" id="40_candle_lit"]
-[ext_resource type="PackedScene" uid="uid://ctfv8u35kddmh" path="res://KayKit/Assets/gltf/plate_food_B.gltf" id="41_plate_food_B"]
-[ext_resource type="PackedScene" uid="uid://dxeae8u563kk8" path="res://KayKit/Assets/gltf/bottle_A_green.gltf" id="42_bottle_A_green"]
-[ext_resource type="PackedScene" uid="uid://byvtvfbimyhcx" path="res://KayKit/Assets/gltf/bottle_B_brown.gltf" id="43_bottle_B_brown"]
-[ext_resource type="PackedScene" uid="uid://fe2jycyai6fe" path="res://KayKit/Assets/gltf/candle_triple.gltf" id="44_candle_triple"]
-[ext_resource type="PackedScene" uid="uid://d12it5t66tits" path="res://KayKit/Assets/gltf/plate_stack.gltf" id="45_plate_stack"]
-[ext_resource type="PackedScene" uid="uid://cv6bil6j0ohm0" path="res://KayKit/Assets/gltf/bottle_A_labeled_brown.gltf" id="46_bottle_A_labeled_brown"]
-[ext_resource type="PackedScene" uid="uid://i4bq352lwi20" path="res://KayKit/Assets/gltf/map.gltf" id="47_map"]
-[ext_resource type="PackedScene" uid="uid://clc3uuwg6ab7m" path="res://KayKit/Assets/gltf/coin_stack_medium.gltf" id="48_coin_stack_medium"]
+[ext_resource type="PackedScene" uid="uid://0e6f53sex63d" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Shield_Wooden.gltf" id="32_sword_shield"]
+[ext_resource type="PackedScene" uid="uid://cupsk62tnoili" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Peg_Rack.gltf" id="33_keyring_hanging"]
+[ext_resource type="PackedScene" uid="uid://cgit2x0wj40xx" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Shelf_Simple.gltf" id="34_shelf_small_candles"]
+[ext_resource type="PackedScene" uid="uid://jhmn4ouu77k3" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Barrel_Holder.gltf" id="35_keg"]
+[ext_resource type="PackedScene" uid="uid://ddhsv7ahmkvj1" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Anvil.gltf" id="37_anvil"]
+[ext_resource type="PackedScene" uid="uid://dognafghdbtt4" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Crate_Wooden.gltf" id="38_crates_stacked"]
+[ext_resource type="PackedScene" uid="uid://b7npnoc7mmgj4" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/CandleStick.gltf" id="40_candle_lit"]
+[ext_resource type="PackedScene" uid="uid://bwvm2deawtluf" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Bottle_1.gltf" id="42_bottle_A_green"]
+[ext_resource type="PackedScene" uid="uid://odmxude637h1" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Potion_2.gltf" id="43_bottle_B_brown"]
+[ext_resource type="PackedScene" uid="uid://dlwpx3mqeah5d" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/CandleStick_Triple.gltf" id="44_candle_triple"]
+[ext_resource type="PackedScene" uid="uid://b155v7prglbbg" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Table_Plate.gltf" id="45_plate_stack"]
+[ext_resource type="PackedScene" uid="uid://cxenm2y265vlk" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Potion_4.gltf" id="46_bottle_A_labeled_brown"]
+[ext_resource type="PackedScene" uid="uid://dcdieq0camlsy" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Scroll_2.gltf" id="47_map"]
+[ext_resource type="PackedScene" uid="uid://cr7nicf1dbpgy" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Coin_Pile_2.gltf" id="48_coin_stack_medium"]
 [ext_resource type="Script" uid="uid://b17nqpp7xesmr" path="res://scripts/world/outside.gd" id="49_outside"]
 [ext_resource type="PackedScene" path="res://scenes/props/magic_glow.tscn" id="50_magic_glow"]
 [ext_resource type="Script" uid="uid://ds1ywl15208gn" path="res://scripts/world/ambience_zone.gd" id="51_ambience_zone"]
-[ext_resource type="PackedScene" uid="uid://b5e0ma0f5m3rx" path="res://KayKit/Assets/gltf/pillar.gltf" id="52_pillar"]
-[ext_resource type="PackedScene" uid="uid://kpayi4evxeaq" path="res://KayKit/Assets/gltf/barrier_column.gltf" id="53_barrier_column"]
+[ext_resource type="PackedScene" uid="uid://b4q7g5gpkbkfo" path="res://new assets/Medieval Village MegaKit[Standard]/Medieval Village MegaKit[Standard]/glTF/Corner_ExteriorWide_Brick.gltf" id="52_pillar"]
+[ext_resource type="PackedScene" uid="uid://dc6corpbjvbcl" path="res://new assets/Medieval Village MegaKit[Standard]/Medieval Village MegaKit[Standard]/glTF/Roof_Log.gltf" id="53_barrier_column"]
 [ext_resource type="Script" uid="uid://dlw1lxnbemers" path="res://scripts/effects/flicker_light.gd" id="54_flicker_light"]
+[ext_resource type="PackedScene" uid="uid://dubonjkji2k6r" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Sword_Bronze.gltf" id="54_sword"]
+[ext_resource type="PackedScene" uid="uid://ct24bv4dje786" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Key_Metal.gltf" id="55_key"]
+[ext_resource type="PackedScene" uid="uid://3q48uqe337kh" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Candle_2.gltf" id="56_candle"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_day"]
 sky_top_color = Color(0.26, 0.48, 0.8, 1)
@@ -94,22 +92,22 @@ size = Vector3(24, 12, 0.5)
 size = Vector3(0.5, 12, 34)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_4"]
-size = Vector3(0.9, 1.025, 1)
+size = Vector3(1.1, 1.02, 0.6)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_5"]
-size = Vector3(0.672, 0.6, 0.6)
+size = Vector3(1.28, 0.32, 0.28)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_6"]
-size = Vector3(0.972, 0.48, 0.45)
+size = Vector3(0.93, 0.48, 0.34)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_7"]
-size = Vector3(1.254, 1.284, 1.35)
+size = Vector3(1.2, 1.28, 0.65)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_corner_post"]
-size = Vector3(0.7, 1.4, 0.7)
+size = Vector3(0.45, 1.4, 0.5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_arch_pillar"]
-size = Vector3(0.96, 3.2, 0.96)
+size = Vector3(1.03, 3.2, 1.14)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_basement_zone"]
 size = Vector3(13, 4.4, 29)
@@ -386,11 +384,11 @@ locked_text = "The front doors are barred for now"
 [node name="RoomDoors" type="Node3D" parent="Structure" unique_id=1408271555]
 
 [node name="GuestRoomAWall" parent="Structure/RoomDoors" unique_id=784553157 instance=ExtResource("7_wall_doorway")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 10, 4, -1)
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 9.705949, 4, -1)
 width = 4.0
 
 [node name="GuestRoomADoor" parent="Structure/RoomDoors" unique_id=934563444 instance=ExtResource("8_door")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 10, 4, -1)
+transform = Transform3D(-4.5459842e-08, 0, -1.04, 0, 1.04, 0, 1.04, 0, -4.5459842e-08, 9.552143, 4, -0.9660329)
 locked = true
 locked_text = "Locked. Someone else's room"
 
@@ -455,13 +453,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2794466, 4, -4)
 tiles_x = 2
 
 [node name="BalconyUnderside" parent="Structure/UpperFloor" unique_id=154324121 instance=ExtResource("11_roof")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.31747663, 4)
 tiles_x = 2
 tiles_z = 9
 height = 3.65
 
 [node name="LandingUnderside" parent="Structure/UpperFloor" unique_id=2118006111 instance=ExtResource("11_roof")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.340644, 0, -4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.340644, 0.32069182, -4)
 tiles_x = 2
 height = 3.65
 
@@ -526,10 +524,6 @@ width = 2.6
 [node name="Furniture" type="Node3D" parent="." unique_id=1724651469]
 
 [node name="Tavern" type="Node3D" parent="Furniture" unique_id=577679495]
-
-[node name="Fireplace" parent="Furniture/Tavern" unique_id=313244035 instance=ExtResource("21_fireplace")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -9.1, 0, -1)
-chimney_height = 8.0
 
 [node name="HearthTable" parent="Furniture/Tavern" unique_id=123086877 instance=ExtResource("22_table")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.1, 0, -1)
@@ -852,22 +846,55 @@ width = 1.0
 [node name="WallDecor" type="Node3D" parent="Decoration" unique_id=1069427598]
 
 [node name="CrestOverDoors" parent="Decoration/WallDecor" unique_id=942867382 instance=ExtResource("32_sword_shield")]
-transform = Transform3D(-0.7, 0, 0, 0, 0.7, 0, 0, 0, -0.7, 0, 6.4, 14.48)
+transform = Transform3D(-1.414, 0, 0, 0, 1.414, 0, 0, 0, -1.414, 0, 6.4, 14.48)
+
+[node name="Sword" parent="Decoration/WallDecor/CrestOverDoors" unique_id=1169772609 instance=ExtResource("54_sword")]
+transform = Transform3D(0.766, -0.643, 0, 0.643, 0.766, 0, 0, 0, 1, 0.228, -0.272, -0.04)
 
 [node name="ArmoryCrest1" parent="Decoration/WallDecor" unique_id=9387849 instance=ExtResource("32_sword_shield")]
-transform = Transform3D(0.55, 0, 0, 0, 0.55, 0, 0, 0, 0.55, 6, 2.5, -14.48)
+transform = Transform3D(1.111, 0, 0, 0, 1.111, 0, 0, 0, 1.111, 6, 2.5, -14.48)
+
+[node name="Sword" parent="Decoration/WallDecor/ArmoryCrest1" unique_id=17334663 instance=ExtResource("54_sword")]
+transform = Transform3D(0.766, -0.643, 0, 0.643, 0.766, 0, 0, 0, 1, 0.228, -0.272, -0.04)
 
 [node name="ArmoryCrest2" parent="Decoration/WallDecor" unique_id=670231285 instance=ExtResource("32_sword_shield")]
-transform = Transform3D(0, 0, -0.55, 0, 0.55, 0, 0.55, 0, 0, 9.48, 2.5, -5)
+transform = Transform3D(0, 0, -1.111, 0, 1.111, 0, 1.111, 0, 0, 9.48, 2.5, -5)
+
+[node name="Sword" parent="Decoration/WallDecor/ArmoryCrest2" unique_id=1149501657 instance=ExtResource("54_sword")]
+transform = Transform3D(0.766, -0.643, 0, 0.643, 0.766, 0, 0, 0, 1, 0.228, -0.272, -0.04)
 
 [node name="ReceptionKeys" parent="Decoration/WallDecor" unique_id=1784563136 instance=ExtResource("33_keyring_hanging")]
-transform = Transform3D(0.35, 0, 0, 0, 0.35, 0, 0, 0, 0.35, -5.7, 2.6, -14.48)
+transform = Transform3D(0.42, 0, 0, 0, 0.42, 0, 0, 0, 0.42, -5.7, 2.6, -14.48)
+
+[node name="Key1" parent="Decoration/WallDecor/ReceptionKeys" unique_id=1754891104 instance=ExtResource("55_key")]
+transform = Transform3D(2.4, 0, 0, 0, 0, 2.4, 0, -2.4, 0, -0.25, -0.3, 0.06)
+
+[node name="Key2" parent="Decoration/WallDecor/ReceptionKeys" unique_id=974610736 instance=ExtResource("55_key")]
+transform = Transform3D(2.4, 0, 0, 0, 0, 2.4, 0, -2.4, 0, 0.25, -0.3, 0.06)
 
 [node name="CandleShelf1" parent="Decoration/WallDecor" unique_id=780660775 instance=ExtResource("34_shelf_small_candles")]
-transform = Transform3D(0, 0, 0.6, 0, 0.6, 0, -0.6, 0, 0, -9.5, 1.9, -3.6)
+transform = Transform3D(0, 0, 0.51, 0, 0.51, 0, -0.51, 0, 0, -9.5, 1.9, -3.6)
+
+[node name="Candle1" parent="Decoration/WallDecor/CandleShelf1" unique_id=38889451 instance=ExtResource("56_candle")]
+transform = Transform3D(1.18, 0, 0, 0, 1.18, 0, 0, 0, 1.18, -0.35, 0.11, 0.19)
+
+[node name="Candle2" parent="Decoration/WallDecor/CandleShelf1" unique_id=856969857 instance=ExtResource("56_candle")]
+transform = Transform3D(1.18, 0, 0, 0, 1.18, 0, 0, 0, 1.18, 0, 0.11, 0.19)
+
+[node name="Candle3" parent="Decoration/WallDecor/CandleShelf1" unique_id=467097194 instance=ExtResource("56_candle")]
+transform = Transform3D(1.18, 0, 0, 0, 1.18, 0, 0, 0, 1.18, 0.35, 0.11, 0.19)
 
 [node name="CandleShelf2" parent="Decoration/WallDecor" unique_id=1708284204 instance=ExtResource("34_shelf_small_candles")]
-transform = Transform3D(0, 0, 0.6, 0, 0.6, 0, -0.6, 0, 0, -9.5, 1.9, 1.6)
+transform = Transform3D(0, 0, 0.51, 0, 0.51, 0, -0.51, 0, 0, -9.5, 1.9, 1.6)
+
+[node name="Candle1" parent="Decoration/WallDecor/CandleShelf2" unique_id=1507385122 instance=ExtResource("56_candle")]
+transform = Transform3D(1.18, 0, 0, 0, 1.18, 0, 0, 0, 1.18, -0.35, 0.11, 0.19)
+
+[node name="Candle2" parent="Decoration/WallDecor/CandleShelf2" unique_id=1709364307 instance=ExtResource("56_candle")]
+transform = Transform3D(1.18, 0, 0, 0, 1.18, 0, 0, 0, 1.18, 0, 0.11, 0.19)
+
+[node name="Candle3" parent="Decoration/WallDecor/CandleShelf2" unique_id=951032743 instance=ExtResource("56_candle")]
+transform = Transform3D(1.18, 0, 0, 0, 1.18, 0, 0, 0, 1.18, 0.35, 0.11, 0.19)
 
 [node name="FloorDecor" type="Node3D" parent="Decoration" unique_id=213367107]
 
@@ -879,17 +906,23 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5125, 0)
 shape = SubResource("BoxShape3D_4")
 
 [node name="Model" parent="Decoration/FloorDecor/Keg" unique_id=1239381292 instance=ExtResource("35_keg")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+transform = Transform3D(0.81, 0, 0, 0, 0.81, 0, 0, 0, 0.81, 0, 0, 0)
 
 [node name="Firewood" type="StaticBody3D" parent="Decoration/FloorDecor" unique_id=797292452]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -8.9, 0, 1)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Decoration/FloorDecor/Firewood" unique_id=653218791]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.16, 0)
 shape = SubResource("BoxShape3D_5")
 
-[node name="Model" parent="Decoration/FloorDecor/Firewood" unique_id=412156442 instance=ExtResource("36_Wood_Log_Stack")]
-transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 0)
+[node name="Model" parent="Decoration/FloorDecor/Firewood" unique_id=412156442 instance=ExtResource("53_barrier_column")]
+transform = Transform3D(0, 0, 0.12, 0, 0.12, 0, -0.12, 0, 0, 0, -0.4619, -0.0718)
+
+[node name="Model2" parent="Decoration/FloorDecor/Firewood" unique_id=1066160766 instance=ExtResource("53_barrier_column")]
+transform = Transform3D(0, 0, 0.12, 0, 0.12, 0, -0.12, 0, 0, 0, -0.4619, 0.0682)
+
+[node name="Model3" parent="Decoration/FloorDecor/Firewood" unique_id=478717187 instance=ExtResource("53_barrier_column")]
+transform = Transform3D(0, 0, 0.12, 0, 0.12, 0, -0.12, 0, 0, 0, -0.3119, -0.0018)
 
 [node name="Anvil" type="StaticBody3D" parent="Decoration/FloorDecor" unique_id=1808862323]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, 0, -13.7)
@@ -899,7 +932,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.24, 0)
 shape = SubResource("BoxShape3D_6")
 
 [node name="Model" parent="Decoration/FloorDecor/Anvil" unique_id=1183413639 instance=ExtResource("37_anvil")]
-transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0, 0)
+transform = Transform3D(0.857, 0, 0, 0, 0.857, 0, 0, 0, 0.857, 0, 0, 0)
 
 [node name="CrateStack" type="StaticBody3D" parent="Decoration/FloorDecor" unique_id=1746760954]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 8.6, 0, -6.4)
@@ -909,54 +942,69 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.642, 0)
 shape = SubResource("BoxShape3D_7")
 
 [node name="Model" parent="Decoration/FloorDecor/CrateStack" unique_id=355633235 instance=ExtResource("38_crates_stacked")]
-transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0, 0)
+transform = Transform3D(0.69, 0, 0, 0, 0.69, 0, 0, 0, 0.69, -0.3, 0.0345, 0)
+
+[node name="Model2" parent="Decoration/FloorDecor/CrateStack" unique_id=1046596457 instance=ExtResource("38_crates_stacked")]
+transform = Transform3D(0.6833, 0, 0.096, 0, 0.69, 0, -0.096, 0, 0.6833, 0.3, 0.0345, 0)
+
+[node name="Model3" parent="Decoration/FloorDecor/CrateStack" unique_id=439536268 instance=ExtResource("38_crates_stacked")]
+transform = Transform3D(0.6749, 0, -0.1435, 0, 0.69, 0, 0.1435, 0, 0.6749, 0, 0.6745, 0)
 
 [node name="TableProps" type="Node3D" parent="Decoration" unique_id=846689227]
 
-[node name="LongAPlate1" parent="Decoration/TableProps" unique_id=1677710262 instance=ExtResource("39_plate_food_A")]
-transform = Transform3D(0.28, 0, 0, 0, 0.28, 0, 0, 0, 0.28, -7.6, 0.78, 6.9)
+[node name="LongAPlate1" parent="Decoration/TableProps" unique_id=1677710262 instance=ExtResource("45_plate_stack")]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, -7.6, 0.78, 6.9)
 
 [node name="LongACandle" parent="Decoration/TableProps" unique_id=417980121 instance=ExtResource("40_candle_lit")]
-transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -7.6, 0.78, 7.9)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 0.78, 7.9)
 
-[node name="LongAPlate2" parent="Decoration/TableProps" unique_id=105958660 instance=ExtResource("41_plate_food_B")]
-transform = Transform3D(0.2298, 0, 0.1928, 0, 0.3, 0, -0.1928, 0, 0.2298, -7.6, 0.78, 8.9)
+[node name="LongAPlate2" parent="Decoration/TableProps" unique_id=105958660 instance=ExtResource("45_plate_stack")]
+transform = Transform3D(0.6894, 0, 0.5784, 0, 0.9, 0, -0.5784, 0, 0.6894, -7.6, 0.78, 8.9)
 
 [node name="LongABottle" parent="Decoration/TableProps" unique_id=953071169 instance=ExtResource("42_bottle_A_green")]
-transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, -7.35, 0.78, 9.4)
+transform = Transform3D(0.62, 0, 0, 0, 0.62, 0, 0, 0, 0.62, -7.35, 0.78, 9.4)
 
-[node name="LongBPlate1" parent="Decoration/TableProps" unique_id=1099383696 instance=ExtResource("41_plate_food_B")]
-transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, -4, 0.78, 7)
+[node name="LongBPlate1" parent="Decoration/TableProps" unique_id=1099383696 instance=ExtResource("45_plate_stack")]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, -4, 0.78, 7)
 
 [node name="LongBBottle" parent="Decoration/TableProps" unique_id=164938225 instance=ExtResource("43_bottle_B_brown")]
-transform = Transform3D(0.22, 0, 0, 0, 0.22, 0, 0, 0, 0.22, -3.8, 0.78, 7.6)
+transform = Transform3D(0.85, 0, 0, 0, 0.85, 0, 0, 0, 0.85, -3.8, 0.78, 7.6)
 
 [node name="LongBCandles" parent="Decoration/TableProps" unique_id=176521065 instance=ExtResource("44_candle_triple")]
-transform = Transform3D(0.2165, 0, 0.125, 0, 0.25, 0, -0.125, 0, 0.2165, -4, 0.78, 8.3)
+transform = Transform3D(0.4763, 0, 0.275, 0, 0.55, 0, -0.275, 0, 0.4763, -4, 0.78, 8.3)
 
 [node name="LongBPlates" parent="Decoration/TableProps" unique_id=1335418904 instance=ExtResource("45_plate_stack")]
-transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, -4.05, 0.78, 9.2)
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -4.05, 0.78, 9.2)
+
+[node name="Plate2" parent="Decoration/TableProps/LongBPlates" unique_id=1821085687 instance=ExtResource("45_plate_stack")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.022, 0)
+
+[node name="Plate3" parent="Decoration/TableProps/LongBPlates" unique_id=1221110466 instance=ExtResource("45_plate_stack")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.044, 0)
+
+[node name="Plate4" parent="Decoration/TableProps/LongBPlates" unique_id=1385473917 instance=ExtResource("45_plate_stack")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.066, 0)
 
 [node name="TableCCandle" parent="Decoration/TableProps" unique_id=1615145490 instance=ExtResource("40_candle_lit")]
-transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -6.2, 0.78, 3.4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.2, 0.78, 3.4)
 
-[node name="TableCPlate" parent="Decoration/TableProps" unique_id=1808077061 instance=ExtResource("39_plate_food_A")]
-transform = Transform3D(0, 0, 0.28, 0, 0.28, 0, -0.28, 0, 0, -6.65, 0.78, 3.2)
+[node name="TableCPlate" parent="Decoration/TableProps" unique_id=1808077061 instance=ExtResource("45_plate_stack")]
+transform = Transform3D(0, 0, 0.9, 0, 0.9, 0, -0.9, 0, 0, -6.65, 0.78, 3.2)
 
 [node name="TableDBottle" parent="Decoration/TableProps" unique_id=607139253 instance=ExtResource("46_bottle_A_labeled_brown")]
-transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, -6.5, 0.78, -5.6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 0.78, -5.6)
 
-[node name="TableDPlate" parent="Decoration/TableProps" unique_id=1677341253 instance=ExtResource("41_plate_food_B")]
-transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, -5.8, 0.78, -5.5)
+[node name="TableDPlate" parent="Decoration/TableProps" unique_id=1677341253 instance=ExtResource("45_plate_stack")]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, -5.8, 0.78, -5.5)
 
 [node name="HearthCandle" parent="Decoration/TableProps" unique_id=2048865275 instance=ExtResource("40_candle_lit")]
-transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -7.1, 0.6, -1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.1, 0.6, -1)
 
 [node name="ArmoryMap" parent="Decoration/TableProps" unique_id=1309634460 instance=ExtResource("47_map")]
-transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 7.2, 0.78, -10)
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 7.2, 0.78, -10)
 
 [node name="ArmoryCoins" parent="Decoration/TableProps" unique_id=656710354 instance=ExtResource("48_coin_stack_medium")]
-transform = Transform3D(0.18, 0, 0, 0, 0.18, 0, 0, 0, 0.18, 7.7, 0.78, -9.6)
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 7.7, 0.78, -9.6)
 
 [node name="Outside" type="Node3D" parent="." unique_id=1212131277]
 script = ExtResource("49_outside")
@@ -1017,7 +1065,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.25, 0, -4.85)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
 shape = SubResource("BoxShape3D_corner_post")
 
-[node name="Model" parent="Basement/Stairwell/CornerPostWest" unique_id=711196268 instance=ExtResource("16_column")]
+[node name="Model" parent="Basement/Stairwell/CornerPostWest" unique_id=711196268 instance=ExtResource("52_pillar")]
+transform = Transform3D(0.46, 0, 0, 0, 0.46, 0, 0, 0, 0.46, 0, 0.009, 0)
+
+[node name="Model2" parent="Basement/Stairwell/CornerPostWest" unique_id=1856259680 instance=ExtResource("52_pillar")]
+transform = Transform3D(-0.46, 0, 0, 0, 0.46, 0, 0, 0, -0.46, 0, 0.009, 0)
 
 [node name="CornerPostEast" type="StaticBody3D" parent="Basement/Stairwell" unique_id=765943198]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.25, 0, -4.85)
@@ -1026,7 +1078,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.25, 0, -4.85)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
 shape = SubResource("BoxShape3D_corner_post")
 
-[node name="Model" parent="Basement/Stairwell/CornerPostEast" unique_id=60464818 instance=ExtResource("16_column")]
+[node name="Model" parent="Basement/Stairwell/CornerPostEast" unique_id=60464818 instance=ExtResource("52_pillar")]
+transform = Transform3D(0.46, 0, 0, 0, 0.46, 0, 0, 0, 0.46, 0, 0.009, 0)
+
+[node name="Model2" parent="Basement/Stairwell/CornerPostEast" unique_id=88393543 instance=ExtResource("52_pillar")]
+transform = Transform3D(-0.46, 0, 0, 0, 0.46, 0, 0, 0, -0.46, 0, 0.009, 0)
 
 [node name="Archway" type="Node3D" parent="Basement/Stairwell" unique_id=1713438229]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -11.75)
@@ -1039,7 +1095,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
 shape = SubResource("BoxShape3D_arch_pillar")
 
 [node name="Model" parent="Basement/Stairwell/Archway/PillarWest" unique_id=655872198 instance=ExtResource("52_pillar")]
-transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, 0, 0)
+transform = Transform3D(1.053, 0, 0, 0, 1.053, 0, 0, 0, 1.053, 0, 0.021, 0)
+
+[node name="Model2" parent="Basement/Stairwell/Archway/PillarWest" unique_id=548027982 instance=ExtResource("52_pillar")]
+transform = Transform3D(-1.053, 0, 0, 0, 1.053, 0, 0, 0, -1.053, 0, 0.021, 0)
 
 [node name="PillarEast" type="StaticBody3D" parent="Basement/Stairwell/Archway" unique_id=45378265]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.75, 0, 0)
@@ -1049,10 +1108,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
 shape = SubResource("BoxShape3D_arch_pillar")
 
 [node name="Model" parent="Basement/Stairwell/Archway/PillarEast" unique_id=177771231 instance=ExtResource("52_pillar")]
-transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, 0, 0)
+transform = Transform3D(1.053, 0, 0, 0, 1.053, 0, 0, 0, 1.053, 0, 0.021, 0)
+
+[node name="Model2" parent="Basement/Stairwell/Archway/PillarEast" unique_id=635903176 instance=ExtResource("52_pillar")]
+transform = Transform3D(-1.053, 0, 0, 0, 1.053, 0, 0, 0, -1.053, 0, 0.021, 0)
 
 [node name="Lintel" parent="Basement/Stairwell/Archway" unique_id=1049657878 instance=ExtResource("53_barrier_column")]
-transform = Transform3D(1.6667, 0, 0, 0, 1.6667, 0, 0, 0, 1.6667, 0, 3.2, 0)
+transform = Transform3D(0, 0, 0.61, 0, 0.61, 0, -0.61, 0, 0, 0, 0.8515, -0.0092)
+
+[node name="Lintel2" parent="Basement/Stairwell/Archway" unique_id=774481231 instance=ExtResource("53_barrier_column")]
+transform = Transform3D(0, 0, 0.61, 0, 0.61, 0, -0.61, 0, 0, 0, 1.6994, -0.0092)
 
 [node name="SignSouth" type="Label3D" parent="Basement/Stairwell/Archway" unique_id=1213185417]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.45, 0.62)
@@ -1185,19 +1250,28 @@ size = Vector3(1.1, 0.78, 1)
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 5, -5.2, 4.1)
 
 [node name="DeskCandle" parent="Basement/GuardPost" unique_id=1367558456 instance=ExtResource("40_candle_lit")]
-transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 5.2, -4.42, 2.98)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, -4.42, 2.98)
 
 [node name="DeskMap" parent="Basement/GuardPost" unique_id=1470567054 instance=ExtResource("47_map")]
-transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 4.85, -4.42, 3.3)
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 4.85, -4.42, 3.3)
 
 [node name="DeskCoins" parent="Basement/GuardPost" unique_id=1484147895 instance=ExtResource("48_coin_stack_medium")]
-transform = Transform3D(0.18, 0, 0, 0, 0.18, 0, 0, 0, 0.18, 5.22, -4.42, 3.42)
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 5.22, -4.42, 3.42)
 
 [node name="WallCrest" parent="Basement/GuardPost" unique_id=1964146625 instance=ExtResource("32_sword_shield")]
-transform = Transform3D(0, 0, -0.55, 0, 0.55, 0, 0.55, 0, 0, 6.48, -3, 5.2)
+transform = Transform3D(0, 0, -1.111, 0, 1.111, 0, 1.111, 0, 0, 6.48, -3, 5.2)
+
+[node name="Sword" parent="Basement/GuardPost/WallCrest" unique_id=1580576119 instance=ExtResource("54_sword")]
+transform = Transform3D(0.766, -0.643, 0, 0.643, 0.766, 0, 0, 0, 1, 0.228, -0.272, -0.04)
 
 [node name="WallKeys" parent="Basement/GuardPost" unique_id=1901582233 instance=ExtResource("33_keyring_hanging")]
-transform = Transform3D(0, 0, -0.35, 0, 0.35, 0, 0.35, 0, 0, 6.48, -3.4, 3.4)
+transform = Transform3D(0, 0, -0.42, 0, 0.42, 0, 0.42, 0, 0, 6.48, -3.4, 3.4)
+
+[node name="Key1" parent="Basement/GuardPost/WallKeys" unique_id=2045133940 instance=ExtResource("55_key")]
+transform = Transform3D(2.4, 0, 0, 0, 0, 2.4, 0, -2.4, 0, -0.25, -0.3, 0.06)
+
+[node name="Key2" parent="Basement/GuardPost/WallKeys" unique_id=1820061718 instance=ExtResource("55_key")]
+transform = Transform3D(2.4, 0, 0, 0, 0, 2.4, 0, -2.4, 0, 0.25, -0.3, 0.06)
 
 [node name="GuardLantern" parent="Basement/GuardPost" unique_id=1075422283 instance=ExtResource("28_lantern")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, -0.525, 4)
@@ -1216,7 +1290,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.642, 0)
 shape = SubResource("BoxShape3D_7")
 
 [node name="Model" parent="Basement/Storage/CrateStack" unique_id=215323091 instance=ExtResource("38_crates_stacked")]
-transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0, 0)
+transform = Transform3D(0.69, 0, 0, 0, 0.69, 0, 0, 0, 0.69, -0.3, 0.0345, 0)
+
+[node name="Model2" parent="Basement/Storage/CrateStack" unique_id=719570428 instance=ExtResource("38_crates_stacked")]
+transform = Transform3D(0.6833, 0, 0.096, 0, 0.69, 0, -0.096, 0, 0.6833, 0.3, 0.0345, 0)
+
+[node name="Model3" parent="Basement/Storage/CrateStack" unique_id=1141484813 instance=ExtResource("38_crates_stacked")]
+transform = Transform3D(0.6749, 0, -0.1435, 0, 0.69, 0, 0.1435, 0, 0.6749, 0, 0.6745, 0)
 
 [node name="Crate1" parent="Basement/Storage" unique_id=688797343 instance=ExtResource("26_crate")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, -5.2, -13.9)
@@ -1247,7 +1327,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5125, 0)
 shape = SubResource("BoxShape3D_4")
 
 [node name="Model" parent="Basement/Storage/Keg" unique_id=630468082 instance=ExtResource("35_keg")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+transform = Transform3D(0.81, 0, 0, 0, 0.81, 0, 0, 0, 0.81, 0, 0, 0)
 
 [node name="WallBarrel1" parent="Basement/Storage" unique_id=1177134485 instance=ExtResource("25_barrel")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.95, -5.2, -6.2)
@@ -1266,7 +1346,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.642, 0)
 shape = SubResource("BoxShape3D_7")
 
 [node name="Model" parent="Basement/Storage/GateCrateStack" unique_id=318153193 instance=ExtResource("38_crates_stacked")]
-transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0, 0)
+transform = Transform3D(0.69, 0, 0, 0, 0.69, 0, 0, 0, 0.69, -0.3, 0.0345, 0)
+
+[node name="Model2" parent="Basement/Storage/GateCrateStack" unique_id=278659795 instance=ExtResource("38_crates_stacked")]
+transform = Transform3D(0.6833, 0, 0.096, 0, 0.69, 0, -0.096, 0, 0.6833, 0.3, 0.0345, 0)
+
+[node name="Model3" parent="Basement/Storage/GateCrateStack" unique_id=39579080 instance=ExtResource("38_crates_stacked")]
+transform = Transform3D(0.6749, 0, -0.1435, 0, 0.69, 0, 0.1435, 0, 0.6749, 0, 0.6745, 0)
 
 [node name="GateBarrel1" parent="Basement/Storage" unique_id=1173524017 instance=ExtResource("25_barrel")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9, -5.2, 7.2)

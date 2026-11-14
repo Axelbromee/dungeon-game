@@ -2,14 +2,14 @@
 class_name CaveEntrance
 extends KitPiece
 ## Wooden mine entrance: two thick posts and a beam across the top, each made
-## of KayKit logs (Wood_Log_B) laid end to end at one uniform scale, with box
-## collision. Rebuilds live in the editor when a setting changes.
+## of Medieval Village roof logs (Roof_Log, a slightly curved timber) laid end
+## to end at one uniform scale, with box collision. Rebuilds live in the editor when a setting changes.
 ##
 ## The origin is on the ground in the middle of the opening; the frame spans
 ## X (width) and faces +Z. The posts stand just outside `width` and sink a
 ## little into the ground.
 
-const LOG := "res://KayKit/Assets3/gltf/Wood_Log_B.gltf"
+const LOG := KitPiece.MEDIEVAL + "Roof_Log.gltf"
 ## How far the posts go into the ground, and how far the beam reaches past
 ## the posts on each side.
 const POST_SINK := 0.3
@@ -28,7 +28,8 @@ func _build() -> void:
 	var s := beam_thickness / maxf(maxf(box.size.x, box.size.y), 0.001)
 	var piece := box.size.z * s  # One log's length.
 	var t := beam_thickness
-	# Same look on every rebuild: each log is rolled a little differently.
+	# Same look on every rebuild: each log is turned over (its curve one way
+	# or the other) at random.
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 7
 
@@ -41,8 +42,10 @@ func _build() -> void:
 		var post_count := maxi(ceili((top - bottom) / piece), 1)
 		var post_step := (top - bottom - piece) / maxf(post_count - 1, 1)
 		for k in post_count:
-			var turn := (Basis(Vector3.UP, rng.randf() * TAU) * Basis(Vector3.RIGHT, -PI * 0.5)).scaled(Vector3.ONE * s)
+			var turn := (Basis(Vector3.UP, PI * rng.randi_range(0, 1)) * Basis(Vector3.RIGHT, -PI * 0.5)).scaled(Vector3.ONE * s)
 			var centre := Vector3(x, bottom + piece * 0.5 + post_step * k, 0.0)
+			if post_count == 1:
+				centre.y = top - piece * 0.5  # A long log: the extra goes into the ground.
 			add_model_xform(LOG, Transform3D(turn, centre - turn * box.get_center()))
 		add_collision_box(Vector3(t * 0.9, top - bottom, t * 0.9), Vector3(x, (top + bottom) * 0.5, 0.0))
 
@@ -52,7 +55,7 @@ func _build() -> void:
 	var step := (span - piece) / maxf(count - 1, 1)
 	var beam_y := height + t * 0.5
 	for k in count:
-		var turn := (Basis(Vector3.UP, PI * 0.5) * Basis(Vector3.BACK, rng.randf() * TAU)).scaled(Vector3.ONE * s)
+		var turn := (Basis(Vector3.UP, PI * 0.5) * Basis(Vector3.BACK, PI * rng.randi_range(0, 1))).scaled(Vector3.ONE * s)
 		var centre := Vector3(-span * 0.5 + piece * 0.5 + step * k, beam_y, 0.0)
 		add_model_xform(LOG, Transform3D(turn, centre - turn * box.get_center()))
 	add_collision_box(Vector3(span, t * 0.9, t * 0.9), Vector3(0.0, beam_y, 0.0))

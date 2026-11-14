@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="InventoryItem" format=3]
+
+[ext_resource type="Script" uid="uid://b0ca10dql82uu" path="res://scripts/inventory/inventory_item.gd" id="1_item"]
+[ext_resource type="PackedScene" path="res://scenes/items/grimoire_pickup.tscn" id="2_scene"]
+[ext_resource type="PackedScene" uid="uid://n5ht2d8bxsin" path="res://scenes/items/grimoire_held.tscn" id="3_held"]
+
+[resource]
+script = ExtResource("1_item")
+item_name = "Grimoire"
+category = 0
+description = "Hold it on the hotbar to cast your selected spell with LMB. Hold [R] for the spell wheel; the mouse wheel cycles your equipped spells."
+stackable = false
+max_stack = 1
+world_scene = ExtResource("2_scene")
+held_scene = ExtResource("3_held")
+held_offset = Vector3(-0.04, 0.02, 0)
+held_rotation_degrees = Vector3(45, -18, 0)

@@ -5,8 +5,9 @@ extends Node3D
 ## the guild's Outside): rebuilt live in the editor when a setting changes,
 ## generated nodes aren't saved, same seed = same floor.
 ##
-## - Terrain: a low-poly heightmap (flat-shaded faces, one KayKit-palette
-##   colour per face: grass, dirt paths, sandy shores, rock) with collision.
+## - Terrain: a low-poly heightmap (soft-shaded, one colour per face from a
+##   palette matching the Stylized Nature pack: grass, dirt paths, sandy
+##   shores, rock) with collision.
 ##   Gentle hills, stepped rocky cliffs along an irregular outline (bays and
 ##   outcrops, height varying along the edge), a lake with shallow edges, a
 ##   stream valley, dirt paths, and a hole cut for each stair portal
@@ -17,7 +18,7 @@ extends Node3D
 ##   passages open into wider chambers. Where the rock covers the cave, the
 ##   ground mesh is cut away and the cave brings its own floor, walls and
 ##   ceiling, plus an outer roof that follows the cliff's own heights, so the
-##   cliff has no seams. Outline, ceiling and floor are roughened with noise; KayKit rocks,
+##   cliff has no seams. Outline, ceiling and floor are roughened with noise; Stylized Nature rocks,
 ##   rubble, glowing crystals and glowing mushrooms line the walls (a few soft
 ##   lights, one per chamber). The inside is on render layer 2, which the sun
 ##   skips; daylight seems to spill a few metres in from the mouth. The
@@ -26,13 +27,13 @@ extends Node3D
 ##   into the lake (one strip overlapping both, streaks moving with the flow);
 ##   collision on layer 5 only (spawn areas avoid
 ##   it; the player wades through).
-## - Rock skin: many smaller KayKit rocks (mostly small and medium, a few
-##   large), turned at random, overlapping and half buried, densely cover the
+## - Rock skin: many Stylized Nature rocks and pebbles (mostly small and
+##   medium, a few large), turned at random, overlapping and half buried, densely cover the
 ##   edge cliffs, the cave's spur and its walls and ceiling (rubble at the cliff
 ##   foot; head room kept in the cave), and steep slopes get some too.
-## - Nature: every KayKit tree model (uniform scale, 3-5 m trunks; the slim ones
-##   40-70 m tall, the stout ones smaller), slightly tinted, some with rocks,
-##   bushes or a log at the base; bushes, rocks, logs, grass and reeds, plus small flowers, as MultiMeshes in chunks
+## - Nature: every Stylized Nature tree model (uniform scale, 3-5 m trunks; the
+##   slim ones tall, the stout ones smaller), slightly tinted, some with rocks,
+##   bushes or a log at the base; bushes, rocks, logs, grass, reeds and flowers, as MultiMeshes in chunks
 ##   (each chunk drawn only up to its own distance). The ground mesh is chunked
 ##   too, so what's behind the camera is culled. Nothing overlaps: every piece claims its footprint. Rocks,
 ##   logs and bushes lean with the slope. Trees, big rocks and logs collide
@@ -45,8 +46,9 @@ extends Node3D
 ##
 ## Coordinates: the floor is centred on this node; +Z is south.
 
-const NATURE := "res://KayKit/Assets4/gltf/%s_Color1.gltf"
-const RESOURCE := "res://KayKit/Assets3/gltf/%s.gltf"
+const NATURE := KitPiece.NATURE + "%s.gltf"
+## Logs: the Medieval Village roof log (the nature pack has none).
+const RESOURCE := KitPiece.MEDIEVAL + "%s.gltf"
 const TERRAIN_MATERIAL := "res://materials/world/floor1_terrain.tres"
 const WATER_MATERIAL := "res://materials/world/water.tres"
 ## The pool at the cliff foot where the stream starts (the waterfall scene,
@@ -70,32 +72,29 @@ const CAVE_SCALE := 2.5
 ## parts behind the camera are culled.
 const GROUND_CHUNK_CELLS := 25
 
-## Every KayKit tree: [trunk diameter at scale 1, how often it's picked].
+## Every Stylized Nature tree: [trunk diameter at scale 1, how often it's picked].
 ## The scale (always uniform) is picked so the tree is `tree_height` tall with
 ## a trunk `trunk_width` wide. The round, stout models can't be that tall
 ## without a far too thick trunk, so the trunk wins for them: they grow as
 ## smaller trees (about 17-36 m) between the giants.
 const TREE_MODELS := {
-	"Tree_1_A": [0.85, 0.6], "Tree_1_B": [0.75, 0.6], "Tree_1_C": [1.1, 0.6],
-	"Tree_2_A": [0.33, 1.0], "Tree_2_B": [0.38, 1.0], "Tree_2_C": [0.55, 1.0], "Tree_2_D": [0.55, 1.0], "Tree_2_E": [0.58, 1.0],
-	"Tree_3_A": [0.85, 0.6], "Tree_3_B": [0.8, 0.6], "Tree_3_C": [1.1, 0.6],
-	"Tree_4_A": [0.27, 1.0], "Tree_4_B": [0.45, 1.0], "Tree_4_C": [0.5, 1.0],
-	"Tree_Bare_1_A": [0.9, 0.12], "Tree_Bare_1_B": [0.8, 0.12], "Tree_Bare_1_C": [1.1, 0.12],
-	"Tree_Bare_2_A": [0.33, 0.12], "Tree_Bare_2_B": [0.43, 0.12], "Tree_Bare_2_C": [0.43, 0.12],
+	"CommonTree_1": [0.91, 1.0], "CommonTree_2": [0.9, 1.0], "CommonTree_3": [0.91, 1.0],
+	"CommonTree_4": [0.91, 1.0], "CommonTree_5": [0.77, 1.0],
+	"Pine_5": [0.62, 0.8],
+	"TwistedTree_1": [1.9, 0.5], "TwistedTree_2": [1.88, 0.5], "TwistedTree_3": [1.87, 0.5],
+	"TwistedTree_4": [1.87, 0.5], "TwistedTree_5": [1.87, 0.5],
 }
 ## Some trees get a few rocks, bushes or a log around their base.
 const TREE_BASE_CHANCE := 0.35
-## Rock skin on the cliff and cave walls: many smaller KayKit rocks, mostly
-## small and medium, a few large: [models, scale min, scale max] per tier.
-## (Large ones use the lighter big models; the 850-vertex ones are left out.)
+## Rock skin on the cliff and cave walls: many Stylized Nature rocks and
+## pebbles, mostly small and medium, a few large: [models, size min, size max]
+## per tier (the longest side in metres; each model is scaled evenly to it).
 const CLIFF_TIERS := {
-	"large": [["Rock_2_E", "Rock_2_F", "Rock_2_G", "Rock_2_H",
-		"Rock_3_M", "Rock_3_N", "Rock_3_O", "Rock_3_P", "Rock_3_Q", "Rock_3_R"], 1.0, 2.0],
-	"medium": [["Rock_1_G", "Rock_1_H", "Rock_1_I", "Rock_2_D", "Rock_3_G", "Rock_3_H", "Rock_3_I", "Rock_3_J",
-		"Rock_3_K", "Rock_3_L"], 1.0, 2.2],
-	"small": [["Rock_1_D", "Rock_1_E", "Rock_1_F", "Rock_2_C", "Rock_3_A", "Rock_3_B", "Rock_3_C", "Rock_3_D",
-		"Rock_3_E", "Rock_3_F"], 0.9, 2.0],
-	"rubble": [["Rock_1_A", "Rock_1_B", "Rock_1_C", "Rock_2_A", "Rock_2_B"], 1.0, 2.5],
+	"large": [BIG_ROCKS, 3.6, 7.2],
+	"medium": [BIG_ROCKS, 2.0, 4.4],
+	"small": [["Rock_Medium_1", "Rock_Medium_2", "Rock_Medium_3", "Pebble_Square_1", "Pebble_Square_3",
+		"Pebble_Square_4", "Pebble_Square_5"], 0.95, 2.1],
+	"rubble": [PEBBLES, 0.4, 1.4],
 }
 ## Share of `cliff_rock_density` that goes into the main layer (medium, a few
 ## large; drawn far); the rest is the fine layer (small rocks and rubble).
@@ -113,34 +112,40 @@ const CAVE_WALL_FOOT_REACH := 0.5
 const EDGE_INSET := 40.0
 ## Bushes, rocks and the like are placed on this grid (trees use tree_spacing).
 const UNDERGROWTH_SPACING := 4.0
-const BUSHES := ["Bush_1_C", "Bush_1_E", "Bush_2_C", "Bush_3_B", "Bush_4_C"]
-const ROCKS_SMALL := ["Rock_1_D", "Rock_2_C", "Rock_3_E", "Rock_3_G"]
-const ROCKS_BIG := ["Rock_1_J", "Rock_2_E", "Rock_3_M", "Rock_3_Q"]
-## Tall rock spires for the cave.
-const ROCKS_SPIRE := ["Rock_1_N", "Rock_1_O", "Rock_1_P"]
-const GRASS := ["Grass_1_B", "Grass_2_B", "Grass_1_C"]
-const REEDS := ["Grass_2_C", "Grass_2_D"]
-const LOGS := ["Wood_Log_A", "Wood_Log_B"]
-## KayKit-style palette (flat colours like the KayKit atlases).
-const GRASS_COLORS: Array[Color] = [Color(0.38, 0.65, 0.28), Color(0.33, 0.6, 0.26), Color(0.42, 0.69, 0.3)]
-const DIRT_COLOR := Color(0.74, 0.55, 0.38)
-const SAND_COLOR := Color(0.86, 0.77, 0.56)
-const ROCK_COLOR := Color(0.56, 0.6, 0.63)
-const CAVE_FLOOR_COLOR := Color(0.44, 0.47, 0.52)
-const CAVE_INSIDE_COLOR := Color(0.46, 0.49, 0.55)
-## Low parts of the cave walls (KayKit rocks run from light on top to dark below).
-const CAVE_DEEP_COLOR := Color(0.3, 0.33, 0.38)
-## Mid-sized KayKit rocks that line the cave walls.
-const ROCKS_WALL := ["Rock_1_G", "Rock_1_H", "Rock_2_D", "Rock_3_G", "Rock_3_J", "Rock_3_K"]
-const FLOWER_COLORS: Array[Color] = [
-	Color(0.96, 0.55, 0.75), Color(1.0, 0.85, 0.35), Color(0.97, 0.96, 0.92),
-	Color(0.65, 0.5, 0.9), Color(0.45, 0.8, 0.95),
-]
+const BUSHES := ["Bush_Common", "Bush_Common", "Bush_Common_Flowers"]
+## The pack's boulders (about 3.3 m) and pebbles (about 0.45 m).
+const BIG_ROCKS := ["Rock_Medium_1", "Rock_Medium_2", "Rock_Medium_3"]
+const PEBBLES := ["Pebble_Round_1", "Pebble_Round_2", "Pebble_Round_3", "Pebble_Round_4", "Pebble_Round_5",
+	"Pebble_Square_1", "Pebble_Square_2", "Pebble_Square_3", "Pebble_Square_4", "Pebble_Square_5", "Pebble_Square_6"]
+const ROCKS_SMALL := BIG_ROCKS
+const ROCKS_BIG := BIG_ROCKS
+## Tall rock spires for the cave: the boulders stood on end.
+const ROCKS_SPIRE := BIG_ROCKS
+const GRASS := ["Grass_Common_Short", "Grass_Wispy_Short", "Grass_Common_Short"]
+const REEDS := ["Grass_Wispy_Tall", "Grass_Common_Tall"]
+const FLOWERS := ["Flower_3_Group", "Flower_3_Single", "Flower_4_Group", "Flower_4_Single"]
+const LOGS := ["Roof_Log"]
+## Palette matching the Stylized Nature pack: warm yellow-green grass,
+## khaki paths, pale sand, and the pack's green-grey rock.
+const GRASS_COLORS: Array[Color] = [Color(0.45, 0.66, 0.2), Color(0.4, 0.61, 0.19), Color(0.52, 0.71, 0.23)]
+const DIRT_COLOR := Color(0.71, 0.62, 0.41)
+const SAND_COLOR := Color(0.87, 0.8, 0.57)
+const ROCK_COLOR := Color(0.55, 0.57, 0.52)
+const CAVE_FLOOR_COLOR := Color(0.42, 0.43, 0.4)
+const CAVE_INSIDE_COLOR := Color(0.45, 0.46, 0.43)
+## Low parts of the cave walls (darker than the rock above).
+const CAVE_DEEP_COLOR := Color(0.29, 0.3, 0.28)
+## Mid-sized rocks that line the cave walls.
+const ROCKS_WALL := BIG_ROCKS
 ## Room a tree claims around its trunk (metres past the bark), and the gap
 ## kept to other trunks: crowns may overlap, trunks, rocks, logs and bushes
 ## never do.
 const TREE_ROOM := 0.3
-const TREE_GAP := 6.7
+const TREE_GAP := 5.7
+## Trees are 25% bigger than their crown clearance to the cliffs was set
+## for: this share of the crown's radius is kept clear of the cliffs too, so
+## crowns reach no closer to the cliffs than before.
+const CROWN_GROWTH := 0.2
 ## Rock above the cave's vault needed for it to count as covered (inside the
 ## mountain); where the cliff is thinner than this, the cave is open: its mouth.
 const CAVE_ROOF_MIN := 1.0
@@ -232,9 +237,9 @@ const TAKEN_MAX_RADIUS := 8.0
 ## Grid cell for tree candidates (smaller = more trees).
 @export var tree_spacing: float = 6.0
 ## Forest trees are this tall (metres, min / max)...
-@export var tree_height: Vector2 = Vector2(40, 70)
+@export var tree_height: Vector2 = Vector2(50, 87.5)
 ## ...with a trunk this wide (scaling is always uniform, so both decide the scale).
-@export var trunk_width: Vector2 = Vector2(3, 5)
+@export var trunk_width: Vector2 = Vector2(3.75, 6.25)
 
 @export_group("Cliff Rocks")
 ## Rocks per square metre of cliff wall (edge cliffs and the cave's spur),
@@ -303,7 +308,7 @@ var _cave_box := Rect2()
 ## vertex (index -> metres), as built, so rocks follow the drawn surface.
 var _cave_floors := {}
 var _cave_ceilings := {}
-## Built meshes used by the MultiMesh batches (flowers, crystals, mushrooms).
+## Built meshes used by the MultiMesh batches (crystals, mushrooms).
 var _custom_meshes: Dictionary = {}
 var _generated: Array[Node] = []
 var _containers: Dictionary = {}
@@ -606,8 +611,8 @@ func _build_heights() -> void:
 			_weights[i] = Color(dirt, v.z, v.w, cave)
 
 
-## Flat-shaded terrain: every triangle gets its own normal and one palette
-## colour, like the KayKit low-poly models. Split into square chunks (one
+## Terrain: every triangle gets its own normal and one palette colour (the
+## terrain material softens the lighting and paints over it). Split into square chunks (one
 ## mesh each, so what's behind the camera is culled); one collider for all.
 func _build_terrain() -> void:
 	var chunks := {}
@@ -1472,7 +1477,7 @@ const CAVE_SKIN_TIERS := [["small", 0.52], ["medium", 0.42], ["large", 0.03]]
 
 
 ## Covers the edge cliffs and the cave's cliff spur densely with many
-## smaller KayKit rocks (a main layer of medium and a few large ones, and a
+## Stylized Nature rocks and pebbles (a main layer of medium and a few large ones, and a
 ## fine layer of small rocks and rubble), randomly turned, overlapping and half
 ## buried, so they read as rough rock; steep slopes inside the floor get some
 ## too. Then the same for the cave's walls and ceiling.
@@ -1557,7 +1562,7 @@ func _rock_scale(rng: RandomNumberGenerator, model: String, spec: Array, size_ra
 	var longest := maxf(KitPiece.model_aabb(model).get_longest_axis_size(), 0.01)
 	var low := maxf(size_range.x, 0.01) / longest
 	var high := maxf(size_range.y, size_range.x) / longest
-	return clampf(rng.randf_range(spec[1], spec[2]), low, maxf(low, high))
+	return clampf(rng.randf_range(spec[1], spec[2]) / longest, low, maxf(low, high))
 
 
 ## A rock turned at random (any direction, uniform scale `s`), its centre
@@ -1756,8 +1761,8 @@ func _on_waterfall(p: Vector2, r: float) -> bool:
 func _place_steep_rock(rng: RandomNumberGenerator, p: Vector2, tier: String) -> void:
 	var spec: Array = CLIFF_TIERS[tier]
 	var model := NATURE % _pick(rng, spec[0])
-	var s := rng.randf_range(spec[1], spec[2])
 	var box := KitPiece.model_aabb(model)
+	var s := rng.randf_range(spec[1], spec[2]) / maxf(box.get_longest_axis_size(), 0.01)
 	var radius := maxf(box.size.x, box.size.z) * 0.5 * s
 	if _path_distance(p) < radius + 1.5 or not _clear_of_edges(p, radius) or _in_entrance_walkway(p, radius) \
 			or _on_waterfall(p, radius) or not _claim(p, radius * 0.8):
@@ -1790,7 +1795,7 @@ func _in_entrance_walkway(p: Vector2, radius: float) -> bool:
 	return _segment_distance(p, start, end) < ENTRANCE_WALKWAY + radius
 
 
-## A forest tree: any KayKit tree model, `tree_height` tall with a
+## A forest tree: any Stylized Nature tree model, `tree_height` tall with a
 ## `trunk_width` trunk where the model allows (uniform scale only; stout
 ## models stay smaller so their trunk isn't too thick). Turned and leaning a
 ## little at random, slightly tinted, its trunk sunk below the lowest ground
@@ -1808,9 +1813,10 @@ func _place_tree(rng: RandomNumberGenerator, p: Vector2) -> void:
 		s_max = minf(trunk_width.y / trunk_d, tree_height.y / height)
 	var s := rng.randf_range(s_min, maxf(s_min, s_max))
 	var trunk_r := trunk_d * 0.5 * s
+	var crown_r := _radius(model, s)
 	# Trunks keep a wide gap to each other; the claim itself hugs the trunk, so
 	# rocks, bushes and logs can lie right at its base.
-	if not _clear_of_edges(p, trunk_r) or not _is_free(p, trunk_r + TREE_GAP) or not _claim(p, trunk_r + TREE_ROOM):
+	if not _clear_of_edges(p, trunk_r + crown_r * CROWN_GROWTH) or not _is_free(p, trunk_r + TREE_GAP) or not _claim(p, trunk_r + TREE_ROOM):
 		return
 	# A slight lean in a random direction.
 	var lean_dir := rng.randf() * TAU
@@ -1867,7 +1873,8 @@ func _place_tree_base(rng: RandomNumberGenerator, p: Vector2, trunk_r: float) ->
 
 func _place_bush(rng: RandomNumberGenerator, p: Vector2) -> void:
 	var model := NATURE % _pick(rng, BUSHES)
-	var s := rng.randf_range(1.6, 2.6)
+	# 2.2-3.6 m wide, as before.
+	var s := rng.randf_range(2.2, 3.6) / maxf(KitPiece.model_aabb(model).size.x, 0.01)
 	var radius := _radius(model, s)
 	if _path_distance(p) < radius + 1.5 or not _clear_of_edges(p, radius) or not _claim(p, radius):
 		return
@@ -1875,13 +1882,14 @@ func _place_bush(rng: RandomNumberGenerator, p: Vector2) -> void:
 	_queue("Bushes", 48.0, model, xform, true, 140.0)
 	var body := CylinderShape3D.new()
 	body.radius = radius * 0.8
-	body.height = 1.2 * s
+	body.height = KitPiece.model_aabb(model).end.y * s
 	_add_shape(_scenery, body, Transform3D(Basis.IDENTITY, xform.origin + Vector3.UP * body.height * 0.5))
 
 
 func _place_rock(rng: RandomNumberGenerator, p: Vector2, big: bool, group: String = "Rocks") -> void:
 	var model := NATURE % _pick(rng, ROCKS_BIG if big else ROCKS_SMALL)
-	var s := rng.randf_range(1.5, 2.4) if big else rng.randf_range(1.2, 2.2)
+	var longest := maxf(KitPiece.model_aabb(model).get_longest_axis_size(), 0.01)
+	var s := (rng.randf_range(5.4, 8.6) if big else rng.randf_range(1.3, 2.4)) / longest
 	var radius := _radius(model, s)
 	var ceiling := _cave_height(p)
 	if ceiling > 0.0 and KitPiece.model_aabb(model).size.y * s > ceiling - 0.4:
@@ -1899,8 +1907,8 @@ func _place_rock(rng: RandomNumberGenerator, p: Vector2, big: bool, group: Strin
 ## always fitting under the ceiling.
 func _place_cave_rock(rng: RandomNumberGenerator, p: Vector2) -> void:
 	var model := NATURE % _pick(rng, ROCKS_WALL)
-	var s := rng.randf_range(0.8, 1.6)
 	var box := KitPiece.model_aabb(model)
+	var s := rng.randf_range(1.6, 3.2) / maxf(box.get_longest_axis_size(), 0.01)
 	if box.size.y * s > _cave_height(p) - 0.4 or _in_entrance_walkway(p, _radius(model, s)) \
 			or not _claim(p, _radius(model, s) * 0.8):
 		return
@@ -1909,12 +1917,11 @@ func _place_cave_rock(rng: RandomNumberGenerator, p: Vector2) -> void:
 	_add_shape_box(_colliders, xform, box, 0.8)
 
 
-## Small KayKit rocks and stone chunks along the cave walls.
+## Pebbles and small rocks along the cave walls.
 func _place_rubble(rng: RandomNumberGenerator, p: Vector2) -> void:
-	var model := RESOURCE % _pick(rng, ["Stone_Chunks_Small", "Stone_Chunks_Large"]) if rng.randf() < 0.5 \
-		else NATURE % _pick(rng, ["Rock_2_A", "Rock_2_B", "Rock_1_A", "Rock_1_B"])
-	var s := rng.randf_range(1.0, 1.8)
+	var model := NATURE % _pick(rng, PEBBLES if rng.randf() < 0.5 else BIG_ROCKS)
 	var box := KitPiece.model_aabb(model)
+	var s := rng.randf_range(0.6, 1.6) / maxf(box.get_longest_axis_size(), 0.01)
 	var ceiling := _cave_height(p)
 	if (ceiling > 0.0 and box.size.y * s > ceiling - 0.4) or _in_entrance_walkway(p, _radius(model, s)) \
 			or not _claim(p, _radius(model, s) * 0.8):
@@ -1960,28 +1967,34 @@ func _place_glow_plant(rng: RandomNumberGenerator, p: Vector2) -> void:
 ## Tall rock spire in the cave, only where the ceiling is high enough.
 func _place_spire(rng: RandomNumberGenerator, p: Vector2) -> void:
 	var model := NATURE % _pick(rng, ROCKS_SPIRE)
-	var s := rng.randf_range(1.6, 2.6)
 	var box := KitPiece.model_aabb(model)
-	if _cave_height(p) < box.size.y * s + 1.0 or _in_entrance_walkway(p, _radius(model, s)) \
-			or not _claim(p, _radius(model, s)):
+	# Stood on end: the model's X (its longest side) points up.
+	var stand := Basis(Vector3.BACK, PI * 0.5)
+	var upright := Transform3D(stand, Vector3.ZERO) * box
+	var s := rng.randf_range(7.0, 11.5) / upright.size.y
+	var radius := maxf(upright.size.x, upright.size.z) * 0.5 * s
+	if _cave_height(p) < upright.size.y * s + 1.0 or _in_entrance_walkway(p, radius) \
+			or not _claim(p, radius):
 		return
-	var xform := _xform(p, rng.randf() * TAU, s, -0.2 * s, 0.0)
+	var xform := _xform(p, rng.randf() * TAU, s, -upright.position.y * s - 0.2 * s, 0.0)
+	xform.basis = xform.basis * stand
 	_queue("CaveRocks", 48.0, model, xform, true, 160.0)
 	_add_shape_box(_colliders, xform, box, 0.8)
 
 
 func _place_log(rng: RandomNumberGenerator, p: Vector2) -> void:
 	var model := RESOURCE % _pick(rng, LOGS)
-	var s := rng.randf_range(3.0, 3.8)
 	var box := KitPiece.model_aabb(model)
+	var s := rng.randf_range(4.0, 5.0) / box.size.z
 	# A log is long: it claims a circle of half its length.
 	if _path_distance(p) < box.size.z * s * 0.5 + 1.5 or not _clear_of_edges(p, box.size.z * s * 0.5) \
 			or not _claim(p, box.size.z * s * 0.5):
 		return
-	# The log model is centred on its origin: lift it so it lies slightly sunk,
+	# Centre the log on the spot, then lift it so it lies slightly sunk,
 	# along the slope.
 	var xform := _xform(p, rng.randf() * TAU, s, 0.0, 1.0)
-	xform.origin += xform.basis.y.normalized() * 0.2 * s
+	xform.origin -= xform.basis * box.get_center()
+	xform.origin += xform.basis.y.normalized() * box.size.y * s * 0.35
 	_queue("Logs", 48.0, model, xform, true, 180.0)
 	_add_shape_box(_colliders, xform, box, 0.85)
 
@@ -2005,21 +2018,23 @@ static func _add_shape(body: StaticBody3D, shape: Shape3D, xform: Transform3D) -
 ## never inside a rock, log, bush or trunk.
 func _scatter_ground_cover(rng: RandomNumberGenerator) -> void:
 	var half := size * 0.5
-	var spacing := 1.4
+	# Twice as many spots as before (1.4 m cells, area halved).
+	var spacing := 1.4 / sqrt(2.0)
 	var steps := int(size / spacing)
 	for ix in steps:
 		for iz in steps:
 			var p := Vector2(-half + (ix + rng.randf()) * spacing, -half + (iz + rng.randf()) * spacing)
 			var roll := rng.randf()
 			var zone := _zone(p)
-			var chance := {&"plain": 0.8, &"clearing": 0.55, &"forest": 0.3, &"edge_clear": 0.3, &"path": 0.04}.get(zone, 0.0) as float
+			var chance := {&"plain": 0.8, &"clearing": 0.55, &"forest": 0.3, &"edge_clear": 0.3, &"path": 0.02}.get(zone, 0.0) as float
 			if roll < chance * grass_density and _normal(p).y > 0.75 and _is_free(p, 0.15):
-				_queue("Grass", 32.0, NATURE % _pick(rng, GRASS), _xform(p, rng.randf() * TAU, rng.randf_range(0.9, 1.6), -0.03, 0.5), false, 45.0)
-			if zone == &"plain" and rng.randf() < 0.3:
+				var grass := NATURE % _pick(rng, GRASS)
+				_queue("Grass", 32.0, grass, _xform(p, rng.randf() * TAU, _sized(grass, rng.randf_range(0.5, 0.9)), -0.03, 0.5), false, 45.0)
+			if zone == &"plain" and rng.randf() < 0.15:  # Same number of flowers as before.
 				var q := p + Vector2(rng.randf_range(-0.6, 0.6), rng.randf_range(-0.6, 0.6))
 				if _is_free(q, 0.1):
-					_queue("Flowers", 32.0, "flower", _xform(q, rng.randf() * TAU, rng.randf_range(0.8, 1.3), -0.02, 0.5), false, 45.0,
-						FLOWER_COLORS[rng.randi() % FLOWER_COLORS.size()])
+					var flower := NATURE % _pick(rng, FLOWERS)
+					_queue("Flowers", 32.0, flower, _xform(q, rng.randf() * TAU, _sized(flower, rng.randf_range(0.3, 0.55)), -0.02, 0.5), false, 45.0)
 
 	# Reeds in the shallows around the lake and along the stream banks.
 	for i in 2250:
@@ -2029,7 +2044,8 @@ func _scatter_ground_cover(rng: RandomNumberGenerator) -> void:
 		if _project(p, stream).x < stream_half_width + 1.0 or not _is_free(p, 0.15):
 			continue
 		if rng.randf() < 0.6:
-			_queue("Reeds", 48.0, NATURE % _pick(rng, REEDS), _xform(p, rng.randf() * TAU, rng.randf_range(1.6, 2.4), -0.05, 0.0), false, 70.0)
+			var reed := NATURE % _pick(rng, REEDS)
+			_queue("Reeds", 48.0, reed, _xform(p, rng.randf() * TAU, _sized(reed, rng.randf_range(1.5, 2.2)), -0.05, 0.0), false, 70.0)
 	var total := _line_length(stream)
 	var along := 0.0
 	while along < minf(total, _pool_along):
@@ -2040,7 +2056,8 @@ func _scatter_ground_cover(rng: RandomNumberGenerator) -> void:
 		var ahead := _point_along(stream, minf(along + 0.5, total)) - _point_along(stream, maxf(along - 0.5, 0.0))
 		var side := Vector2(-ahead.y, ahead.x).normalized() * (stream_half_width + rng.randf_range(0.4, 2.4)) * (1.0 if rng.randf() < 0.5 else -1.0)
 		if _is_free(at + side, 0.15):
-			_queue("Reeds", 48.0, NATURE % _pick(rng, REEDS), _xform(at + side, rng.randf() * TAU, rng.randf_range(1.4, 2.1), -0.05, 0.0), false, 70.0)
+			var reed := NATURE % _pick(rng, REEDS)
+			_queue("Reeds", 48.0, reed, _xform(at + side, rng.randf() * TAU, _sized(reed, rng.randf_range(1.3, 2.0)), -0.05, 0.0), false, 70.0)
 
 
 ## Placement on the ground: turned `yaw`, uniform scale `s`, lowered by `sink`,
@@ -2051,6 +2068,11 @@ func _xform(p: Vector2, yaw: float, s: float, sink: float, follow: float) -> Tra
 		lean = Quaternion.IDENTITY.slerp(Quaternion(Vector3.UP, _normal(p)), follow)
 	var turn := (Basis(lean) * Basis(Vector3.UP, yaw)).scaled(Vector3.ONE * s)
 	return Transform3D(turn, Vector3(p.x, _h(p) + sink, p.y))
+
+
+## Uniform scale that makes a model `height` tall (above its origin).
+static func _sized(path: String, height: float) -> float:
+	return height / maxf(KitPiece.model_aabb(path).end.y, 0.01)
 
 
 static func _pick(rng: RandomNumberGenerator, names: Array) -> String:
@@ -2106,7 +2128,6 @@ func _queue(group: String, chunk: float, path: String, xform: Transform3D, shado
 
 func _flush_batches() -> void:
 	var root := _root(nature_root)
-	_custom_meshes["flower"] = _flower_mesh()
 	for tint in ["cyan", "violet"]:
 		for variant in 3:
 			_custom_meshes["crystal_%s_%d" % [tint, variant]] = _crystal_mesh(variant, tint)
@@ -2123,7 +2144,7 @@ func _flush_batches() -> void:
 			var multimesh := MultiMesh.new()
 			multimesh.transform_format = MultiMesh.TRANSFORM_3D
 			var tinted: bool = batch["group"] == "Trees"
-			multimesh.use_colors = tinted or batch["path"] == "flower"
+			multimesh.use_colors = tinted
 			# Tinted models get copies of their materials that take the
 			# instance colour (the shared imported materials stay as they are).
 			multimesh.mesh = _tinted_mesh(part["mesh"]) if tinted else part["mesh"]
@@ -2172,50 +2193,8 @@ func _tinted_mesh(mesh: Mesh) -> Mesh:
 	return copy
 
 
-## Small meadow flower: a green stem and a flat petal head that takes the
-## instance colour (flat shaded, like the KayKit plants).
-func _flower_mesh() -> ArrayMesh:
-	var mesh := ArrayMesh.new()
-	var stem := SurfaceTool.new()
-	stem.begin(Mesh.PRIMITIVE_TRIANGLES)
-	for angle in [0.0, PI * 0.5]:
-		var side := Vector3(cos(angle), 0.0, sin(angle)) * 0.008
-		for v in [-side, side, side + Vector3.UP * 0.26, -side, side + Vector3.UP * 0.26, -side + Vector3.UP * 0.26]:
-			stem.set_normal(Vector3(sin(angle), 0.0, -cos(angle)))
-			stem.add_vertex(v)
-	stem.commit(mesh)
-	var stem_material := StandardMaterial3D.new()
-	stem_material.albedo_color = Color(0.33, 0.6, 0.3)
-	stem_material.roughness = 1.0
-	stem_material.cull_mode = BaseMaterial3D.CULL_DISABLED
-	mesh.surface_set_material(0, stem_material)
-
-	var head := SurfaceTool.new()
-	head.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var centre := Vector3(0.0, 0.27, 0.0)
-	var petals := 6
-	for i in petals:
-		var a0 := TAU * i / petals
-		var a1 := TAU * (i + 0.5) / petals
-		var tip := centre + Vector3(cos(a1) * 0.07, 0.025, sin(a1) * 0.07)
-		var left := centre + Vector3(cos(a0) * 0.03, 0.0, sin(a0) * 0.03)
-		var right := centre + Vector3(cos(TAU * (i + 1) / petals) * 0.03, 0.0, sin(TAU * (i + 1) / petals) * 0.03)
-		for v in [centre, left, tip, centre, tip, right]:
-			head.set_color(Color.WHITE)
-			head.set_normal(Vector3.UP)
-			head.add_vertex(v)
-	head.commit(mesh)
-	var head_material := StandardMaterial3D.new()
-	head_material.vertex_color_use_as_albedo = true
-	head_material.vertex_color_is_srgb = true
-	head_material.roughness = 0.9
-	head_material.cull_mode = BaseMaterial3D.CULL_DISABLED
-	mesh.surface_set_material(1, head_material)
-	return mesh
-
-
 ## Crystal cluster: a few six-sided crystals with pointed tips, flat shaded
-## like the KayKit models, glowing softly (emission).
+## and glowing softly (emission).
 func _crystal_mesh(variant: int, tint: String) -> ArrayMesh:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 900 + variant

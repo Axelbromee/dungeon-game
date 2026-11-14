@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://h4fnx5apa7io"
+path="res://.godot/imported/Banner_2_Cloth.obj-d9b27cc8ddcb7fac5cfd50ee0ec2dddc.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Banner_2_Cloth.obj-d9b27cc8ddcb7fac5cfd50ee0ec2dddc.mesh"]
+
+source_file="res://new assets/Fantasy Props MegaKit[Standard]/Exports/OBJ/Banner_2_Cloth.obj"
+dest_files=["res://.godot/imported/Banner_2_Cloth.obj-d9b27cc8ddcb7fac5cfd50ee0ec2dddc.mesh", "res://.godot/imported/Banner_2_Cloth.obj-d9b27cc8ddcb7fac5cfd50ee0ec2dddc.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

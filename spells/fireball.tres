@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="Spell" format=3 uid="uid://cl3s51cpxxkq8"]
+
+[ext_resource type="Script" uid="uid://bowdfs033fdq5" path="res://scripts/spells/spell.gd" id="1_spell"]
+[ext_resource type="PackedScene" uid="uid://c4lh6ixekga6m" path="res://scenes/spells/fireball.tscn" id="2_scene"]
+[ext_resource type="Script" uid="uid://b83l0mdw7s8or" path="res://scripts/spells/charged_projectile_caster.gd" id="3_caster"]
+
+[sub_resource type="Gradient" id="Gradient_icon"]
+offsets = PackedFloat32Array(0, 0.25, 0.55, 0.8, 1)
+colors = PackedColorArray(1, 0.95, 0.6, 1, 1, 0.55, 0.1, 1, 0.75, 0.12, 0.04, 1, 0.3, 0.04, 0.02, 0.9, 0.1, 0.02, 0.01, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_icon"]
+gradient = SubResource("Gradient_icon")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[resource]
+script = ExtResource("1_spell")
+spell_name = "Fireball"
+description = "Hold LMB to gather fire above the book; after a moment it forms into a fireball. Release to throw it: it explodes on impact, burning everything nearby."
+icon = SubResource("GradientTexture2D_icon")
+mana_cost = 22.5
+min_charge_time = 0.5
+scene = ExtResource("2_scene")
+caster = ExtResource("3_caster")

@@ -1,0 +1,16 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://shaders/world/stylized_foliage.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://new assets/Stylized Nature MegaKit[Standard]/glTF/Leaves_NormalTree_C.png" id="2_mask"]
+
+[resource]
+resource_name = "Leaves_NormalTree"
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/leaf_mask = ExtResource("2_mask")
+shader_parameter/color_shade = Color(0.27, 0.52, 0.15, 1)
+shader_parameter/color_light = Color(0.6, 0.82, 0.27, 1)
+shader_parameter/color_variation = Color(0.7, 0.78, 0.22, 1)
+shader_parameter/variation_amount = 0.25
+shader_parameter/variation_scale = 0.15
+shader_parameter/alpha_cutoff = 0.2

@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/inventory_ui.tscn" id="2_inv"]
+[ext_resource type="Script" path="res://scripts/ui/spell_wheel_ui.gd" id="3_wheel"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_frame"]
 content_margin_left = 4.0
@@ -424,5 +425,16 @@ theme_override_font_sizes/font_size = 13
 text = "Body"
 horizontal_alignment = 1
 autowrap_mode = 3
+
+[node name="SpellWheel" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_wheel")
 
 [node name="InventoryUI" parent="." instance=ExtResource("2_inv")]

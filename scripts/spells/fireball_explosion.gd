@@ -1,37 +1,32 @@
 class_name FireballExplosion
 extends Node3D
-## One-shot fire burst + light flash. Set `charge_ratio` before adding to the
-## tree; frees itself once every emitter has finished.
+## One-shot fire burst + light flash. The fireball sets its size, push and
+## splash before adding it to the tree; frees itself once every emitter has
+## finished.
 
 @export_group("Scaling")
-## Burst size multiplier for an uncharged fireball.
-@export var min_scale: float = 1.0
-## Burst size multiplier for a fully charged fireball.
-@export var max_scale: float = 1.8
-## Particle count multiplier for a fully charged fireball.
-@export var max_amount_multiplier: float = 1.8
+## Burst size and particle count multiplier (the fireball sets it).
+@export var size_scale: float = 1.4
 
 @export_group("Blast")
 ## Push radius when the fireball doesn't supply a splash radius.
-@export var min_blast_radius: float = 1.5
-@export var max_blast_radius: float = 4.0
+@export var blast_radius: float = 2.75
 ## Nodes in this group never hurt each other (slime fireballs vs. slimes).
 @export var friendly_group: StringName = &"enemies"
-## Outward impulse at the blast centre (falls off linearly to 0 at the edge).
-@export var min_blast_impulse: float = 3.0
-@export var max_blast_impulse: float = 20.0
+## Outward impulse at the blast centre (falls off linearly to 0 at the edge;
+## the fireball sets it).
+@export var blast_impulse: float = 11.5
 @export_flags_3d_physics var blast_mask: int = 1
 
 @export_group("Flash")
 @export var flash_energy: float = 8.0
 @export var flash_duration: float = 0.35
 
-var charge_ratio: float = 0.0
 ## Body the blast never pushes or damages (the fireball's caster).
 var ignore: Node = null
 ## Already took the fireball's direct damage, so gets no splash damage.
 var direct_target: Node = null
-## Set by the fireball. 0 radius = use min/max_blast_radius, push only.
+## Set by the fireball. 0 radius = use blast_radius, push only.
 var splash_radius: float = 0.0
 var splash_damage: float = 0.0
 ## Damage multiplier at the edge of the radius.
@@ -48,8 +43,8 @@ func _ready() -> void:
 	# Read now: the caster may be gone by the time the deferred blast runs.
 	_caster_is_friendly = friendly_group != &"" and ignore != null \
 		and is_instance_valid(ignore) and ignore.is_in_group(friendly_group)
-	var s := lerpf(min_scale, max_scale, charge_ratio)
-	var amount_mult := lerpf(1.0, max_amount_multiplier, charge_ratio)
+	var s := size_scale
+	var amount_mult := size_scale
 
 	for emitter in _emitters:
 		var mat := (emitter.process_material as ParticleProcessMaterial).duplicate() as ParticleProcessMaterial
@@ -77,8 +72,8 @@ func _ready() -> void:
 
 
 func _apply_blast() -> void:
-	var radius := splash_radius if splash_radius > 0.0 else lerpf(min_blast_radius, max_blast_radius, charge_ratio)
-	var impulse := lerpf(min_blast_impulse, max_blast_impulse, charge_ratio)
+	var radius := splash_radius if splash_radius > 0.0 else blast_radius
+	var impulse := blast_impulse
 	var sphere := SphereShape3D.new()
 	sphere.radius = radius
 	var query := PhysicsShapeQueryParameters3D.new()

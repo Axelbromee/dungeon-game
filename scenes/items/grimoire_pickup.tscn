@@ -1,0 +1,65 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/interaction/item_pickup.gd" id="1_pickup"]
+[ext_resource type="PackedScene" path="res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/Book_7.gltf" id="2_model"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_book"]
+rough = true
+friction = 1.0
+bounce = 0.1
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_book"]
+size = Vector3(0.34, 0.072, 0.26)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rune"]
+albedo_color = Color(1, 0.5, 0.15, 1)
+emission_enabled = true
+emission = Color(1, 0.4, 0.08, 1)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_rune"]
+material = SubResource("StandardMaterial3D_rune")
+top_radius = 0.065
+bottom_radius = 0.065
+height = 0.004
+radial_segments = 24
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_brass"]
+albedo_color = Color(0.55, 0.4, 0.15, 1)
+metallic = 0.9
+roughness = 0.35
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ring"]
+material = SubResource("StandardMaterial3D_brass")
+top_radius = 0.085
+bottom_radius = 0.085
+height = 0.003
+radial_segments = 24
+rings = 1
+
+[node name="GrimoirePickup" type="RigidBody3D"]
+collision_layer = 4
+collision_mask = 1
+mass = 0.8
+linear_damp = 0.6
+angular_damp = 3.0
+physics_material_override = SubResource("PhysicsMaterial_book")
+continuous_cd = true
+script = ExtResource("1_pickup")
+default_item = "res://items/grimoire.tres"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_book")
+
+[node name="Model" parent="." instance=ExtResource("2_model")]
+transform = Transform3D(0, 0, -1.03, 0, 1.03, 0, 1.03, 0, 0, 0, 0, 0)
+
+[node name="RuneRing" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0375, 0)
+mesh = SubResource("CylinderMesh_ring")
+
+[node name="Rune" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.039, 0)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_rune")

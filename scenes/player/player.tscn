@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://bnixwl4ts8xyx"]
 
 [ext_resource type="Script" uid="uid://b7q38jbceuvyd" path="res://scripts/player/player.gd" id="1_ky7la"]
-[ext_resource type="PackedScene" path="res://scenes/spells/fireball.tscn" id="2_fb"]
+[ext_resource type="Resource" path="res://spells/fireball.tres" id="2_fb"]
 [ext_resource type="Script" path="res://scripts/inventory/inventory.gd" id="3_inv"]
-[ext_resource type="Resource" path="res://items/fire_spellbook.tres" id="4_book"]
+[ext_resource type="Resource" path="res://items/grimoire.tres" id="4_book"]
 [ext_resource type="Script" path="res://scripts/player/held_item_view.gd" id="5_hand"]
 [ext_resource type="Script" path="res://scripts/player/player_stats.gd" id="6_stats"]
 
@@ -24,8 +24,8 @@ floor_constant_speed = true
 floor_max_angle = 0.872665
 floor_snap_length = 0.4
 script = ExtResource("1_ky7la")
-fireball_scene = ExtResource("2_fb")
-spell_item = ExtResource("4_book")
+grimoire_item = ExtResource("4_book")
+starting_spell = ExtResource("2_fb")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=345927631]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)

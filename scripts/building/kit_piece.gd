@@ -15,15 +15,59 @@ const LAYER_WORLD := 1
 const LAYER_PLAYER_ONLY := 2
 const LAYER_INTERACTABLE := 4
 
-## Folder of the KayKit dungeon models (meshes for the kit pieces).
-const KAYKIT := "res://KayKit/Assets/gltf/"
+## Folders of the Quaternius packs (meshes for the kit pieces and props).
+const MEDIEVAL := "res://new assets/Medieval Village MegaKit[Standard]/Medieval Village MegaKit[Standard]/glTF/"
+const PROPS := "res://new assets/Fantasy Props MegaKit[Standard]/Exports/glTF/"
+const NATURE := "res://new assets/Stylized Nature MegaKit[Standard]/glTF/"
 
 static var _materials: Dictionary = {}
 
 
-## Path of a KayKit dungeon model by name, e.g. kk("wall").
-static func kk(model_name: String) -> String:
-	return KAYKIT + model_name + ".gltf"
+## Path of a Medieval Village model by name, e.g. mv("Wall_UnevenBrick_Straight").
+static func mv(model_name: String) -> String:
+	return MEDIEVAL + model_name + ".gltf"
+
+
+## Path of a Fantasy Props model by name, e.g. fp("Barrel").
+static func fp(model_name: String) -> String:
+	return PROPS + model_name + ".gltf"
+
+
+## Path of a Stylized Nature model by name, e.g. nat("CommonTree_1").
+static func nat(model_name: String) -> String:
+	return NATURE + model_name + ".gltf"
+
+
+## A model's own material by name (e.g. "MI_UnevenBrick"), shared.
+static func model_material(path: String, material_name: String) -> Material:
+	for part in model_parts(path):
+		var mesh := part["mesh"] as Mesh
+		for i in mesh.get_surface_count():
+			var material := mesh.surface_get_material(i)
+			if material and material.resource_name == material_name:
+				return material
+	return null
+
+
+## A copy of a model's own material mapped in world space (triplanar), for
+## plain boxes that fill gaps between pack pieces. `tile` = metres per
+## texture repeat.
+static func pack_box_material(path: String, material_name: String, tile: float = 2.0) -> Material:
+	var key := "%s|%s|%s" % [path, material_name, tile]
+	if _materials.has(key):
+		return _materials[key]
+	var base := model_material(path, material_name) as BaseMaterial3D
+	var material: BaseMaterial3D
+	if base:
+		material = base.duplicate() as BaseMaterial3D
+		material.uv1_triplanar = true
+		material.uv1_world_triplanar = true
+		material.uv1_scale = Vector3.ONE / tile
+		material.uv1_offset = Vector3.ZERO
+	else:
+		material = _flat(Color(0.6, 0.55, 0.5), 0.9)
+	_materials[key] = material
+	return material
 
 var _signature: String = ""
 var _generated: Array[Node] = []
@@ -133,7 +177,7 @@ func add_label(text: String, pos: Vector3, font_size: int = 48, color: Color = C
 	return label
 
 
-## A model (e.g. a KayKit .gltf) at uniform scale `s`, turned `rot_y_deg`
+## A model (e.g. a pack .gltf) at uniform scale `s`, turned `rot_y_deg`
 ## around Y, with the bottom centre of its bounds at `bottom` (in the
 ## parent's space). Models are never stretched: pick a scale, use several
 ## pieces, or a bigger model. `only` / `skip` pick mesh parts by node name;
@@ -232,10 +276,39 @@ static func model_parts(path: String) -> Array:
 			while walk != null and walk != root:
 				xform = (walk as Node3D).transform * xform
 				walk = walk.get_parent()
-			parts.append({"name": String(mesh_node.name), "mesh": mesh_node.mesh, "xform": xform})
+			parts.append({"name": String(mesh_node.name), "mesh": nature_mesh(mesh_node.mesh), "xform": xform})
 		root.free()
 	_models[path] = parts
 	return parts
+
+
+## Stylized Nature leaf materials: the free pack's leaf textures are only
+## cut-out masks, so these colour them (materials/nature, foliage shader).
+const LEAF_MATERIALS := {
+	"Leaves_NormalTree": "res://materials/nature/leaves_normal_tree.tres",
+	"Leaves_TwistedTree": "res://materials/nature/leaves_twisted_tree.tres",
+	"Leaves_Pine": "res://materials/nature/leaves_pine.tres",
+}
+
+static var _nature_meshes: Dictionary = {}
+
+
+## The mesh with any Stylized Nature leaf material swapped for its coloured
+## version (shared copy; other meshes are returned unchanged).
+static func nature_mesh(mesh: Mesh) -> Mesh:
+	if mesh == null:
+		return mesh
+	if _nature_meshes.has(mesh):
+		return _nature_meshes[mesh]
+	var result := mesh
+	for i in mesh.get_surface_count():
+		var material := mesh.surface_get_material(i)
+		if material and LEAF_MATERIALS.has(material.resource_name):
+			if result == mesh:
+				result = mesh.duplicate()
+			result.surface_set_material(i, load(LEAF_MATERIALS[material.resource_name]))
+	_nature_meshes[mesh] = result
+	return result
 
 
 static func _filtered_parts(path: String, only: PackedStringArray, skip: PackedStringArray) -> Array:

@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://cpo4eel3weqq7"
+path="res://.godot/imported/Stairs_Exterior_Platform45Clean.obj-e77d8429ed3a5db1b26f9f215a86e16c.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Stairs_Exterior_Platform45Clean.obj-e77d8429ed3a5db1b26f9f215a86e16c.mesh"]
+
+source_file="res://new assets/Medieval Village MegaKit[Standard]/Medieval Village MegaKit[Standard]/OBJ/Stairs_Exterior_Platform45Clean.obj"
+dest_files=["res://.godot/imported/Stairs_Exterior_Platform45Clean.obj-e77d8429ed3a5db1b26f9f215a86e16c.mesh", "res://.godot/imported/Stairs_Exterior_Platform45Clean.obj-e77d8429ed3a5db1b26f9f215a86e16c.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://b6do1oe7q2nky"
+path="res://.godot/imported/Shelf_Simple.obj-53b5bd22dcf1686a4196d1530cbe2cfa.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Shelf_Simple.obj-53b5bd22dcf1686a4196d1530cbe2cfa.mesh"]
+
+source_file="res://new assets/Fantasy Props MegaKit[Standard]/Exports/OBJ/Shelf_Simple.obj"
+dest_files=["res://.godot/imported/Shelf_Simple.obj-53b5bd22dcf1686a4196d1530cbe2cfa.mesh", "res://.godot/imported/Shelf_Simple.obj-53b5bd22dcf1686a4196d1530cbe2cfa.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

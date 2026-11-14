@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://in3bdg8pfx8t"
+path="res://.godot/imported/Mug.obj-826fd0f21ce10532f085e862130d66ce.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Mug.obj-826fd0f21ce10532f085e862130d66ce.mesh"]
+
+source_file="res://new assets/Fantasy Props MegaKit[Standard]/Exports/OBJ/Mug.obj"
+dest_files=["res://.godot/imported/Mug.obj-826fd0f21ce10532f085e862130d66ce.mesh", "res://.godot/imported/Mug.obj-826fd0f21ce10532f085e862130d66ce.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

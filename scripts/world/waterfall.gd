@@ -1,7 +1,7 @@
 @tool
 class_name Waterfall
 extends Node3D
-## A waterfall in the low-poly KayKit style: a thick column of water built
+## A waterfall in the painted Stylized Nature style: a thick column of water built
 ## from stacked, overlapping rounded chunks (round at the front, flat against
 ## the cliff at the back), with thinner strands over it, each flowing at its
 ## own speed in its own shades. Coloured by shaders/world/waterfall.gdshader:
@@ -38,12 +38,12 @@ const CHUNK_OVERLAP := 0.7
 ## width (share), thickness (share), how far in front (share of the
 ## thickness), speed (x flow speed), water colour at the top, at the bottom].
 const STRANDS := [
-	[-0.28, 0.42, 0.5, 0.42, 1.25, Color(0.36, 0.67, 0.73), Color(0.3, 0.58, 0.63)],
-	[0.06, 0.36, 0.45, 0.5, 0.8, Color(0.31, 0.62, 0.68), Color(0.26, 0.53, 0.59)],
-	[0.3, 0.4, 0.5, 0.4, 1.45, Color(0.38, 0.7, 0.76), Color(0.32, 0.6, 0.66)],
+	[-0.28, 0.42, 0.5, 0.42, 1.25, Color(0.33, 0.71, 0.78), Color(0.27, 0.61, 0.68)],
+	[0.06, 0.36, 0.45, 0.5, 0.8, Color(0.28, 0.66, 0.74), Color(0.23, 0.56, 0.64)],
+	[0.3, 0.4, 0.5, 0.4, 1.45, Color(0.36, 0.74, 0.8), Color(0.29, 0.63, 0.7)],
 ]
 ## The main body's water colour at the top and the bottom.
-const BODY_COLORS := [Color(0.333, 0.643, 0.702), Color(0.287, 0.553, 0.605)]
+const BODY_COLORS := [Color(0.3, 0.68, 0.76), Color(0.25, 0.58, 0.66)]
 ## Snap To Cliff: how far behind the waterfall it looks for the cliff, in metres.
 const SNAP_REACH := 90.0
 
@@ -473,7 +473,7 @@ func _mist(landing: Vector3) -> CPUParticles3D:
 
 ## Particles with the shared settings: always on, preprocessed so they're
 ## already going when the scene appears, no shadows. Lit by default (the foam
-## catches the light like the KayKit models, with a soft glow to stay white).
+## catches the light like the scenery, with a soft glow to stay white).
 func _particles(node_name: String, amount: int, lifetime: float, mesh: Mesh, lit: bool = true) -> CPUParticles3D:
 	var particles := CPUParticles3D.new()
 	particles.name = node_name
@@ -496,7 +496,7 @@ func _particles(node_name: String, amount: int, lifetime: float, mesh: Mesh, lit
 	return particles
 
 
-## A low-poly lump of foam (few faces, so it's faceted like the KayKit models).
+## A low-poly lump of foam (few faces).
 func _blob_mesh(radius: float) -> SphereMesh:
 	var sphere := SphereMesh.new()
 	sphere.radius = radius

@@ -1,8 +1,9 @@
 @tool
 class_name KitStairs
 extends KitPiece
-## Straight wooden stairs rising toward -Z: the KayKit wooden stairs scaled
-## evenly so they climb `rise` (4 m = one storey: 3.26 m wide, 5.93 m long).
+## Straight wooden stairs rising toward -Z: the Medieval Village interior
+## stairs (Stair_Interior_Solid) scaled evenly so they climb `rise`
+## (4 m = one storey: 2.33 m wide, 6.2 m long).
 ## Origin at the bottom front edge (centre).
 ## An invisible ramp on the player_only layer makes walking up smooth; the
 ## step colliders stay solid for everything else.
@@ -14,12 +15,13 @@ extends KitPiece
 @export var rise: float = 4.0
 ## Not used: run follows the rise (kept so existing scenes load).
 @export var run: float = 5.93
-## Not used by the KayKit stairs (kept so existing scenes load unchanged).
+## Not used by the model stairs (kept so existing scenes load unchanged).
 @export var side_boards: bool = true
 @export var smooth_ramp: bool = true
 
-## stairs_wood: 3.3 wide, 4.05 tall, 6 long; high end at model z = 0.
-const MODEL_SIZE := Vector3(3.3, 4.05, 6.0)
+## Stair_Interior_Solid: 1.77 wide, 3.05 tall, 4.71 long; rises toward -Z.
+const MODEL := "Stair_Interior_Solid"
+const MODEL_SIZE := Vector3(1.77, 3.05, 4.71)
 
 
 ## Real footprint at the current rise: (width, run).
@@ -32,8 +34,9 @@ func _build() -> void:
 	var s := rise / MODEL_SIZE.y
 	var w := MODEL_SIZE.x * s
 	var length := MODEL_SIZE.z * s
-	# Model z 0 (top) -> -length, model z 6 (bottom front) -> 0.
-	add_model_xform(kk("stairs_wood"), Transform3D(Basis.from_scale(Vector3.ONE * s), Vector3(0, 0, -length)))
+	# Bottom front edge at z 0, the top toward -length (a hair low so the
+	# top step doesn't fight the upper floor).
+	add_model(mv(MODEL), s, Vector3(0, -0.01, -length * 0.5))
 	var depth := length / steps
 	var step_rise := rise / steps
 	for i in steps:

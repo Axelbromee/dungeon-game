@@ -1,7 +1,7 @@
 @tool
 class_name StorageChest
 extends KitPiece
-## KayKit chest with its own inventory. E opens the lid and shows its
+## Fantasy Props chest (Chest_Wood) with its own inventory. E opens the lid and shows its
 ## slots above your bag in the inventory window (drag / shift+click between
 ## them). Contents are kept in GameState under storage_id, so they survive
 ## scene changes. Front (lock side) is +Z.
@@ -12,6 +12,11 @@ extends KitPiece
 ## Width X sets the (even) scale; the rest follows the model.
 @export var size: Vector3 = Vector3(1.0, 0.55, 0.6)
 @export var lid_open_degrees: float = 70.0
+
+const BASE_PART := "Chest_Wood_Base"
+const LID_PART := "Chest_Wood_Lid"
+## The lid's hinge in model space (Chest_Wood's Chest_Top bone).
+const LID_HINGE := Vector3(0.0, 0.429, -0.314)
 
 var inventory: Inventory
 
@@ -36,19 +41,20 @@ func _ready() -> void:
 
 func _build() -> void:
 	collision_layer = LAYER_WORLD | LAYER_INTERACTABLE
-	# KayKit chest (1.7 x 1.3 x 1.45 m with its lid), scaled evenly from the
-	# width; the lid is a separate part, hinged at the back top edge.
-	var path := kk("chest")
-	var s := size.x / 1.7
+	# Chest_Wood (1.28 x 0.72 x 0.76 m with its lid), scaled evenly from the
+	# width; the lid is a separate part, hinged at the back top edge (the
+	# model's Chest_Top bone).
+	var path := fp("Chest_Wood")
+	var src := KitPiece.model_aabb(path)
+	var s := size.x / src.size.x
 	var fit := uniform_xform(path, s, Vector3.ZERO)
-	add_model_xform(path, fit, null, PackedStringArray(["chest"]))
-	var body := KitPiece.model_aabb(path, PackedStringArray(["chest"]))
+	add_model_xform(path, fit, null, PackedStringArray([BASE_PART]))
+	var body := KitPiece.model_aabb(path, PackedStringArray([BASE_PART]))
 	add_collision_box(body.size * s, Vector3(0, body.size.y * s * 0.5, fit.origin.z + body.get_center().z * s))
-	var hinge := KitPiece.model_part_xform(path, "chest_lid").origin
 	_lid = Node3D.new()
-	_lid.position = fit * hinge
+	_lid.position = fit * LID_HINGE
 	add_generated(_lid)
-	add_model_xform(path, Transform3D(fit.basis, fit.basis * -hinge), _lid, PackedStringArray(["chest_lid"]))
+	add_model_xform(path, Transform3D(fit.basis, fit.basis * -LID_HINGE), _lid, PackedStringArray([LID_PART]))
 
 
 func get_interaction_text() -> String:

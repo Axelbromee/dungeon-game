@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dkb1nsdjx5254"
+path="res://.godot/imported/Stair_Interior_Simple.obj-1b7e12025252159e66eb7c24e5ffa966.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Stair_Interior_Simple.obj-1b7e12025252159e66eb7c24e5ffa966.mesh"]
+
+source_file="res://new assets/Medieval Village MegaKit[Standard]/Medieval Village MegaKit[Standard]/OBJ/Stair_Interior_Simple.obj"
+dest_files=["res://.godot/imported/Stair_Interior_Simple.obj-1b7e12025252159e66eb7c24e5ffa966.mesh", "res://.godot/imported/Stair_Interior_Simple.obj-1b7e12025252159e66eb7c24e5ffa966.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

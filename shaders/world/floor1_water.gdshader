@@ -1,6 +1,7 @@
 shader_type spatial;
-// Floor 1 water: the flat KayKit teal, with lighter streaks drifting the way
-// the water flows (GL Compatibility friendly).
+// Floor 1 water: a bright painted teal like the Stylized Nature pack, with
+// soft lighter streaks drifting the way the water flows (GL Compatibility
+// friendly).
 //
 // Per vertex (set by forest_floor.gd and waterfall.gd):
 //   UV.x  = across the flow (metres), UV.y = along it (metres, increasing in
@@ -24,8 +25,8 @@ void fragment() {
 	float phase = (UV.y - TIME * flow_speed * COLOR.g * 4.0) * streak_scale;
 	float wobble = sin(UV.x * 2.3 + UV.y * 0.37) * 1.2;
 	float wave = sin(phase * 1.4 + wobble) * sin(phase * 0.47 + UV.x * 0.9 + 1.7);
-	// Crisp-edged streaks, like the flat KayKit shading.
-	float streak = smoothstep(0.42, 0.52, wave) * flow;
+	// Soft-edged streaks, like brush strokes.
+	float streak = smoothstep(0.3, 0.6, wave) * flow;
 	vec3 color = mix(water_color.rgb, streak_color.rgb, streak * 0.75);
 	color = mix(color, white_color.rgb, COLOR.b);
 	ALBEDO = color;

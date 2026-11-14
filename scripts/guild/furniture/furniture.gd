@@ -1,7 +1,7 @@
 @tool
 class_name KitFurniture
 extends KitPiece
-## Guild furniture from KayKit models, always scaled evenly (never
+## Guild furniture from Fantasy Props models, always scaled evenly (never
 ## stretched): the height in `size` sets the scale and the footprint follows
 ## the model (shelves: the width sets it). Collision matches the model.
 ## Front (the side you sit on / face) is +Z.
@@ -35,59 +35,61 @@ func _build() -> void:
 
 
 func _table() -> void:
-	# The KayKit table closest in shape (table_long runs along Z, so it's
-	# turned when the table is long along X). All KayKit tables are 1 m
-	# tall, so the height sets the scale.
-	var s := size.y
-	var ratio := maxf(size.x, size.z) / maxf(minf(size.x, size.z), 0.01)
-	var model := "table_long"
-	var turn := 90.0 if size.x > size.z else 0.0
-	if ratio < 1.4:
-		model = "table_small" if maxf(size.x, size.z) < 1.2 else "table_medium"
-		turn = 0.0
-	add_model(kk(model), s, Vector3.ZERO, turn)
-	_model_collision(kk(model), s, turn)
+	# Table_Large (the pack's only table: 2.85 x 0.81 x 1.1 m, long along X),
+	# scaled evenly from the height; turned when the table is long along Z.
+	var path := fp("Table_Large")
+	var s := size.y / model_aabb(path).size.y
+	var turn := 90.0 if size.z > size.x * 1.01 else 0.0
+	add_model(path, s, Vector3.ZERO, turn)
+	_model_collision(path, s, turn)
 
 
 func _chair() -> void:
-	# The KayKit chair's back is at +X; turned so it's at -Z like before.
-	var s := (size.y + 0.5) / 1.23
-	add_model(kk("chair"), s, Vector3.ZERO, 90.0)
-	_model_collision(kk("chair"), s, 90.0)
+	# Chair_1 (back at -Z), as tall as before: the seat height + 0.5 m.
+	var path := fp("Chair_1")
+	var s := (size.y + 0.5) / model_aabb(path).size.y
+	add_model(path, s, Vector3.ZERO)
+	_model_collision(path, s, 0.0)
 
 
 func _bench() -> void:
-	# No KayKit bench: a row of KayKit stools along X, `size.x` long.
-	var s := size.y / 0.5
-	var stool := 0.75 * s
-	var count := maxi(roundi(size.x / (stool + 0.1)), 1)
-	var step := size.x / count
+	# Benches (2.78 x 0.53 x 0.53 m) scaled evenly from the seat height,
+	# as many in a row along X as fit `size.x` best.
+	var path := fp("Bench")
+	var src := model_aabb(path)
+	var s := size.y / src.size.y
+	var one := src.size.x * s
+	var count := maxi(roundi(size.x / one), 1)
 	for i in count:
-		add_model(kk("stool"), s, Vector3(-size.x * 0.5 + (i + 0.5) * step, 0, 0), 90.0 * (i % 2))
-	add_collision_box(Vector3(size.x, size.y, stool), Vector3(0, size.y * 0.5, 0))
+		add_model(path, s, Vector3((i - (count - 1) * 0.5) * one, 0, 0))
+	add_collision_box(Vector3(one * count, size.y, src.size.z * s), Vector3(0, size.y * 0.5, 0))
 
 
 func _barrel() -> void:
-	var s := size.y / 1.02
-	add_model(kk("barrel_small"), s, Vector3.ZERO)
+	var path := fp("Barrel")
+	var src := model_aabb(path)
+	var s := size.y / src.size.y
+	add_model(path, s, Vector3.ZERO)
 	var shape := CylinderShape3D.new()
-	shape.radius = 0.5 * s
+	shape.radius = src.size.x * 0.5 * s
 	shape.height = size.y
 	_collision(shape, Vector3(0, size.y * 0.5, 0), Vector3.ZERO, null)
 
 
 func _crate() -> void:
-	var s := size.y
-	add_model(kk("box_small"), s, Vector3.ZERO)
-	add_collision_box(Vector3.ONE * s, Vector3(0, s * 0.5, 0))
+	var path := fp("Crate_Wooden")
+	var s := size.y / model_aabb(path).size.y
+	add_model(path, s, Vector3.ZERO)
+	_model_collision(path, s, 0.0)
 
 
 func _shelf() -> void:
-	# A stack of KayKit wall shelves (board + brackets), scaled evenly to
+	# A stack of Shelf_Simple wall shelves (board + brackets), scaled evenly to
 	# the width, backs against -Z. The lowest one leaves room for brackets.
 	var w := size.x
 	var h := size.y
-	var src := KitPiece.model_aabb(kk("shelf_large"))
+	var shelf := fp("Shelf_Simple")
+	var src := KitPiece.model_aabb(shelf)
 	var s := w / src.size.x
 	var depth := src.size.z * s
 	var back := -depth * 0.5
@@ -95,7 +97,7 @@ func _shelf() -> void:
 	for i in shelf_count:
 		var y := h - 0.15 if shelf_count == 1 else lerpf(0.45, h - 0.15, float(i) / (shelf_count - 1))
 		boards.append(y)
-		add_model(kk("shelf_large"), s, Vector3(0, y - src.size.y * s, back + depth * 0.5))
+		add_model(shelf, s, Vector3(0, y - src.size.y * s, back + depth * 0.5))
 	if shelf_items:
 		_fill_shelf(boards, w, depth)
 	add_collision_box(Vector3(w, h, depth), Vector3(0, h * 0.5, 0))
@@ -111,13 +113,13 @@ func _model_collision(path: String, s: float, turn: float) -> void:
 
 
 const SHELF_ITEMS := [
-	["bottle_A_brown", 0.24], ["bottle_A_green", 0.24], ["bottle_A_labeled_brown", 0.24],
-	["bottle_B_green", 0.2], ["bottle_C_brown", 0.18], ["candle", 0.16],
-	["candle_melted", 0.12], ["coin_stack_small", 0.08],
+	["Bottle_1", 0.24], ["Potion_2", 0.24], ["Potion_4", 0.22],
+	["Potion_1", 0.18], ["SmallBottles_1", 0.14], ["Candle_2", 0.16],
+	["Candle_1", 0.12], ["Coin_Pile", 0.06],
 ]
 
 
-## KayKit bottles, candles and coins along each board (board tops at y).
+## Bottles, candles and coins along each board (board tops at y).
 func _fill_shelf(boards: Array[float], width: float, depth: float) -> void:
 	var rng := make_rng(7)
 	for y in boards:
@@ -127,7 +129,7 @@ func _fill_shelf(boards: Array[float], width: float, depth: float) -> void:
 				x += rng.randf_range(0.08, 0.2)  # Gap.
 				continue
 			var pick: Array = SHELF_ITEMS[rng.randi() % SHELF_ITEMS.size()]
-			var path := kk(pick[0])
+			var path := fp(pick[0])
 			var item_h: float = pick[1]
 			var src := KitPiece.model_aabb(path)
 			var half_w := maxf(src.size.x, src.size.z) * item_h / maxf(src.size.y, 0.001) * 0.5

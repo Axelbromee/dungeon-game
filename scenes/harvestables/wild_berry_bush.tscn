@@ -1,8 +1,9 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/interaction/harvestable.gd" id="1_harvest"]
-[ext_resource type="PackedScene" path="res://KayKit/Assets4/gltf/Bush_1_C_Color1.gltf" id="2_bush"]
+[ext_resource type="PackedScene" path="res://new assets/Stylized Nature MegaKit[Standard]/glTF/Bush_Common.gltf" id="2_bush"]
 [ext_resource type="Resource" path="res://items/wild_berries.tres" id="3_item"]
+[ext_resource type="Material" path="res://materials/nature/leaves_twisted_tree.tres" id="4_leaves"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_bush"]
 radius = 0.75
@@ -35,6 +36,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
 shape = SubResource("SphereShape3D_bush")
 
 [node name="Model" parent="." instance=ExtResource("2_bush")]
+transform = Transform3D(0.615, 0, 0, 0, 0.615, 0, 0, 0, 0.615, -0.02, 0, -0.006)
+
+[node name="Bush_Common" parent="Model" index="0"]
+material_override = ExtResource("4_leaves")
 
 [node name="Berries" type="Node3D" parent="."]
 

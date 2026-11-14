@@ -1,8 +1,9 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://c4lh6ixekga6m"]
 
-[ext_resource type="Script" path="res://scripts/spells/fireball.gd" id="1_fb"]
-[ext_resource type="Shader" path="res://shaders/spells/fireball_shell.gdshader" id="2_shell"]
+[ext_resource type="Script" uid="uid://cfpl383qigfci" path="res://scripts/spells/fireball.gd" id="1_fb"]
+[ext_resource type="Shader" uid="uid://c6ernt7wht8kp" path="res://shaders/spells/fireball_shell.gdshader" id="2_shell"]
 [ext_resource type="PackedScene" path="res://scenes/spells/fireball_explosion.tscn" id="3_fx"]
+[ext_resource type="Shader" uid="uid://2rduf63lltgr" path="res://shaders/spells/fireball_gather.gdshader" id="4_gather"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_fb"]
 radius = 0.15
@@ -36,31 +37,6 @@ height = 0.32
 radial_segments = 32
 rings = 16
 
-[sub_resource type="Gradient" id="Gradient_soft"]
-offsets = PackedFloat32Array(0, 1)
-colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_soft"]
-gradient = SubResource("Gradient_soft")
-width = 64
-height = 64
-fill = 1
-fill_from = Vector2(0.5, 0.5)
-fill_to = Vector2(0.5, 0)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_particle"]
-transparency = 1
-blend_mode = 1
-shading_mode = 0
-vertex_color_use_as_albedo = true
-albedo_texture = SubResource("GradientTexture2D_soft")
-billboard_mode = 3
-billboard_keep_scale = true
-
-[sub_resource type="QuadMesh" id="QuadMesh_particle"]
-material = SubResource("StandardMaterial3D_particle")
-size = Vector2(0.18, 0.18)
-
 [sub_resource type="Gradient" id="Gradient_trail"]
 offsets = PackedFloat32Array(0, 0.25, 0.65, 1)
 colors = PackedColorArray(1, 0.95, 0.6, 1, 1, 0.6, 0.1, 1, 0.8, 0.15, 0.02, 0.6, 0.2, 0.05, 0.02, 0)
@@ -90,35 +66,90 @@ scale_max = 1.2
 scale_curve = SubResource("CurveTexture_trail")
 color_ramp = SubResource("GradientTexture1D_trail")
 
-[node name="Fireball" type="Area3D"]
+[sub_resource type="Gradient" id="Gradient_soft"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_soft"]
+gradient = SubResource("Gradient_soft")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_particle"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = SubResource("GradientTexture2D_soft")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_particle"]
+material = SubResource("StandardMaterial3D_particle")
+size = Vector2(0.18, 0.18)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gather"]
+shader = ExtResource("4_gather")
+shader_parameter/start_radius = 0.35
+shader_parameter/end_radius = 0.02
+shader_parameter/turns = 1.1
+shader_parameter/height_spread = 0.12
+shader_parameter/spark_scale = 1.0
+shader_parameter/speed = 1.0
+shader_parameter/scatter = 0.0
+shader_parameter/scatter_distance = 0.5
+shader_parameter/color = Color(1, 0.62, 0.22, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_spark"]
+material = SubResource("StandardMaterial3D_particle")
+size = Vector2(0.045, 0.045)
+
+[node name="Fireball" type="Area3D" unique_id=1595106659]
 collision_layer = 0
-collision_mask = 1
 monitorable = false
 script = ExtResource("1_fb")
+size_scale = 1.0
+damage = 10.0
+gather_speed_start = 0.205
+gather_speed_end = 1.01
+gather_density_start = 0.666
+form_time = 1.0
 explosion_scene = ExtResource("3_fx")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=535913442]
 shape = SubResource("SphereShape3D_fb")
 
-[node name="Visual" type="Node3D" parent="."]
+[node name="Visual" type="Node3D" parent="." unique_id=1592243550]
 
-[node name="Core" type="MeshInstance3D" parent="Visual"]
+[node name="Core" type="MeshInstance3D" parent="Visual" unique_id=1371575623]
 cast_shadow = 0
 mesh = SubResource("SphereMesh_core")
 
-[node name="Shell" type="MeshInstance3D" parent="Visual"]
+[node name="Shell" type="MeshInstance3D" parent="Visual" unique_id=1192228737]
 cast_shadow = 0
 mesh = SubResource("SphereMesh_shell")
 
-[node name="Trail" type="GPUParticles3D" parent="."]
+[node name="Trail" type="GPUParticles3D" parent="." unique_id=888580684]
 amount = 64
 lifetime = 0.6
-local_coords = false
 visibility_aabb = AABB(-6, -6, -6, 12, 12, 12)
 process_material = SubResource("ParticleProcessMaterial_trail")
 draw_pass_1 = SubResource("QuadMesh_particle")
 
-[node name="OmniLight3D" type="OmniLight3D" parent="."]
+[node name="Gather" type="GPUParticles3D" parent="." unique_id=1770878076]
+cast_shadow = 0
+emitting = false
+amount = 40
+lifetime = 0.45
+visibility_aabb = AABB(-1, -1, -1, 2, 2, 2)
+local_coords = true
+process_material = SubResource("ShaderMaterial_gather")
+draw_pass_1 = SubResource("QuadMesh_spark")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=1833349767]
 light_color = Color(1, 0.55, 0.2, 1)
 light_energy = 2.0
 omni_range = 2.0

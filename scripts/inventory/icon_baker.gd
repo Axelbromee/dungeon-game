@@ -15,7 +15,7 @@ const ITEMS_DIR := "res://items"
 const CACHE_DIR := "user://icon_cache"
 const ICON_SIZE := 128
 ## Bump to throw away every cached icon (e.g. after changing the lighting).
-const CACHE_VERSION := 2
+const CACHE_VERSION := 3
 const CAMERA_FOV := 30.0
 const CAMERA_YAW_DEGREES := 35.0
 const CAMERA_PITCH_DEGREES := 28.0

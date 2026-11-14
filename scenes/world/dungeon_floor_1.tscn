@@ -22,11 +22,10 @@
 [ext_resource type="PackedScene" path="res://scenes/world/waterfall.tscn" id="20_hk4tn"]
 
 [sub_resource type="ProceduralSkyMaterial" id="Sky_material"]
-sky_top_color = Color(0.2, 0.38, 0.8, 1)
-sky_horizon_color = Color(0.5, 0.72, 0.88, 1)
-sky_curve = 0.2
-ground_bottom_color = Color(0.08, 0.1, 0.13, 1)
-ground_horizon_color = Color(0.5, 0.72, 0.88, 1)
+sky_top_color = Color(0.27, 0.58, 0.93, 1)
+sky_horizon_color = Color(0.74, 0.89, 0.96, 1)
+ground_bottom_color = Color(0.1, 0.12, 0.1, 1)
+ground_horizon_color = Color(0.74, 0.89, 0.96, 1)
 sun_angle_max = 18.0
 sun_curve = 0.08
 
@@ -37,7 +36,7 @@ sky_material = SubResource("Sky_material")
 background_mode = 2
 sky = SubResource("Sky_magic")
 ambient_light_source = 2
-ambient_light_color = Color(0.5, 0.56, 0.66, 1)
+ambient_light_color = Color(0.58, 0.64, 0.6, 1)
 ambient_light_energy = 0.38
 glow_enabled = true
 glow_intensity = 0.35
@@ -177,7 +176,7 @@ shape = SubResource("Bounds_z")
 [node name="Portals" type="Node3D" parent="." unique_id=320249177]
 
 [node name="ArrivalStairs" parent="Portals" unique_id=492371178 instance=ExtResource("5_stairs")]
-transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 8.069661, 190)
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 8.08219, 190)
 collision_layer = 5
 target_scene = "res://scenes/world/guild_hall.tscn"
 target_spawn = &"from_dungeon"
@@ -481,8 +480,8 @@ process_material = SubResource("Process_motes")
 draw_pass_1 = SubResource("Quad_mote")
 
 [node name="CaveEntrance" parent="." unique_id=972617870 instance=ExtResource("19_entrance")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 7.9, -132.51817)
-width = 11.4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 7.9, -132.07715)
+width = 11.7
 height = 5.2
 beam_thickness = 2.0
 

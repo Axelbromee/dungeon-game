@@ -41,25 +41,25 @@ func _build() -> void:
 
 func _reception_props() -> void:
 	var top := height
-	# Brass bell (no KayKit match), an open KayKit journal as the ledger with
-	# a quill, and a stack of papers.
+	# Brass bell (no pack match), a book lying flat as the ledger with a
+	# quill, and a rolled scroll.
 	add_cylinder(0.07, 0.03, Vector3(width * 0.32, top + 0.015, 0.1), mat("wood_dark"), false)
 	add_sphere(0.06, Vector3(width * 0.32, top + 0.06, 0.1), mat("brass"), Vector3(1, 0.8, 1))
-	add_model_posed(kk("journal_open"), Vector3(-width * 0.1, top, 0.05), 0.42, Vector3(-90, 0, 0))
+	add_model_posed(fp("Book_7"), Vector3(-width * 0.1, top, 0.05), 0.42, Vector3(0, 90, 0))
 	add_box(Vector3(0.012, 0.012, 0.28), Vector3(-width * 0.1 + 0.15, top + 0.06, 0.02), mat("linen"), false, Vector3(25, 20, 0))
-	add_model_posed(kk("blueprint_stacked"), Vector3(-width * 0.38, top, -0.05), 0.26, Vector3(0, 12, 0))
+	add_model_posed(fp("Scroll_1"), Vector3(-width * 0.38, top, -0.05), 0.26, Vector3(0, 12, 0))
 
 
 func _shop_props() -> void:
 	var top := height
 	var rng := make_rng(11)
-	# KayKit bottles, a crate and a coin stack; the straw sack has no match.
-	var bottles := ["bottle_A_green", "bottle_B_brown", "bottle_A_labeled_green", "bottle_C_brown", "bottle_A_labeled_brown"]
+	# Bottles and potions, a crate and a coin pile; the straw sack has no match.
+	var bottles := ["Bottle_1", "Potion_2", "Potion_4", "Potion_1", "Bottle_1"]
 	for i in 5:
-		add_model_sized(kk(bottles[i]), Vector3(-width * 0.4 + i * 0.12, top, 0.1), 0.18, rng.randf_range(0.0, 360.0))
+		add_model_sized(fp(bottles[i]), Vector3(-width * 0.4 + i * 0.12, top, 0.1), 0.18, rng.randf_range(0.0, 360.0))
 	add_sphere(0.2, Vector3(width * 0.3, top + 0.16, 0.0), mat("straw"), Vector3(1.0, 0.8, 0.9))
-	add_model(kk("box_small"), 0.32, Vector3(width * 0.05, top, -0.05), rng.randf_range(-15.0, 15.0))
-	add_model_sized(kk("coin_stack_small"), Vector3(-width * 0.05, top, 0.15), 0.08, rng.randf_range(0.0, 360.0))
+	add_model_sized(fp("Crate_Wooden"), Vector3(width * 0.05, top, -0.05), 0.32, rng.randf_range(-15.0, 15.0))
+	add_model_sized(fp("Coin_Pile"), Vector3(-width * 0.05, top, 0.15), 0.06, rng.randf_range(0.0, 360.0))
 
 
 func get_interaction_text() -> String:

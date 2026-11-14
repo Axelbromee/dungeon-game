@@ -1,7 +1,7 @@
 class_name HUD
 extends CanvasLayer
-## On-screen HUD: mana bar, crosshair, interaction prompt, pickup toasts and
-## the inventory UI. Listens to the Player's signals. While charging, a pale
+## On-screen HUD: mana bar, crosshair, interaction prompt, pickup toasts,
+## the spell wheel and the inventory UI. Listens to the Player's signals. While charging, a pale
 ## mana segment shows what the shot will cost on release.
 
 ## Left empty, the HUD uses the scene's Player (the node in group "player").
@@ -53,6 +53,7 @@ var _shown_remaining: float = 0.0
 @onready var _prompt: Label = $PromptLabel
 @onready var _toast: Label = $ToastLabel
 @onready var _inventory_ui: InventoryUI = $InventoryUI
+@onready var _spell_wheel: SpellWheelUI = $SpellWheel
 @onready var _info_panel: Control = $InfoPanel
 @onready var _info_title: Label = $InfoPanel/Margin/VBox/Title
 @onready var _info_body: Label = $InfoPanel/Margin/VBox/Body
@@ -90,6 +91,7 @@ func _ready() -> void:
 	player.interact_prompt_changed.connect(_on_prompt_changed)
 	player.notified.connect(_on_notified)
 	_inventory_ui.setup(player)
+	_spell_wheel.setup(player)
 	_inventory_ui.open_changed.connect(_on_inventory_open_changed)
 	_on_prompt_changed("")
 

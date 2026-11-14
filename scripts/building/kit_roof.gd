@@ -1,9 +1,9 @@
 @tool
 class_name KitRoof
 extends KitPiece
-## Ceiling with wooden beams underneath. One KayKit ceiling tile per 2 m
-## cell (the 4 m tile at an even half scale); beams are KayKit wooden
-## planks laid end to end across X. Origin at FLOOR level in the middle of
+## Ceiling with wooden beams underneath. One Medieval Village wooden floor
+## tile per 2 m cell, turned face down; beams are the pack's roof log,
+## scaled evenly to 2 m and laid end to end across X. Origin at FLOOR level in the middle of
 ## the area; the ceiling's underside is at `height`, so it lines up with
 ## walls of the same height. Spans tiles_x x tiles_z cells.
 
@@ -12,18 +12,20 @@ extends KitPiece
 @export var height: float = 4.0
 ## Collision thickness above `height`.
 @export var thickness: float = 0.12
-## Not used: the beams are KayKit planks (kept so existing scenes load).
+## Not used: the beams are the log model's size (kept so existing scenes load).
 @export var beam_width: float = 0.2
-## Not used: the beams are KayKit planks (kept so existing scenes load).
+## Not used: the beams are the log model's size (kept so existing scenes load).
 @export var beam_depth: float = 0.24
 ## Beam rows per grid cell (running along X). 0 = no beams.
 @export_range(0, 4) var beams_per_tile: int = 1
 
-const TILE_SCALE := 0.5
-## Wooden plank (Wood_Plank_*: 0.4 x 0.15 x 1.5 m) scaled evenly to 2 m.
-const PLANK_SCALE := 2.0 / 1.5
-const PLANK_DEPTH := 0.15 * PLANK_SCALE
-const PLANKS := ["Wood_Plank_A", "Wood_Plank_B", "Wood_Plank_C"]
+## Ceiling tile (Floor_WoodDark: 2 x 0.02 x 2 m), face down.
+const TILE_MODEL := "Floor_WoodDark"
+const TILE_DEPTH := 0.02
+## Beam: Roof_Log (1.15 x 1.39 x 10.7 m, along Z) scaled evenly to 2 m long.
+const BEAM_MODEL := "Roof_Log"
+const BEAM_SCALE := 2.0 / 10.7
+const BEAM_DEPTH := 1.39 * BEAM_SCALE
 
 
 func _build() -> void:
@@ -33,12 +35,11 @@ func _build() -> void:
 	for ix in tiles_x:
 		for iz in tiles_z:
 			var centre := Vector3(-size_x * 0.5 + (ix + 0.5) * GRID, height, -size_z * 0.5 + (iz + 0.5) * GRID)
-			add_model(kk("ceiling_tile"), TILE_SCALE, centre)
-	var rng := make_rng(5)
+			var flip := Basis(Vector3.RIGHT, PI)
+			add_model_xform(mv(TILE_MODEL), Transform3D(flip, centre + Vector3.UP * TILE_DEPTH * 0.5))
 	var rows := tiles_z * beams_per_tile
 	for i in rows:
 		var z := -size_z * 0.5 + (i + 0.5) * size_z / rows
 		for ix in tiles_x:
 			var x := -size_x * 0.5 + (ix + 0.5) * GRID
-			var plank := "res://KayKit/Assets3/gltf/%s.gltf" % PLANKS[rng.randi() % PLANKS.size()]
-			add_model(plank, PLANK_SCALE, Vector3(x, height - PLANK_DEPTH, z), 90.0)
+			add_model(mv(BEAM_MODEL), BEAM_SCALE, Vector3(x, height - BEAM_DEPTH, z), 90.0)

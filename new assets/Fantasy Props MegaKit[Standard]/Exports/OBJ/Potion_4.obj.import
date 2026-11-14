@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bssh4pp5eieu5"
+path="res://.godot/imported/Potion_4.obj-c53e4fbdc175f4cbf00d865b5647740b.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Potion_4.obj-c53e4fbdc175f4cbf00d865b5647740b.mesh"]
+
+source_file="res://new assets/Fantasy Props MegaKit[Standard]/Exports/OBJ/Potion_4.obj"
+dest_files=["res://.godot/imported/Potion_4.obj-c53e4fbdc175f4cbf00d865b5647740b.mesh", "res://.godot/imported/Potion_4.obj-c53e4fbdc175f4cbf00d865b5647740b.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false
